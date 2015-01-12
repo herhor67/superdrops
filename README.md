@@ -1,2 +1,2 @@
-# superdrops
+# SuperDrops
 Drop ze stone!
