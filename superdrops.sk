@@ -1,0 +1,575 @@
+#hercore superdrops
+#=============================================#
+#   Skrypt napisany przez: herhor67           #
+#   Nazwa: SuperDrops                         #
+#=============================================#
+#  Licencja skryptu:                          #
+# * Nie zezwalam na:                          #
+# - Usuwanie treści o autorze!                #
+# - Podszywanie się pod autora!               #
+# - Używanie kodu skryptu w swoich skryptach! #
+# - Zarabianie na skrypcie!                   #
+# - Wrzucanie skryptu do internetu!           #
+# - Dodawanie kodu na swoja potrzebe!         #
+# - Modyfikowanie kodu na swoja potrzebe!     #
+#=============================================#
+
+variables:
+	{usuwac.rudy} = false
+
+options:
+#szansa bez fortuny:
+	wegiel: 1.6
+	diament: 0.2
+	szmaragd: 0.3
+	zloto: 0.4
+	zelazo: 0.6
+	lazuryt: 1.9
+	redstone: 1.9
+	kwarc: 1.9
+	drewno: 2.7
+ 
+#szansa z kilofem fortune I
+	1wegiel: 2.4
+	1diament: 0.3
+	1szmaragd: 0.5
+	1zloto: 0.6
+	1zelazo: 0.9
+	1lazuryt: 2.9
+	1redstone: 2.9
+	1kwarc: 2.9
+ 
+#szansa z kilofem forune II
+	2wegiel: 3.2
+	2diament: 0.4
+	2szmaragd: 0.6
+	2zloto: 0.9
+	2zelazo: 1.2
+	2lazuryt: 3.9
+	2redstone: 3.9
+	2kwarc: 3.9
+ 
+#szansa z kilofem fortune III
+	3wegiel: 5.6
+	3diament: 0.7
+	3szmaragd: 1.1
+	3zloto: 1.5
+	3zelazo: 2.1
+	3lazuryt: 4.9
+	3redstone: 4.9
+	3kwarc: 4.9
+
+#szansa superkilofem
+	superwegiel: 16
+	superdiament: 2
+	superszmaragd: 3
+	superzloto: 4
+	superzelazo: 6
+	superlazuryt: 20
+	superredstone: 20
+	superkwarc: 20
+
+#inneinfo:
+	diamentmax: 16
+	diamentmin: 9
+	szmaragdmax: 128
+	szmaragdmin: 60
+	wegielmax: 128
+	zelazomax: 64
+	zlotomax: 32
+	lapismax:32
+	redstonemax: 16
+
+#w co ma sie zamieniac ruda, jezeli wlaczone
+	zamienw: stone
+	zamienwnether: netherrack
+	wiadomosc: &4Surowce wypadają ze stone!
+	prefiks: &7[&cSuper&6Drop&7]
+
+#ilosc expa za 1 blok
+	xp: 1
+
+aliases:
+	diament = 57
+
+on script load:
+	register new shaped recipe for diamond pickaxe named "&bSuperKilof" using diament, diament, diament, none, stick, none, none, stick, none
+
+command /superdrops [<text>] [<text>]:
+	aliases: sd, superdrop
+	trigger:
+		arg 1 is "szansa":
+			arg 2 is not set:
+				send "&6---------------=============[ {@prefiks} &6]=============---------------"
+				send "&fNazwa surowca  &0| &fBez enchantu &0| &fFortune I   &0| &fFortune II   &0| &fFortune III"
+				send "&l&0---------------------------------------------------------------------"
+				send "&0WĘGIEL         &0&l| &f{@wegiel}          &0&l| &f{@1wegiel}         &0&l| &f{@2wegiel}         &0&l| &f{@3wegiel}"
+				send "&l&0---------------------------------------------------------------------"
+				send "&7ŻELAZO         &0&l| &f{@zelazo}         &0&l| &f{@1zelazo}         &0&l| &f{@2zelazo}         &0&l| &f{@3zelazo}"
+				send "&l&0---------------------------------------------------------------------"
+				send "&eZŁOTO          &0&l| &f{@zloto}         &0&l| &f{@1zloto}         &0&l| &f{@2zloto}         &0&l| &f{@3zloto}"
+				send "&l&0---------------------------------------------------------------------"
+				send "&1LAZURYT        &0&l| &f{@lazuryt}         &0&l| &f{@1lazuryt}         &0&l| &f{@2lazuryt}         &0&l| &f{@3lazuryt}"
+				send "&l&0---------------------------------------------------------------------"
+				send "&4REDSTONE       &0&l| &f{@redstone}         &0&l| &f{@1redstone}         &0&l| &f{@2redstone}         &0&l| &f{@3redstone}"
+				send "&l&0---------------------------------------------------------------------"
+				send "&bDIAMENT        &0&l| &f{@diament}         &0&l| &f{@1diament}         &0&l| &f{@2diament}         &0&l| &f{@3diament}"
+				send "&l&0---------------------------------------------------------------------"
+				send "&2SZMARAGD       &0&l| &f{@szmaragd}         &0&l| &f{@1szmaragd}         &0&l| &f{@2szmaragd}         &0&l| &f{@3szmaragd}"
+				send "&l&0---------------------------------------------------------------------"
+				send "&fKWARC          &0&l| &f{@kwarc}         &0&l| &f{@1kwarc}         &0&l| &f{@2kwarc}         &0&l| &f{@3kwarc}"
+				send "&l&0---------------------------------------------------------------------"
+				send "&2RÓŻNE SADZONKI &0&l| &f{@drewno}         &0&l| &fbrak        &0&l| &fbrak       &0&l| &fbrak"
+				send "&l&0---------------------------------------------------------------------"
+			arg 2 is "super":
+				send "&6-----===[ {@prefiks} &6]===-----"
+				send "&fNazwa surowca  &0| &fSzansa"
+				send "&l&0------------------------------"
+				send "&0WĘGIEL         &0&l| &f{@superwegiel}"
+				send "&l&0------------------------------"
+				send "&7ŻELAZO         &0&l| &f{@superzelazo}"
+				send "&l&0------------------------------"
+				send "&eZŁOTO          &0&l| &f{@superzloto}"
+				send "&l&0------------------------------"
+				send "&1LAZURYT        &0&l| &f{@superlazuryt}"
+				send "&l&0------------------------------"
+				send "&4REDSTONE       &0&l| &f{@superredstone}"
+				send "&l&0------------------------------"
+				send "&bDIAMENT        &0&l| &f{@superdiament}"
+				send "&l&0------------------------------"
+				send "&2SZMARAGD       &0&l| &f{@superszmaragd}"
+				send "&l&0------------------------------"
+				send "&fKWARC          &0&l| &f{@superkwarc}"
+				send "&l&0------------------------------"
+
+on mine of stone:
+	give {@xp} xp to player
+	if player's tool is wooden pickaxe of Fortune 0 or golden pickaxe of Fortune 0:
+		if event-block's y coordinate is less than {@wegielmax}:
+			chance of {@wegiel}%:
+				drop 1 coal
+#====================================================================#
+	if player's tool is stone pickaxe:
+		if event-block's y coordinate is less than {@wegielmax}:
+			chance of {@wegiel}%:
+				drop 1 coal
+		if event-block's y coordinate is less than {@zelazomax}:
+			chance of {@zelazo}%:
+				drop 1 iron ore
+		if event-block's y coordinate is less than {@lapismax}:
+			chance of {@lazuryt}%:
+				drop 4 lapis lazuli
+				chance of {@lazuryt}%:
+					drop 1 lapis lazuli
+					chance of {@lazuryt}%:
+						drop 1 lapis lazuli
+						chance of {@lazuryt}%:
+							drop 1 lapis lazuli
+							chance of {@lazuryt}%:
+								drop 1 lapis lazuli
+#====================================================================#
+	if player's tool is iron pickaxe or diamond pickaxe:
+		if event-block's y coordinate is less than {@wegielmax}:
+			chance of {@wegiel}%:
+				drop 1 coal
+		if event-block's y coordinate is less than {@zelazomax}:
+			chance of {@zelazo}%:
+				drop 1 iron ore
+		if event-block's y coordinate is less than {@diamentmax}:
+			if event-block's y coordinate is greater than {@diamentmin}:
+				chance of {@diament}%:
+					drop 1 diamond
+		if event-block's y coordinate is less than {@lapismax}:
+			chance of {@lazuryt}%:
+				drop 4 lapis lazuli
+				chance of {@lazuryt}%:
+					drop 1 lapis lazuli
+					chance of {@lazuryt}%:
+						drop 1 lapis lazuli
+						chance of {@lazuryt}%:
+							drop 1 lapis lazuli
+							chance of {@lazuryt}%:
+								drop 1 lapis lazuli
+		if event-block's y coordinate is less than {@zlotomax}:
+			chance of {@zloto}%:
+				drop 1 gold ore
+		if event-block's y coordinate is less than {@szmaragdmax}:
+			if event-block's y coordinate is greater than {@szmaragdmin}:
+				biome at the player is extreme hills or ice mountains or desert hills or forest hills or taiga hills or small mountains or jungle hills:
+					chance of {@szmaragd}%:
+						drop 1 emerald
+		if event-block's y coordinate is less than {@redstonemax}:
+			chance of {@redstone}%:
+				drop 4 redstone
+				chance of {@redstone}%:
+					drop 1 redstone
+					chance of {@redstone}%:
+						drop 1 redstone
+						chance of {@redstone}%:
+							drop 1 redstone
+							chance of {@redstone}%:
+								drop 1 redstone
+#====================================================================#
+#====================================================================#
+	if player's tool is wooden pickaxe of Fortune 1 or golden pickaxe of Fortune 1:
+		if event-block's y coordinate is less than {@wegielmax}:
+			chance of {@1wegiel}%:
+				drop 1 coal
+#====================================================================#
+	if player's tool is stone pickaxe of Fortune 1:
+		if event-block's y coordinate is less than {@wegielmax}:
+			chance of {@1wegiel}%:
+				drop 1 coal
+		if event-block's y coordinate is less than {@zelazomax}:
+			chance of {@1zelazo}%:
+				drop 1 iron ore
+		if event-block's y coordinate is less than {@lapismax}:
+			chance of {@1lazuryt}%:
+				drop 4 lapis lazuli
+				chance of {@1lazuryt}%:
+					drop 1 lapis lazuli
+					chance of {@1lazuryt}%:
+						drop 1 lapis lazuli
+						chance of {@1lazuryt}%:
+							drop 1 lapis lazuli
+							chance of {@1lazuryt}%:
+								drop 1 lapis lazuli
+		if event-block's y coordinate is less than {@redstonemax}:
+			chance of {@1redstone}%:
+				drop 4 redstone
+				chance of {@1redstone}%:
+					drop 1 redstone
+					chance of {@1redstone}%:
+						drop 1 redstone
+						chance of {@1redstone}%:
+							drop 1 redstone
+							chance of {@1redstone}%:
+								drop 1 redstone
+#====================================================================#
+	if player's tool is iron pickaxe of Fortune 1 or diamond pickaxe of Fortune 1:
+		if event-block's y coordinate is less than {@wegielmax}:
+			chance of {@1wegiel}%:
+				drop 1 coal
+		if event-block's y coordinate is less than {@zelazomax}:
+			chance of {@1zelazo}%:
+				drop 1 iron ore
+		if event-block's y coordinate is less than {@diamentmax}:
+			if player's y coordinate is greater than {@diamentmin}:
+				chance of {@1diament}%:
+					drop 1 diamond
+		if event-block's y coordinate is less than {@lapismax}:
+			chance of {@1lazuryt}%:
+				drop 4 lapis lazuli
+				chance of {@1lazuryt}%:
+					drop 1 lapis lazuli
+					chance of {@1lazuryt}%:
+						drop 1 lapis lazuli
+						chance of {@1lazuryt}%:
+							drop 1 lapis lazuli
+							chance of {@1lazuryt}%:
+								drop 1 lapis lazuli
+		if event-block's y coordinate is less than {@zlotomax}:
+			chance of {@1zloto}%:
+				drop 1 gold ore
+		if event-block's y coordinate is less than {@szmaragdmax}:
+			if player's y coordinate is greater than {@szmaragdmin}:
+				biome at the player is extreme hills or ice mountains or desert hills or forest hills or taiga hills or small mountains or jungle hills:
+					chance of {@1szmaragd}%:
+						drop 1 emerald
+		if event-block's y coordinate is less than {@redstonemax}:
+			chance of {@1redstone}%:
+				drop 4 redstone
+				chance of {@1redstone}%:
+					drop 1 redstone
+					chance of {@1redstone}%:
+						drop 1 redstone
+						chance of {@1redstone}%:
+							drop 1 redstone
+							chance of {@1redstone}%:
+								drop 1 redstone
+#====================================================================#
+#====================================================================#
+	if player's tool is wooden pickaxe of Fortune 2 or golden pickaxe of Fortune 2:
+		if event-block's y coordinate is less than {@wegielmax}:
+			chance of {@2wegiel}%:
+				drop 1 coal
+#====================================================================#
+	if player's tool is stone pickaxe of Fortune 2:
+		if event-block's y coordinate is less than {@wegielmax}:
+			chance of {@2wegiel}%:
+				drop 1 coal
+		if event-block's y coordinate is less than {@zelazomax}:
+			chance of {@2zelazo}%:
+				drop 1 iron ore
+		if event-block's y coordinate is less than {@lapismax}:
+			chance of {@2lazuryt}%:
+				drop 4 lapis lazuli
+				chance of {@2lazuryt}%:
+					drop 1 lapis lazuli
+					chance of {@2lazuryt}%:
+						drop 1 lapis lazuli
+						chance of {@2lazuryt}%:
+							drop 1 lapis lazuli
+							chance of {@2lazuryt}%:
+								drop 1 lapis lazuli
+#====================================================================#
+	if player's tool is iron pickaxe of Fortune 2 or diamond pickaxe of Fortune 2:
+		if event-block's y coordinate is less than {@wegielmax}:
+			chance of {@2wegiel}%:
+				drop 1 coal
+		if event-block's y coordinate is less than {@zelazomax}:
+			chance of {@2zelazo}%:
+				drop 1 iron ore
+		if event-block's y coordinate is less than {@diamentmax}:
+			if event-block's y coordinate is greater than {@diamentmin}:
+				chance of {@2diament}%:
+					drop 1 diamond
+		if event-block's y coordinate is less than {@lapismax}:
+			chance of {@2lazuryt}%:
+				drop 4 lapis lazuli
+				chance of {@2lazuryt}%:
+					drop 1 lapis lazuli
+					chance of {@2lazuryt}%:
+						drop 1 lapis lazuli
+						chance of {@2lazuryt}%:
+							drop 1 lapis lazuli
+							chance of {@2lazuryt}%:
+								drop 1 lapis lazuli
+		if event-block's y coordinate is less than {@zlotomax}:
+			chance of {@2zloto}%:
+				drop 1 gold ore
+		if event-block's y coordinate is less than {@szmaragdmax}:
+			if event-block's y coordinate is greater than {@szmaragdmin}:
+				biome at the player is extreme hills or ice mountains or desert hills or forest hills or taiga hills or small mountains or jungle hills:
+					chance of {@2szmaragd}%:
+						drop 1 emerald
+		if event-block's y coordinate is less than {@redstonemax}:
+			chance of {@2redstone}%:
+				drop 4 redstone
+				chance of {@2redstone}%:
+					drop 1 redstone
+					chance of {@2redstone}%:
+						drop 1 redstone
+						chance of {@2redstone}%:
+							drop 1 redstone
+							chance of {@2redstone}%:
+								drop 1 redstone
+#====================================================================#
+#====================================================================#
+	if player's tool is wooden pickaxe of Fortune 3 or golden pickaxe of Fortune 3:
+		if event-block's y coordinate is less than {@wegielmax}:
+			chance of {@3wegiel}%:
+				drop 1 coal
+#====================================================================#
+	if player's tool is stone pickaxe of Fortune 3:
+		if event-block's y coordinate is less than {@wegielmax}:
+			chance of {@3wegiel}%:
+				drop 1 coal
+		if event-block's y coordinate is less than {@zelazomax}:
+			chance of {@3zelazo}%:
+				drop 1 iron ore
+		if event-block's y coordinate is less than {@lapismax}:
+			chance of {@3lazuryt}%:
+				drop 4 lapis lazuli
+				chance of {@3lazuryt}%:
+					drop 1 lapis lazuli
+					chance of {@3lazuryt}%:
+						drop 1 lapis lazuli
+						chance of {@3lazuryt}%:
+							drop 1 lapis lazuli
+							chance of {@3lazuryt}%:
+								drop 1 lapis lazuli
+#====================================================================#
+	if player's tool is iron pickaxe of Fortune 3 or diamond pickaxe of Fortune 3:
+		if event-block's y coordinate is less than {@wegielmax}:
+			chance of {@3wegiel}%:
+				drop 1 coal
+		if event-block's y coordinate is less than {@zelazomax}:
+			chance of {@3zelazo}%:
+				drop 1 iron ore
+		if event-block's y coordinate is less than {@diamentmax}:
+			if event-block's y coordinate is greater than {@diamentmin}:
+				chance of {@3diament}%:
+					drop 1 diamond
+		if event-block's y coordinate is less than {@lapismax}:
+			chance of {@3lazuryt}%:
+				drop 4 lapis lazuli
+				chance of {@3lazuryt}%:
+					drop 1 lapis lazuli
+					chance of {@3lazuryt}%:
+						drop 1 lapis lazuli
+						chance of {@3lazuryt}%:
+							drop 1 lapis lazuli
+							chance of {@3lazuryt}%:
+								drop 1 lapis lazuli
+		if event-block's y coordinate is less than {@zlotomax}:
+			chance of {@3zloto}%:
+				drop 1 gold ore
+		if event-block's y coordinate is less than {@szmaragdmax}:
+			if event-block's y coordinate is greater than {@szmaragdmin}:
+				biome at the player is extreme hills or ice mountains or desert hills or forest hills or taiga hills or small mountains or jungle hills:
+					chance of {@3szmaragd}%:
+						drop 1 emerald
+		if event-block's y coordinate is less than {@redstonemax}:
+			chance of {@3redstone}%:
+				drop 4 redstone
+				chance of {@3redstone}%:
+					drop 1 redstone
+					chance of {@3redstone}%:
+						drop 1 redstone
+						chance of {@3redstone}%:
+							drop 1 redstone
+							chance of {@3redstone}%:
+								drop 1 redstone
+#====================================================================#
+#====================================================================#
+	if player's tool is diamond pickaxe named "&bSuperKilof":
+		if event-block's y coordinate is less than {@wegielmax}:
+			chance of {@superwegiel}%:
+				drop 1 coal
+		if event-block's y coordinate is less than {@zelazomax}:
+			chance of {@superzelazo}%:
+				drop 1 iron ore
+		if event-block's y coordinate is less than {@diamentmax}:
+			if player's y coordinate is greater than {@diamentmin}:
+				chance of {@superdiament}%:
+					drop 1 diamond
+		if event-block's y coordinate is less than {@lapismax}:
+			chance of {@superlazuryt}%:
+				drop 4 lapis lazuli
+				chance of {@superlazuryt}%:
+					drop 1 lapis lazuli
+					chance of {@superlazuryt}%:
+						drop 1 lapis lazuli
+						chance of {@superlazuryt}%:
+							drop 1 lapis lazuli
+							chance of {@superlazuryt}%:
+								drop 1 lapis lazuli
+		if event-block's y coordinate is less than {@zlotomax}:
+			chance of {@superzloto}%:
+				drop 1 gold ore
+		if event-block's y coordinate is less than {@szmaragdmax}:
+			if event-block's y coordinate is greater than {@szmaragdmin}:
+				biome at the player is extreme hills or ice mountains or desert hills or forest hills or taiga hills or small mountains or jungle hills:
+					chance of {@superszmaragd}%:
+						drop 1 emerald
+		if event-block's y coordinate is less than {@redstonemax}:
+			chance of {@superredstone}%:
+				drop 4 redstone
+				chance of {@superredstone}%:
+					drop 1 redstone
+					chance of {@superredstone}%:
+						drop 1 redstone
+						chance of {@superredstone}%:
+							drop 1 redstone
+							chance of {@superredstone}%:
+								drop 1 redstone
+#====================================================================#
+#====================================================================#
+on mine of netherrack:
+	if player's tool is any pickaxe of Fortune 0:
+		chance of {@kwarc}%:
+			drop 1 quartz
+			chance of {@kwarc}%:
+				drop 1 quartz
+				chance of {@kwarc}%:
+					drop 1 quartz
+					chance of {@kwarc}%:
+						drop 1 quartz
+						chance of {@kwarc}%:
+							drop 1 quartz
+#====================================================================#
+	if player's tool is any pickaxe of Fortune 1:
+		chance of {@1kwarc}%:
+			drop 1 quartz
+			chance of {@1kwarc}%:
+				drop 1 quartz
+				chance of {@1kwarc}%:
+					drop 1 quartz
+					chance of {@1kwarc}%:
+						drop 1 quartz
+						chance of {@1kwarc}%:
+							drop 1 quartz
+#====================================================================#
+	if player's tool is any pickaxe of Fortune 2:
+		chance of {@2kwarc}%:
+			drop 1 quartz
+			chance of {@2kwarc}%:
+				drop 1 quartz
+				chance of {@2kwarc}%:
+					drop 1 quartz
+					chance of {@2kwarc}%:
+						drop 1 quartz
+						chance of {@2kwarc}%:
+							drop 1 quartz
+#====================================================================#
+	if player's tool is any pickaxe of Fortune 3:
+		chance of {@3kwarc}%:
+			drop 1 quartz
+			chance of {@3kwarc}%:
+				drop 1 quartz
+				chance of {@3kwarc}%:
+					drop 1 quartz
+					chance of {@3kwarc}%:
+						drop 1 quartz
+						chance of {@3kwarc}%:
+							drop 1 quartz
+#====================================================================#
+	if player's tool is diamond pickaxe named "&bSuperKilof":
+		chance of {@superkwarc}%:
+			drop 1 quartz
+			chance of {@superkwarc}%:
+				drop 1 quartz
+				chance of {@superkwarc}%:
+					drop 1 quartz
+					chance of {@superkwarc}%:
+						drop 1 quartz
+						chance of {@superkwarc}%:
+							drop 1 quartz
+#====================================================================#
+#====================================================================#
+
+on break of leaves:
+	chance of {@drewno}%:
+		drop 1 spruce sapling
+	chance of {@drewno}%:
+		drop 1 birch sapling
+	chance of {@drewno}%:
+		drop 1 jungle sapling
+	chance of {@drewno}%:
+		drop 1 sapling
+
+command /sdadmin [<text>]:
+	aliases: superdropsadmin
+	trigger:
+		if player has permission "dropy.admin" or "dropy.*":
+			arg 1 is "przelaczdropy":
+				{usuwac.rudy} is false:
+					set {usuwac.rudy} to true
+					send "&6Wlaczono usuwanie rud"
+				else:
+					set {usuwac.rudy} to false
+					send "&6Wylaczono usuwanie rud"
+			arg 1 is "odswiez":
+				execute player command "/sk reload %script%"
+		
+
+on click on any ore or emerald ore:
+	{usuwac.rudy} is true:
+		set clicked block to {@zamienw}
+		send "{@prefiks} {@wiadomosc}"
+
+on click on quartz ore:
+	{usuwac.rudy} is true:
+		set clicked block to {@zamienwnether}
+		send "{@prefiks} {@wiadomosc}"
+
+on explode:
+	{usuwac.rudy} is true:
+		cancel event
+		loop blocks in radius 4 of event-location:
+			if loop-block is any ore or emerald ore:
+				set loop-block to {@zamienw}
+			if loop-block is quartz ore:
+				set loop-block to {@zamienwnether}
+		uncancel event
