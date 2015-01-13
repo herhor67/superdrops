@@ -15,7 +15,7 @@
 #=============================================#
 
 variables:
-	{usuwac.rudy} = false
+	{usuwac.rudy} = true
 
 options:
 #szansa bez fortuny:
@@ -30,44 +30,16 @@ options:
 	drewno: 2.7
  
 #szansa z kilofem fortune I
-	1wegiel: 2.4
-	1diament: 0.3
-	1szmaragd: 0.5
-	1zloto: 0.6
-	1zelazo: 0.9
-	1lazuryt: 2.9
-	1redstone: 2.9
-	1kwarc: 2.9
+	fortune1: 1.5
  
 #szansa z kilofem forune II
-	2wegiel: 3.2
-	2diament: 0.4
-	2szmaragd: 0.6
-	2zloto: 0.9
-	2zelazo: 1.2
-	2lazuryt: 3.9
-	2redstone: 3.9
-	2kwarc: 3.9
+	fortune2: 2
  
 #szansa z kilofem fortune III
-	3wegiel: 5.6
-	3diament: 0.7
-	3szmaragd: 1.1
-	3zloto: 1.5
-	3zelazo: 2.1
-	3lazuryt: 4.9
-	3redstone: 4.9
-	3kwarc: 4.9
+	fortune3: 2.5
 
 #szansa superkilofem
-	superwegiel: 16
-	superdiament: 2
-	superszmaragd: 3
-	superzloto: 4
-	superzelazo: 6
-	superlazuryt: 20
-	superredstone: 20
-	superkwarc: 20
+	super: 10
 
 #inneinfo:
 	diamentmax: 16
@@ -91,9 +63,11 @@ options:
 
 aliases:
 	diament = 57
+	diamentitem = 264
 
 on script load:
-	register new shaped recipe for diamond pickaxe named "&bSuperKilof" using diament, diament, diament, none, stick, none, none, stick, none
+	register new shaped recipe for diamond pickaxe named "&bSuperKilof" with lore "&7Fortune X" using diament, diament, diament, none, stick, none, none, stick, none
+	register new shaped recipe for diamond pickaxe named "&bSuperKilof" with lore "&7Smelting I" using diamentitem, furnace. diamentitem, none, stick, none, none, stick, none
 
 command /superdrops [<text>] [<text>]:
 	aliases: sd, superdrop
@@ -143,6 +117,8 @@ command /superdrops [<text>] [<text>]:
 				send "&l&0------------------------------"
 
 on mine of stone:
+	player has permission "superdrops.vip+":
+		set 
 	give {@xp} xp to player
 	if player's tool is wooden pickaxe of Fortune 0 or golden pickaxe of Fortune 0:
 		if event-block's y coordinate is less than {@wegielmax}:
