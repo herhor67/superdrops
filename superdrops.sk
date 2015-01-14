@@ -66,6 +66,11 @@ aliases:
 	diamentitem = 264
 
 on script load:
+	wait 1 tick
+	clear {nDrop::multiplier::*}   
+	set {_multiplier::*} to configuration section "multipliers" get of "plugins/Skript/scripts/nDrop/config.yml"
+	loop {_multiplier::*}:
+		set {nDrop::multiplier::%loop-value%} to value "multipliers.%loop-value%" get of "plugins/Skript/scripts/nDrop/config.yml" parsed as number
 	register new shaped recipe for diamond pickaxe named "&bSuperKilof" with lore "&7Fortune X" using diament, diament, diament, none, stick, none, none, stick, none
 	register new shaped recipe for diamond pickaxe named "&bSuperKilof" with lore "&7Smelting I" using diamentitem, furnace. diamentitem, none, stick, none, none, stick, none
 
