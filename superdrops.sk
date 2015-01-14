@@ -66,11 +66,18 @@ aliases:
 	diamentitem = 264
 
 on script load:
-	wait 1 tick
+	wait 1 second
+#------------#
 	clear {superdrops::multiplier::*}   
 	set {_mnozniki::*} to configuration section "multipliers" get of "plugins/Skript/superdrops/config.yml"
 	loop {_mnozniki::*}:
-		set {superdrops::multiplier::%loop-value%} to value "multipliers.%loop-value%" get of "plugins/Skript/superdrops/config.yml" parsed as number
+		set {superdrops::multiplier::%loop-value%} to single value "multipliers.%loop-value%" get of "plugins/Skript/superdrops/config.yml" parsed as number
+#------------#
+	clear {superdrops::minerals::*}   
+	set {_mineraly::*} to configuration section "minerals" get of "plugins/Skript/superdrops/config.yml"
+	loop {_mineraly::*}:
+		set {superdrops::minerals::%loop-value%} to single value "multipliers.%loop-value%" get of "plugins/Skript/superdrops/config.yml" parsed as number
+#------------#
 	register new shaped recipe for diamond pickaxe named "&bSuperKilof" with lore "&7Fortune X" using diament, diament, diament, none, stick, none, none, stick, none
 	register new shaped recipe for diamond pickaxe named "&bSuperKilof" with lore "&7Smelting I" using diamentitem, furnace. diamentitem, none, stick, none, none, stick, none
 
