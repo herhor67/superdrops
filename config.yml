@@ -1,9 +1,33 @@
 multipliers:
-  vip: 1.3
-  vip+: 1.5
+  vip: '1.3'
+  vip+: '1.5'
 
-  fortune1: 1.5
-  fortune2: 2
-  fortune3: 2.5
-  superkilof: 10
-  
+  fortune1: '1.5'
+  fortune2: '2.0'
+  fortune3: '2.5'
+  superkilof: '10'
+
+drop:
+  stone:
+    wegiel:
+      name: '&0WĘGIEL       '
+      item: 'coal'
+      itemsmelted: 'coal'
+      chance: '1.6'
+      tool: 'any pickaxe'
+      heightmin: '10'
+      heightmax: '128'
+  netherrack:
+    kwarc:
+  	   name: '&fQUARTZ       '
+  	   item: 'quartz'
+  	   itemsmelted: 'quartz'
+  	   chance: '3.5'
+  	   tool: 'any pickaxe'
+  	   heightmin: '0'
+  	   heightmax: '128'
+
+replace:
+  coalore:
+    block: 'stone'
+    message: '%{superdrops:tag}% &cWęgiel wypada ze stone!"
