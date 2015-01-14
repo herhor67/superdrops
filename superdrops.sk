@@ -69,13 +69,13 @@ on script load:
 	wait 1 second
 #------------#
 	clear {superdrops::multiplier::*}   
-	set {_mnozniki::*} to configuration section "multipliers" get of "plugins/Skript/superdrops/config.yml"
-	loop {_mnozniki::*}:
+	set {_config::*} to configuration section "multipliers" get of "plugins/Skript/superdrops/config.yml"
+	loop {_config::*}:
 		set {superdrops::multiplier::%loop-value%} to single value "multipliers.%loop-value%" get of "plugins/Skript/superdrops/config.yml" parsed as number
 #------------#
 	clear {superdrops::minerals::*}   
-	set {_mineraly::*} to configuration section "minerals" get of "plugins/Skript/superdrops/config.yml"
-	loop {_mineraly::*}:
+	set {_config::*} to configuration section "minerals" get of "plugins/Skript/superdrops/config.yml"
+	loop {_config::*}:
 		set {superdrops::minerals::%loop-value%} to single value "multipliers.%loop-value%" get of "plugins/Skript/superdrops/config.yml" parsed as number
 #------------#
 	register new shaped recipe for diamond pickaxe named "&bSuperKilof" with lore "&7Fortune X" using diament, diament, diament, none, stick, none, none, stick, none
@@ -148,22 +148,53 @@ on mine of stone:
 		set {_mnoznik} to {_mnoznik}*{superdrops::turbodrop}
 #==============================={ XP }===============================#
 	give {@xp}*{_mnoznik} xp to player
+#==============================={ WĘGIEL }===============================#
+	if player's tool is any pickaxe:
+		if event-block's y coordinate is less than {superdrops::heightmin::coal}:
+			if event-block's y coordinate is less than {superdrops::heightmax::coal}:
+				chance of {superdrops::minerals::coal}*{_mnoznik}%:
+					drop 1 coal
+#==============================={ ŻELAZO }===============================#
+	if player's tool is stone pickaxe or iron pickaxe or diamond pickaxe:
+		if event-block's y coordinate is less than {superdrops::heightmin::iron}:
+			if event-block's y coordinate is less than {superdrops::heightmax::iron}:
+				chance of {superdrops::minerals::iron}*{_mnoznik}%:
+					{_smelt.mode} is true:
+						drop 1 iron ingot
+					else:
+						drop 1 iron ore
+#==============================={ ZŁOTO }===============================#
+	if player's tool is iron pickaxe or diamond pickaxe:
+		if event-block's y coordinate is less than {superdrops::heightmin::gold}:
+			if event-block's y coordinate is less than {superdrops::heightmax::gold}:
+				chance of {superdrops::minerals::gold*{_mnoznik}%:
+					{_smelt.mode} is true:
+						drop 1 gold ingot
+					else:
+						drop 1 dold ore
+
+
+
+
+
+
+
 #==============================={ DREWNIANY I ZŁOTY }===============================#
 	if player's tool is wooden pickaxe or golden pickaxe:
 		if event-block's y coordinate is less than {@wegielmax}:
-			chance of {@wegiel}*{_mnoznik}%:
+			chance of {superdrops::minerals::coal}*{_mnoznik}%:
 				drop 1 coal
 #==============================={ KAMIENNY }===============================#
 	if player's tool is stone pickaxe:
 		if event-block's y coordinate is less than {@wegielmax}:
-			chance of {@wegiel}*{_mnoznik}%:
+			chance of {superdrops::minerals::coal}*{_mnoznik}%:
 				drop 1 coal
 		if event-block's y coordinate is less than {@zelazomax}:
-			chance of {@zelazo}*{_mnoznik}%:
+			chance of {superdrops::minerals::iron}*{_mnoznik}%:
 				drop 1 iron ore
 		if event-block's y coordinate is less than {@lapismax}:
 			loop 5 times:
-				chance of {@lazuryt}*{_mnoznik}%:
+				chance of {superdrops::minerals::lapis lazuli}*{_mnoznik}%:
 					drop 1 lapis lazuli
 #==============================={ ŻELAZNY I DIAMENTOWY }===============================#
 	if player's tool is iron pickaxe or diamond pickaxe:
