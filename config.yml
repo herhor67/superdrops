@@ -19,13 +19,13 @@ drop:
       heightmax: '128'
   netherrack:
     kwarc:
-  	   name: '&fQUARTZ       '
-  	   item: 'quartz'
-  	   itemsmelted: 'quartz'
-  	   chance: '3.5'
-  	   tool: 'any pickaxe'
-  	   heightmin: '0'
-  	   heightmax: '128'
+      name: '&fQUARTZ       '
+      item: 'quartz'
+      itemsmelted: 'quartz'
+      chance: '3.5'
+      tool: 'any pickaxe'
+      heightmin: '0'
+      heightmax: '128'
 
 replace:
   coalore:
