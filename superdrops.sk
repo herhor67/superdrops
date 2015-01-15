@@ -81,8 +81,15 @@ on script load:
 				loop {_config::*}:
 					set {superdrops::drop::%loop-value-1%::%loop-value-2%::%loop-value-3%}} to single value "multipliers.%loop-value%" get of "plugins/Skript/superdrops/config.yml" parsed as number
 #------------#
+	clear {superdrops::replace::*}
+	set {superdrops::replace::*} to configuration section "replace" get of "plugins/Skript/superdrop/config.yml"
+	loop {superdrops::replace::*}:
+		set {_config::*} to configuration section "replace.%loop-value%" get of "plugins/Skript/superdrops/config.yml"
+		loop {_config::*}:
+			set {superdrops::replace::%loop-value-1%::%loop-value-2%} to single value "replace.%loop-value-1%.%loop-value-2%" get of "plugins/Skript/superdrops/config.yml"
+#------------#
 	register new shaped recipe for diamond pickaxe named "&bSuperKilof" with lore "&7Fortune X" using diament, diament, diament, none, stick, none, none, stick, none
-	register new shaped recipe for diamond pickaxe named "&bSuperKilof" with lore "&7Smelting I" using diamentitem, furnace. diamentitem, none, stick, none, none, stick, none
+	register new shaped recipe for diamond pickaxe named "&bSuperKilof" with lore "&7Smelting I" using diamentitem, furnace, diamentitem, none, stick, none, none, stick, none
 
 command /superdrops [<text>] [<text>]:
 	aliases: sd, superdrop
@@ -130,7 +137,7 @@ command /superdrops [<text>] [<text>]:
 				send "&fKWARC          &0&l| &f{@superkwarc}"
 				send "&l&0------------------------------"
 
-on mine:
+on break:
 	set {_block} to type of event-block
 	if {superdrops::drop::*} contains {_block}:
 #==============================={ MNOŻNIKI }===============================#
@@ -158,7 +165,10 @@ on mine:
 				if event-block's y-coordinate is greater than {superdrops::drop::%{_block}%::%loop-value%::heightmin}:
 					if player's tool is {superdrops::drop::%{_block}%::%loop-value%::tool}:
 						chance of {superdrops::drop::%{_block}%::%loop-value%::chance}*{_mnoznik}:
-							drop {superdrops::drop::%{_block}%::%loop-value%::item} at event-block
+							{_smelt.mode} isn't true:
+								drop {superdrops::drop::%{_block}%::%loop-value%::item} at event-block
+							else:
+								drop {superdrop::drop::%{_block}%::%loop-value%::itemsmelted} at event-block
 
 
 #==============================={ WĘGIEL }===============================#
@@ -266,351 +276,19 @@ on mine of netherrack:
 				drop 1 quartz
 #====================================================================#
 
-on break of leaves:
-	chance of {@drewno}%:
-		drop 1 spruce sapling
-	chance of {@drewno}%:
-		drop 1 birch sapling
-	chance of {@drewno}%:
-		drop 1 jungle sapling
-	chance of {@drewno}%:
-		drop 1 sapling
-
 command /sdadmin [<text>]:
 	aliases: superdropsadmin
 	trigger:
 		if player has permission "dropy.admin" or "dropy.*":
-			arg 1 is "przelaczdropy":
-				{usuwac.rudy} is false:
-					set {usuwac.rudy} to true
-					send "&6Włączono usuwanie rud"
-				else:
-					set {usuwac.rudy} to false
-					send "&6Wyłączono usuwanie rud"
-			arg 1 is "odswiez":
+			arg 1 is "odswiez" or "reload":
 				execute player command "/sk reload %script%"
-		
 
-on click on any ore or emerald ore:
-	{usuwac.rudy} is true:
-		set clicked block to {@zamienw}
-		send "{@prefiks} {@wiadomosc}"
-
-on click on quartz ore:
-	{usuwac.rudy} is true:
-		set clicked block to {@zamienwnether}
-		send "{@prefiks} {@wiadomosc}"
-
-on explode:
-	{usuwac.rudy} is true:
-		cancel event
-		loop blocks in radius 4 of event-location:
-			if loop-block is any ore or emerald ore:
-				set loop-block to {@zamienw}
-			if loop-block is quartz ore:
-				set loop-block to {@zamienwnether}
-		uncancel eventgegev
-#=============================================#
-#   Skrypt napisany przez: herhor67           #
-#   Nazwa: SuperDrops                         #
-#=============================================#
-#  Licencja skryptu:                          #
-# * Nie zezwalam na:                          #
-# - Usuwanie treści o autorze!                #
-# - Podszywanie się pod autora!               #
-# - Używanie kodu skryptu w swoich skryptach! #
-# - Zarabianie na skrypcie!                   #
-# - Wrzucanie skryptu do internetu!           #
-# - Dodawanie kodu na swoja potrzebe!         #
-# - Modyfikowanie kodu na swoja potrzebe!     #
-#=============================================#
-
-variables:
-	{usuwac.rudy} = true
-
-options:
-#szansa bez fortuny:
-	wegiel: 1.6
-	diament: 0.2
-	szmaragd: 0.3
-	zloto: 0.4
-	zelazo: 0.6
-	lazuryt: 1.9
-	redstone: 1.9
-	kwarc: 1.9
-	drewno: 2.7
- 
-#szansa z kilofem fortune I
-	fortune1: 1.5
- 
-#szansa z kilofem forune II
-	fortune2: 2
- 
-#szansa z kilofem fortune III
-	fortune3: 2.5
-
-#szansa superkilofem
-	super: 10
-
-#inneinfo:
-	diamentmax: 16
-	diamentmin: 9
-	szmaragdmax: 128
-	szmaragdmin: 60
-	wegielmax: 128
-	zelazomax: 64
-	zlotomax: 32
-	lapismax:32
-	redstonemax: 16
-
-#w co ma sie zamieniac ruda, jezeli wlaczone
-	zamienw: stone
-	zamienwnether: netherrack
-	wiadomosc: &4Surowce wypadają ze stone!
-	prefiks: &7[&cSuper&6Drop&7]
-
-#ilosc expa za 1 blok
-	xp: 1
-
-aliases:
-	diament = 57
-	diamentitem = 264
-
-on script load:
-	wait 1 second
-#------------#
-	clear {superdrops::multiplier::*}   
-	set {_config::*} to configuration section "multipliers" get of "plugins/Skript/superdrops/config.yml"
-	loop {_config::*}:
-		set {superdrops::multiplier::%loop-value%} to single value "multipliers.%loop-value%" get of "plugins/Skript/superdrops/config.yml" parsed as number
-#------------#
-	clear {superdrops::drop::*}   
-	set {superdrops::drop::*} to configuration section "drop" get of "plugins/Skript/superdrops/config.yml"
-	loop {superdrops::drop::*}:
-		loop {superdrops::drop::%loop-value%::*}:
-			set {_config::*} to configuration section "drop.%loop-value-1%.%loop-value-2%" get of "plugins/Skript/superdrops/config.yml"
-				loop {_config::*}:
-					set {superdrops::drop::%loop-value-1%::%loop-value-2%::%loop-value-3%}} to single value "multipliers.%loop-value%" get of "plugins/Skript/superdrops/config.yml" parsed as number
-#------------#
-	register new shaped recipe for diamond pickaxe named "&bSuperKilof" with lore "&7Fortune X" using diament, diament, diament, none, stick, none, none, stick, none
-	register new shaped recipe for diamond pickaxe named "&bSuperKilof" with lore "&7Smelting I" using diamentitem, furnace. diamentitem, none, stick, none, none, stick, none
-
-command /superdrops [<text>] [<text>]:
-	aliases: sd, superdrop
-	trigger:
-		arg 1 is "szansa":
-			send "&6---------------=============[ {@prefiks} &6]=============---------------"
-			send "&fNazwa surowca  &0| &fBez enchantu &0| &fFortune I   &0| &fFortune II   &0| &fFortune III"
-			send "&l&0---------------------------------------------------------------------"
-				send "&0WĘGIEL         &0&l| &f{@wegiel}          &0&l| &f{@1wegiel}         &0&l| &f{@2wegiel}         &0&l| &f{@3wegiel}"
-				send "&l&0---------------------------------------------------------------------"
-				send "&7ŻELAZO         &0&l| &f{@zelazo}         &0&l| &f{@1zelazo}         &0&l| &f{@2zelazo}         &0&l| &f{@3zelazo}"
-				send "&l&0---------------------------------------------------------------------"
-				send "&eZŁOTO          &0&l| &f{@zloto}         &0&l| &f{@1zloto}         &0&l| &f{@2zloto}         &0&l| &f{@3zloto}"
-				send "&l&0---------------------------------------------------------------------"
-				send "&1LAZURYT        &0&l| &f{@lazuryt}         &0&l| &f{@1lazuryt}         &0&l| &f{@2lazuryt}         &0&l| &f{@3lazuryt}"
-				send "&l&0---------------------------------------------------------------------"
-				send "&4REDSTONE       &0&l| &f{@redstone}         &0&l| &f{@1redstone}         &0&l| &f{@2redstone}         &0&l| &f{@3redstone}"
-				send "&l&0---------------------------------------------------------------------"
-				send "&bDIAMENT        &0&l| &f{@diament}         &0&l| &f{@1diament}         &0&l| &f{@2diament}         &0&l| &f{@3diament}"
-				send "&l&0---------------------------------------------------------------------"
-				send "&2SZMARAGD       &0&l| &f{@szmaragd}         &0&l| &f{@1szmaragd}         &0&l| &f{@2szmaragd}         &0&l| &f{@3szmaragd}"
-				send "&l&0---------------------------------------------------------------------"
-				send "&fKWARC          &0&l| &f{@kwarc}         &0&l| &f{@1kwarc}         &0&l| &f{@2kwarc}         &0&l| &f{@3kwarc}"
-				send "&l&0---------------------------------------------------------------------"
-				send "&2RÓŻNE SADZONKI &0&l| &f{@drewno}         &0&l| &fbrak        &0&l| &fbrak       &0&l| &fbrak"
-				send "&l&0---------------------------------------------------------------------"
-			arg 2 is "super":
-				send "&6-----===[ {@prefiks} &6]===-----"
-				send "&fNazwa surowca  &0| &fSzansa"
-				send "&l&0------------------------------"
-				send "&0WĘGIEL         &0&l| &f{@superwegiel}"
-				send "&l&0------------------------------"
-				send "&7ŻELAZO         &0&l| &f{@superzelazo}"
-				send "&l&0------------------------------"
-				send "&eZŁOTO          &0&l| &f{@superzloto}"
-				send "&l&0------------------------------"
-				send "&1LAZURYT        &0&l| &f{@superlazuryt}"
-				send "&l&0------------------------------"
-				send "&4REDSTONE       &0&l| &f{@superredstone}"
-				send "&l&0------------------------------"
-				send "&bDIAMENT        &0&l| &f{@superdiament}"
-				send "&l&0------------------------------"
-				send "&2SZMARAGD       &0&l| &f{@superszmaragd}"
-				send "&l&0------------------------------"
-				send "&fKWARC          &0&l| &f{@superkwarc}"
-				send "&l&0------------------------------"
-
-on mine:
+on click:
 	set {_block} to type of event-block
-	if {superdrops::drop::*} contains {_block}:
-#==============================={ MNOŻNIKI }===============================#
-		player has permission "superdrops.vip+":
-			set {_mnoznik} to {superdrops::mnoznik::vip+}
-		else if player has permission "superdrops.vip":
-			set {_mnoznik} to {superdrops::mnoznik::vip}
-		player's tool is diamond pickaxe named "&bSuperKilof" with lore "&7Fortune X":
-			set {_mnoznik} to {_mnoznik}*{superdrops::mnoznik::superkilof}
-		player's tool is diamond pickaxe named "&bSuperKilof" with lore "&7Smelting I":
-			set {_smelt.mode} to true
-		player's tool is any pickaxe of Fortune 3:
-			set {_mnoznik} to {_mnoznik}*{superdrops::mnoznik::fortune3}
-		player's tool is any pickaxe of Fortune 3:
-			set {_mnoznik} to {_mnoznik}*{superdrops::mnoznik::fortune2}
-		player's tool is any pickaxe of Fortune 3:
-			set {_mnoznik} to {_mnoznik}*{superdrops::mnoznik::fortune1}
-		if {superdrops::turbodrop} is set:
-			set {_mnoznik} to {_mnoznik}*{superdrops::turbodrop}
-#==============================={ XP }===============================#
-		give {@xp}*{_mnoznik} xp to player
-#==============================={ DROP }===============================#
-		loop {superdrops::drop::%{_block}%}:
-			if event-block's y-coordinate is less than {superdrops::drop::%{_block}%::%loop-value%::heightmax}:
-				if event-block's y-coordinate is greater than {superdrops::drop::%{_block}%::%loop-value%::heightmin}:
-					if player's tool is {superdrops::drop::%{_block}%::%loop-value%::tool}:
-						chance of {superdrops::drop::%{_block}%::%loop-value%::chance}*{_mnoznik}:
-							drop {superdrops::drop::%{_block}%::%loop-value%::item} at event-block
-
-
-#==============================={ WĘGIEL }===============================#
-	if player's tool is any pickaxe:
-		if event-block's y coordinate is less than {superdrops::heightmin::coal}:
-			if event-block's y coordinate is less than {superdrops::heightmax::coal}:
-				chance of {superdrops::minerals::coal}*{_mnoznik}%:
-					drop 1 coal
-#==============================={ ŻELAZO }===============================#
-	if player's tool is stone pickaxe or iron pickaxe or diamond pickaxe:
-		if event-block's y coordinate is less than {superdrops::heightmin::iron}:
-			if event-block's y coordinate is less than {superdrops::heightmax::iron}:
-				chance of {superdrops::minerals::iron}*{_mnoznik}%:
-					{_smelt.mode} is true:
-						drop 1 iron ingot
-					else:
-						drop 1 iron ore
-#==============================={ ZŁOTO }===============================#
-	if player's tool is iron pickaxe or diamond pickaxe:
-		if event-block's y coordinate is less than {superdrops::heightmin::gold}:
-			if event-block's y coordinate is less than {superdrops::heightmax::gold}:
-				chance of {superdrops::minerals::gold*{_mnoznik}%:
-					{_smelt.mode} is true:
-						drop 1 gold ingot
-					else:
-						drop 1 dold ore
-
-
-
-
-
-
-
-#==============================={ DREWNIANY I ZŁOTY }===============================#
-	if player's tool is wooden pickaxe or golden pickaxe:
-		if event-block's y coordinate is less than {@wegielmax}:
-			chance of {superdrops::minerals::coal}*{_mnoznik}%:
-				drop 1 coal
-#==============================={ KAMIENNY }===============================#
-	if player's tool is stone pickaxe:
-		if event-block's y coordinate is less than {@wegielmax}:
-			chance of {superdrops::minerals::coal}*{_mnoznik}%:
-				drop 1 coal
-		if event-block's y coordinate is less than {@zelazomax}:
-			chance of {superdrops::minerals::iron}*{_mnoznik}%:
-				drop 1 iron ore
-		if event-block's y coordinate is less than {@lapismax}:
-			loop 5 times:
-				chance of {superdrops::minerals::lapis lazuli}*{_mnoznik}%:
-					drop 1 lapis lazuli
-#==============================={ ŻELAZNY I DIAMENTOWY }===============================#
-	if player's tool is iron pickaxe or diamond pickaxe:
-		if event-block's y coordinate is less than {@wegielmax}:
-			chance of {@wegiel}*{_mnoznik}%:
-				drop 1 coal
-		if event-block's y coordinate is less than {@zelazomax}:
-			chance of {@zelazo}*{_mnoznik}%:
-				drop 1 iron ore
-		if event-block's y coordinate is less than {@diamentmax}:
-			if event-block's y coordinate is greater than {@diamentmin}:
-				chance of {@diament}*{_mnoznik}%:
-					drop 1 diamond
-		if event-block's y coordinate is less than {@lapismax}:
-			loop 5 times:
-				chance of {@lazuryt}*{_mnoznik}%:
-					drop 1 lapis lazuli
-		if event-block's y coordinate is less than {@zlotomax}:
-			chance of {@zloto}*{_mnoznik}%:
-				drop 1 gold ore
-		if event-block's y coordinate is less than {@szmaragdmax}:
-			if event-block's y coordinate is greater than {@szmaragdmin}:
-				biome at the player is extreme hills or ice mountains or desert hills or forest hills or taiga hills or small mountains or jungle hills:
-					chance of {@szmaragd}*{_mnoznik}%:
-						drop 1 emerald
-		if event-block's y coordinate is less than {@redstonemax}:
-			loop 5 times:
-				chance of {@lazuryt}*{_mnoznik}%:
-					drop 1 redstone
-#====================================================================#
-#====================================================================#
-
-
-on mine of netherrack:
-#==============================={ MNOŻNIKI }===============================#
-	player has permission "superdrops.vip+":
-		set {_mnoznik} to {superdrops::mnoznik::vip+}
-	else if player has permission "superdrops.vip":
-		set {_mnoznik} to {superdrops::mnoznik::vip}
-	player's tool is diamond pickaxe named "&bSuperKilof" with lore "&7Fortune X":
-		set {_mnoznik} to {_mnoznik}*{superdrops::mnoznik::superkilof}
-	player's tool is any pickaxe of Fortune 3:
-		set {_mnoznik} to {_mnoznik}*{superdrops::mnoznik::fortune3}
-	player's tool is any pickaxe of Fortune 3:
-		set {_mnoznik} to {_mnoznik}*{superdrops::mnoznik::fortune2}
-	player's tool is any pickaxe of Fortune 3:
-		set {_mnoznik} to {_mnoznik}*{superdrops::mnoznik::fortune1}
-	if {superdrops::turbodrop} is set:
-		set {_mnoznik} to {_mnoznik}*{superdrops::turbodrop}
-#==============================={ XP }===============================#
-	give {@xp}*{_mnoznik} xp to player
-#==============================={ KWARC }===============================#
-	if player's tool is any pickaxe:
-		loop 5 times:
-			chance of {@kwarc}%:
-				drop 1 quartz
-#====================================================================#
-
-on break of leaves:
-	chance of {@drewno}%:
-		drop 1 spruce sapling
-	chance of {@drewno}%:
-		drop 1 birch sapling
-	chance of {@drewno}%:
-		drop 1 jungle sapling
-	chance of {@drewno}%:
-		drop 1 sapling
-
-command /sdadmin [<text>]:
-	aliases: superdropsadmin
-	trigger:
-		if player has permission "dropy.admin" or "dropy.*":
-			arg 1 is "przelaczdropy":
-				{usuwac.rudy} is false:
-					set {usuwac.rudy} to true
-					send "&6Włączono usuwanie rud"
-				else:
-					set {usuwac.rudy} to false
-					send "&6Wyłączono usuwanie rud"
-			arg 1 is "odswiez":
-				execute player command "/sk reload %script%"
-		
-
-on click on any ore or emerald ore:
-	{usuwac.rudy} is true:
-		set clicked block to {@zamienw}
-		send "{@prefiks} {@wiadomosc}"
-
-on click on quartz ore:
-	{usuwac.rudy} is true:
-		set clicked block to {@zamienwnether}
-		send "{@prefiks} {@wiadomosc}"
+	loop {superdrops::replace::*}:
+		if loop-value is {_block}:
+			set clicked block to {superdrops::replace::%loop-value%::block}
+			send "%{superdrops::replace::%loop-value%::message}%"
 
 on explode:
 	{usuwac.rudy} is true:
