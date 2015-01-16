@@ -95,31 +95,25 @@ on script load:
 	register new shaped recipe for diamond pickaxe named "&bSuperKilof" with lore "&7Fortune X" using diament, diament, diament, none, stick, none, none, stick, none
 	register new shaped recipe for diamond pickaxe named "&bSuperKilof" with lore "&7Smelting I" using diamentitem, furnace, diamentitem, none, stick, none, none, stick, none
 
-#command /superdrops [<text>] [<text>]:
-#	aliases: sd, superdrop
-#	trigger:
-#		arg 1 is "szansa":
-#			send "&6---------------=============[ {@prefiks} &6]=============---------------"
-#			send "&fNazwa surowca  &0| &fBez enchantu &0| &fFortune I   &0| &fFortune II   &0| &fFortune III"
-#			send "&l&0---------------------------------------------------------------------"
-#			send "&0WĘGIEL         &0&l| &f{@wegiel}          &0&l| &f{@1wegiel}         &0&l| &f{@2wegiel}         &0&l| &f{@3wegiel}"
-#			send "&l&0---------------------------------------------------------------------"
-#			send "&7ŻELAZO         &0&l| &f{@zelazo}         &0&l| &f{@1zelazo}         &0&l| &f{@2zelazo}         &0&l| &f{@3zelazo}"
-#			send "&l&0---------------------------------------------------------------------"
-#			send "&eZŁOTO          &0&l| &f{@zloto}         &0&l| &f{@1zloto}         &0&l| &f{@2zloto}         &0&l| &f{@3zloto}"
-#			send "&l&0---------------------------------------------------------------------"
-#			send "&1LAZURYT        &0&l| &f{@lazuryt}         &0&l| &f{@1lazuryt}         &0&l| &f{@2lazuryt}         &0&l| &f{@3lazuryt}"
-#			send "&l&0---------------------------------------------------------------------"
-#			send "&4REDSTONE       &0&l| &f{@redstone}         &0&l| &f{@1redstone}         &0&l| &f{@2redstone}         &0&l| &f{@3redstone}"
-#			send "&l&0---------------------------------------------------------------------"
-#			send "&bDIAMENT        &0&l| &f{@diament}         &0&l| &f{@1diament}         &0&l| &f{@2diament}         &0&l| &f{@3diament}"
-#			send "&l&0---------------------------------------------------------------------"
-#			send "&2SZMARAGD       &0&l| &f{@szmaragd}         &0&l| &f{@1szmaragd}         &0&l| &f{@2szmaragd}         &0&l| &f{@3szmaragd}"
-#			send "&l&0---------------------------------------------------------------------"
-#			send "&fKWARC          &0&l| &f{@kwarc}         &0&l| &f{@1kwarc}         &0&l| &f{@2kwarc}         &0&l| &f{@3kwarc}"
-#			send "&l&0---------------------------------------------------------------------"
-#			send "&2RÓŻNE SADZONKI &0&l| &f{@drewno}         &0&l| &fbrak        &0&l| &fbrak       &0&l| &fbrak"
-#			send "&l&0---------------------------------------------------------------------"
+command /superdrops [<text>] [<text>]:
+	aliases: sd, superdrop
+	trigger:
+		arg 1 is "szansa":
+			arg 2 is set:
+				set {_mnoznik} to 1
+				loop {superdrop::multipliers::permissions}:
+					if player has permission "superdrops.%loop-index%":
+						set {_mnoznik} to {_mnoznik}*loop-value
+						exit loop
+				{superdrops::turbodrop} is set:
+					set {_mnoznik} to {_mnoznik}*{superdrops::turbodrop}
+				send "&6---------------=============[ &7[&cSuper&6Drop&7] &6]=============---------------"
+				send "&fNazwa surowca  &0| &fBez enchantu &0| &fFortune I   &0| &fFortune II   &0| &fFortune III"
+				send "&l&0---------------------------------------------------------------------"
+				loop {superdrops::drop::%arg 3%::*}:
+					send "%{superdrops::drop::%arg 3%::%loop-value%::name}% &0&l| &f%{superdrops::drop::%arg 3%::%loop-value%::chance}*{_mnoznik}*{superdrops::multipliers::fortune::fortune1}% &0&l| &f%{superdrops::drop::%arg 3%::%loop-value%::chance}*{_mnoznik}*{superdrops::multipliers::fortune::fortune2}% &0&l| &f%{superdrops::drop::%arg 3%::%loop-value%::chance}*{_mnoznik}*{superdrops::multipliers::fortune::fortune2}% &0&l| &f%{superdrops::drop::%arg 3%::%loop-value%::chance}*{_mnoznik}*{superdrops::multipliers::fortune::fortune3}%"
+
+			send "&l&0---------------------------------------------------------------------"
 
 on mine:
 	set {_block} to event-block
