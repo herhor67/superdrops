@@ -51,10 +51,12 @@ on script load:
 	wait 1 second
 #------------#
 	clear {superdrops::multipliers::*}   
-	set {_config::*} to configuration section "multipliers" get of "plugins/Skript/superdrops/multipliers.yml"
-	loop {_config::*}:
-		set {superdrops::multipliers::%loop-value%} to single value "multipliers.%loop-value%" get of "plugins/Skript/superdrops/multipliers.yml" parsed as number
-		broadcast "%loop-value% %{superdrops::multipliers::%loop-value%}%"
+	set {superdrops::multipliers::*} to configuration section "multipliers" get of "plugins/Skript/superdrops/multipliers.yml"
+	loop {superdrops::multipliers::%loop-value%::*}:
+		set {superdrops::multipliers::%loop-value%::*} to configuration section "multipliers.%loop-value%" get of "plugins/Skript/superdrops/multipliers.yml"
+		loop {superdrops::multipliers::%loop-value%::*}:
+			set {superdrops::multipliers::%loop-value-1%::%loop-value-2%} to single value "multipliers.%loop-value%" get of "plugins/Skript/superdrops/multipliers.yml" parsed as number
+			broadcast "%loop-value% %{superdrops::multipliers::%loop-value-1%::%loop-value-2%}%"
 #------------#
 	clear {superdrops::drop::*}
 	set {superdrops::drop::*} to configuration section "drop" get of "plugins/Skript/superdrops/config.yml"
@@ -67,11 +69,11 @@ on script load:
 				broadcast "%{superdrops::drop::%loop-value-1%::%loop-value-2%::%loop-value-3%}%"
 #------------#
 	clear {superdrops::replace::*}
-	set {superdrops::replace::*} to configuration section "replace" get of "plugins/Skript/superdrops/config.yml"
+	set {superdrops::replace::*} to configuration section "replace" get of "plugins/Skript/superdrops/replace.yml"
 	loop {superdrops::replace::*}:
-		set {superdrops::replace::%loop-value%::*} to configuration section "replace.%loop-value%" get of "plugins/Skript/superdrops/config.yml"
+		set {superdrops::replace::%loop-value%::*} to configuration section "replace.%loop-value%" get of "plugins/Skript/superdrops/replace.yml"
 		loop {superdrops::replace::%loop-value%::*}:
-			set {superdrops::replace::%loop-value-1%::%loop-value-2%} to single value "replace.%loop-value-1%.%loop-value-2%" get of "plugins/Skript/superdrops/config.yml"
+			set {superdrops::replace::%loop-value-1%::%loop-value-2%} to single value "replace.%loop-value-1%.%loop-value-2%" get of "plugins/Skript/superdrops/replace.yml"
 			broadcast "%{superdrops::replace::%loop-value-1%::%loop-value-2%}%"
 #------------#
 	register new shaped recipe for diamond pickaxe named "&bSuperKilof" with lore "&7Fortune X" using diament, diament, diament, none, stick, none, none, stick, none
@@ -83,7 +85,7 @@ command /superdrops [<text>] [<text>]:
 		arg 1 is "szansa":
 			arg 2 is set:
 				set {_mnoznik} to 1
-				loop {superdrop::multipliers::permissions}:
+				loop {superdrop::multipliers::permissions::*}:
 					if player has permission "superdrops.%loop-index%":
 						set {_mnoznik} to {_mnoznik}*loop-value
 						exit loop
@@ -103,10 +105,10 @@ on mine:
 	if {superdrops::drop::%{_block}%::*} is set:
 		send "%{superdrops::drop::%{_block}%::*}%"
 #==============================={ MNOŻNIKI }===============================#
-		player has permission "superdrops.vip+":
-			set {_mnoznik} to {superdrops::mnoznik::vip+}
-		else if player has permission "superdrops.vip":
-			set {_mnoznik} to {superdrops::mnoznik::vip}
+		loop {superdrop::multipliers::permissions::*}:
+			if player has permission "superdrops.%loop-index%":
+				set {_mnoznik} to {_mnoznik}*loop-value
+				exit loop
 		player's tool is diamond pickaxe named "&bSuperKilof" with lore "&7Fortune X":
 			set {_mnoznik} to {_mnoznik}*{superdrops::mnoznik::superkilof}
 		player's tool is diamond pickaxe named "&bSuperKilof" with lore "&7Smelting I":
