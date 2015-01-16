@@ -52,11 +52,11 @@ on script load:
 #------------#
 	clear {superdrops::multipliers::*}   
 	set {superdrops::multipliers::*} to configuration section "multipliers" get of "plugins/Skript/superdrops/multipliers.yml"
-	loop {superdrops::multipliers::%loop-value%::*}:
+	loop {superdrops::multipliers::*}:
 		set {superdrops::multipliers::%loop-value%::*} to configuration section "multipliers.%loop-value%" get of "plugins/Skript/superdrops/multipliers.yml"
 		loop {superdrops::multipliers::%loop-value%::*}:
-			set {superdrops::multipliers::%loop-value-1%::%loop-value-2%} to single value "multipliers.%loop-value%" get of "plugins/Skript/superdrops/multipliers.yml" parsed as number
-			broadcast "%loop-value% %{superdrops::multipliers::%loop-value-1%::%loop-value-2%}%"
+			set {superdrops::multipliers::%loop-value-1%::%loop-value-2%} to single value "multipliers.%loop-value-1%.%loop-value-2%" get of "plugins/Skript/superdrops/multipliers.yml" parsed as number
+			broadcast "%{superdrops::multipliers::%loop-value-1%::%loop-value-2%}%"
 #------------#
 	clear {superdrops::drop::*}
 	set {superdrops::drop::*} to configuration section "drop" get of "plugins/Skript/superdrops/config.yml"
@@ -66,7 +66,7 @@ on script load:
 			set {superdrops::drop::%loop-value-1%::%loop-value-2%::*} to configuration section "drop.%loop-value-1%.%loop-value-2%" get of "plugins/Skript/superdrops/config.yml"
 			loop {superdrops::drop::%loop-value-1%::%loop-value-2%::*}:
 				set {superdrops::drop::%loop-value-1%::%loop-value-2%::%loop-value-3%} to single value "drop.%loop-value-1%.%loop-value-2%.%loop-value-3%" get of "plugins/Skript/superdrops/config.yml"
-				broadcast "%{superdrops::drop::%loop-value-1%::%loop-value-2%::%loop-value-3%}%"
+#				broadcast "%{superdrops::drop::%loop-value-1%::%loop-value-2%::%loop-value-3%}%"
 #------------#
 	clear {superdrops::replace::*}
 	set {superdrops::replace::*} to configuration section "replace" get of "plugins/Skript/superdrops/replace.yml"
@@ -87,49 +87,55 @@ command /superdrops [<text>] [<text>]:
 				set {_mnoznik} to 1
 				loop {superdrop::multipliers::permissions::*}:
 					if player has permission "superdrops.%loop-index%":
-						set {_mnoznik} to {_mnoznik}*loop-value
-						exit loop
-				{superdrops::turbodrop} is set:
-					set {_mnoznik} to {_mnoznik}*{superdrops::turbodrop}
-				send "&6---------------=============[ &7[&cSuper&6Drop&7] &6]=============---------------"
-				send "&fNazwa surowca  &0| &fBez enchantu &0| &fFortune I   &0| &fFortune II   &0| &fFortune III"
-				send "&l&0---------------------------------------------------------------------"
-				loop {superdrops::drop::%arg 3%::*}:
-					send "%{superdrops::drop::%arg 3%::%loop-value%::name}% &0&l| &f%{superdrops::drop::%arg 3%::%loop-value%::chance}*{_mnoznik}*{superdrops::multipliers::fortune::fortune1}% &0&l| &f%{superdrops::drop::%arg 3%::%loop-value%::chance}*{_mnoznik}*{superdrops::multipliers::fortune::fortune2}% &0&l| &f%{superdrops::drop::%arg 3%::%loop-value%::chance}*{_mnoznik}*{superdrops::multipliers::fortune::fortune2}% &0&l| &f%{superdrops::drop::%arg 3%::%loop-value%::chance}*{_mnoznik}*{superdrops::multipliers::fortune::fortune3}%"
-
-			send "&l&0---------------------------------------------------------------------"
+						loop-value isn't 0:
+							set {_mnoznik} to {_mnoznik}*loop-value
+							exit loop
+			#	{superdrops::turbodrop} is set:
+			#		set {_mnoznik} to {_mnoznik}*{superdrops::turbodrop}
+				send "&6----------------=============[ &7[&cSuper&6Drop&7] &6]=============----------------"
+				send "&fNazwa surowca  &f&l| &fBez enchantu &f&l| &fFortune I   &f&l| &fFortune II   &f&l| &fFortune III"
+				send "&f&l----------------------------------------------------------------"
+				loop {superdrops::drop::%arg 2%::*}:
+					set {_f0} to {superdrops::drop::%arg 2%::%loop-value%::chance} * {_mnoznik}
+					set {_f1} to {superdrops::drop::%arg 2%::%loop-value%::chance} * {_mnoznik} * {superdrops::multipliers::fortune::fortune1}
+					set {_f2} to {superdrops::drop::%arg 2%::%loop-value%::chance} * {_mnoznik} * {superdrops::multipliers::fortune::fortune2}
+					set {_f3} to {superdrops::drop::%arg 2%::%loop-value%::chance} * {_mnoznik} * {superdrops::multipliers::fortune::fortune3}
+					send "%coloured {superdrops::drop::%arg 2%::%loop-value%::name}%  &f&l| &f%{_f0}%            &f&l| &f%{_f1}%           &f&l| &f%{_f2}%           &f&l| &f%{_f3}%"
+					send "&f&l----------------------------------------------------------------"
 
 on mine:
 	set {_block} to event-block
 	send "%{_block}%"
-	if {superdrops::drop::%{_block}%::*} is set:
-		send "%{superdrops::drop::%{_block}%::*}%"
+	#loop {superdrops::drop::*}:
+		#send "dupa: %{superdrops::drop::%{_block}%::*}%"
 #==============================={ MNOŻNIKI }===============================#
-		loop {superdrop::multipliers::permissions::*}:
-			if player has permission "superdrops.%loop-index%":
-				set {_mnoznik} to {_mnoznik}*loop-value
-				exit loop
-		player's tool is diamond pickaxe named "&bSuperKilof" with lore "&7Fortune X":
-			set {_mnoznik} to {_mnoznik}*{superdrops::mnoznik::superkilof}
-		player's tool is diamond pickaxe named "&bSuperKilof" with lore "&7Smelting I":
-			set {_smelt.mode} to true
-		player's tool is any pickaxe of Fortune 3:
-			set {_mnoznik} to {_mnoznik}*{superdrops::mnoznik::fortune3}
-		player's tool is any pickaxe of Fortune 3:
-			set {_mnoznik} to {_mnoznik}*{superdrops::mnoznik::fortune2}
-		player's tool is any pickaxe of Fortune 3:
-			set {_mnoznik} to {_mnoznik}*{superdrops::mnoznik::fortune1}
-		if {superdrops::turbodrop} is set:
-			set {_mnoznik} to {_mnoznik}*{superdrops::turbodrop}
+#	loop {superdrop::multipliers::permissions::*}:
+#		if player has permission "superdrops.%loop-index%":
+#			set {_w} to loop-value
+#			set {_mnoznik} to {_mnoznik}*{_w}
+#			exit loop
+#	player's tool is diamond pickaxe named "&bSuperKilof" with lore "&7Fortune X":
+#		set {_mnoznik} to {_mnoznik}*{superdrops::mnoznik::superkilof}
+#	player's tool is diamond pickaxe named "&bSuperKilof" with lore "&7Smelting I":
+#		set {_smelt.mode} to true
+#	player's tool is any tool of Fortune 3:
+#		set {_mnoznik} to {_mnoznik}*{superdrops::mnoznik::fortune3}
+#	player's tool is any tool of Fortune 2:
+#		set {_mnoznik} to {_mnoznik}*{superdrops::mnoznik::fortune2}
+#	player's tool is any tool of Fortune 1:
+#		set {_mnoznik} to {_mnoznik}*{superdrops::mnoznik::fortune1}
+#	if {superdrops::turbodrop} is set:
+#		set {_mnoznik} to {_mnoznik}*{superdrops::turbodrop}
 #==============================={ XP }===============================#
-		give {@xp} xp to player
+	give {@xp} xp to player
 #==============================={ DROP }===============================#
+	if {superdrops::drop::%{_block}%::*} is set:
 		loop {superdrops::drop::%{_block}%::*}:
-			send "%loop-index% %loop-value"
+			send "%loop-index%"
 			if event-block's y-coordinate is less than {superdrops::drop::%{_block}%::%loop-value%::heightmax}:
 				if event-block's y-coordinate is greater than {superdrops::drop::%{_block}%::%loop-value%::heightmin}:
 					if player's tool is {superdrops::drop::%{_block}%::%loop-value%::tool}:
-						chance of {superdrops::drop::%{_block}%::%loop-value%::chance}*{_mnoznik}:
+						chance of {superdrops::drop::%{_block}%::%loop-value%::chance}*{_mnoznik}%:
 							{_smelt.mode} isn't true:
 								drop {superdrops::drop::%{_block}%::%loop-value%::item} at event-block
 							else:
@@ -160,6 +166,8 @@ on click:
 		if loop-value is {_block}:
 			set clicked block to {superdrops::replace::%loop-value%::block}
 			send "%{superdrops::replace::%loop-value%::message}%"
+		else:
+			send "nie w configu!"
 
 on explode:
 	cancel event
