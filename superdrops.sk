@@ -102,47 +102,30 @@ on script load:
 #			send "&6---------------=============[ {@prefiks} &6]=============---------------"
 #			send "&fNazwa surowca  &0| &fBez enchantu &0| &fFortune I   &0| &fFortune II   &0| &fFortune III"
 #			send "&l&0---------------------------------------------------------------------"
-#				send "&0WĘGIEL         &0&l| &f{@wegiel}          &0&l| &f{@1wegiel}         &0&l| &f{@2wegiel}         &0&l| &f{@3wegiel}"
-#				send "&l&0---------------------------------------------------------------------"
-#				send "&7ŻELAZO         &0&l| &f{@zelazo}         &0&l| &f{@1zelazo}         &0&l| &f{@2zelazo}         &0&l| &f{@3zelazo}"
-#				send "&l&0---------------------------------------------------------------------"
-#				send "&eZŁOTO          &0&l| &f{@zloto}         &0&l| &f{@1zloto}         &0&l| &f{@2zloto}         &0&l| &f{@3zloto}"
-#				send "&l&0---------------------------------------------------------------------"
-#				send "&1LAZURYT        &0&l| &f{@lazuryt}         &0&l| &f{@1lazuryt}         &0&l| &f{@2lazuryt}         &0&l| &f{@3lazuryt}"
-#				send "&l&0---------------------------------------------------------------------"
-#				send "&4REDSTONE       &0&l| &f{@redstone}         &0&l| &f{@1redstone}         &0&l| &f{@2redstone}         &0&l| &f{@3redstone}"
-#				send "&l&0---------------------------------------------------------------------"
-#				send "&bDIAMENT        &0&l| &f{@diament}         &0&l| &f{@1diament}         &0&l| &f{@2diament}         &0&l| &f{@3diament}"
-#				send "&l&0---------------------------------------------------------------------"
-#				send "&2SZMARAGD       &0&l| &f{@szmaragd}         &0&l| &f{@1szmaragd}         &0&l| &f{@2szmaragd}         &0&l| &f{@3szmaragd}"
-#				send "&l&0---------------------------------------------------------------------"
-#				send "&fKWARC          &0&l| &f{@kwarc}         &0&l| &f{@1kwarc}         &0&l| &f{@2kwarc}         &0&l| &f{@3kwarc}"
-#				send "&l&0---------------------------------------------------------------------"
-#				send "&2RÓŻNE SADZONKI &0&l| &f{@drewno}         &0&l| &fbrak        &0&l| &fbrak       &0&l| &fbrak"
-#				send "&l&0---------------------------------------------------------------------"
-#			arg 2 is "super":
-#				send "&6-----===[ {@prefiks} &6]===-----"
-#				send "&fNazwa surowca  &0| &fSzansa"
-#				send "&l&0------------------------------"
-#				send "&0WĘGIEL         &0&l| &f{@superwegiel}"
-#				send "&l&0------------------------------"
-#				send "&7ŻELAZO         &0&l| &f{@superzelazo}"
-#				send "&l&0------------------------------"
-#				send "&eZŁOTO          &0&l| &f{@superzloto}"
-#				send "&1LAZURYT        &0&l| &f{@superlazuryt}"
-#				send "&l&0------------------------------"
-#				send "&4REDSTONE       &0&l| &f{@superredstone}"
-#				send "&l&0------------------------------"
-#				send "&bDIAMENT        &0&l| &f{@superdiament}"
-#				send "&l&0------------------------------"
-#				send "&2SZMARAGD       &0&l| &f{@superszmaragd}"
-#				send "&l&0------------------------------"
-#				send "&fKWARC          &0&l| &f{@superkwarc}"
-#				send "&l&0------------------------------"
+#			send "&0WĘGIEL         &0&l| &f{@wegiel}          &0&l| &f{@1wegiel}         &0&l| &f{@2wegiel}         &0&l| &f{@3wegiel}"
+#			send "&l&0---------------------------------------------------------------------"
+#			send "&7ŻELAZO         &0&l| &f{@zelazo}         &0&l| &f{@1zelazo}         &0&l| &f{@2zelazo}         &0&l| &f{@3zelazo}"
+#			send "&l&0---------------------------------------------------------------------"
+#			send "&eZŁOTO          &0&l| &f{@zloto}         &0&l| &f{@1zloto}         &0&l| &f{@2zloto}         &0&l| &f{@3zloto}"
+#			send "&l&0---------------------------------------------------------------------"
+#			send "&1LAZURYT        &0&l| &f{@lazuryt}         &0&l| &f{@1lazuryt}         &0&l| &f{@2lazuryt}         &0&l| &f{@3lazuryt}"
+#			send "&l&0---------------------------------------------------------------------"
+#			send "&4REDSTONE       &0&l| &f{@redstone}         &0&l| &f{@1redstone}         &0&l| &f{@2redstone}         &0&l| &f{@3redstone}"
+#			send "&l&0---------------------------------------------------------------------"
+#			send "&bDIAMENT        &0&l| &f{@diament}         &0&l| &f{@1diament}         &0&l| &f{@2diament}         &0&l| &f{@3diament}"
+#			send "&l&0---------------------------------------------------------------------"
+#			send "&2SZMARAGD       &0&l| &f{@szmaragd}         &0&l| &f{@1szmaragd}         &0&l| &f{@2szmaragd}         &0&l| &f{@3szmaragd}"
+#			send "&l&0---------------------------------------------------------------------"
+#			send "&fKWARC          &0&l| &f{@kwarc}         &0&l| &f{@1kwarc}         &0&l| &f{@2kwarc}         &0&l| &f{@3kwarc}"
+#			send "&l&0---------------------------------------------------------------------"
+#			send "&2RÓŻNE SADZONKI &0&l| &f{@drewno}         &0&l| &fbrak        &0&l| &fbrak       &0&l| &fbrak"
+#			send "&l&0---------------------------------------------------------------------"
 
 on mine:
 	set {_block} to event-block
-	if {superdrops::drop::%{_block}%} is set:
+	send "%{_block}%"
+	if {superdrops::drop::%{_block}%::*} is set:
+		send "%{superdrops::drop::%{_block}%::*}%"
 #==============================={ MNOŻNIKI }===============================#
 		player has permission "superdrops.vip+":
 			set {_mnoznik} to {superdrops::mnoznik::vip+}
@@ -164,6 +147,7 @@ on mine:
 		give {@xp} xp to player
 #==============================={ DROP }===============================#
 		loop {superdrops::drop::%{_block}%::*}:
+			send "%loop-index% %loop-value"
 			if event-block's y-coordinate is less than {superdrops::drop::%{_block}%::%loop-value%::heightmax}:
 				if event-block's y-coordinate is greater than {superdrops::drop::%{_block}%::%loop-value%::heightmin}:
 					if player's tool is {superdrops::drop::%{_block}%::%loop-value%::tool}:
@@ -182,32 +166,6 @@ on mine:
 				send "za nisko!"
 	else:
 		send "nie w configu!"
-
-
-#==============================={ WĘGIEL }===============================#
-#	if player's tool is any pickaxe:
-#		if event-block's y coordinate is less than {superdrops::heightmin::coal}:
-#			if event-block's y coordinate is less than {superdrops::heightmax::coal}:
-#				chance of {superdrops::minerals::coal}*{_mnoznik}%:
-#					drop 1 coal
-#==============================={ ŻELAZO }===============================#
-#	if player's tool is stone pickaxe or iron pickaxe or diamond pickaxe:
-#		if event-block's y coordinate is less than {superdrops::heightmin::iron}:
-#			if event-block's y coordinate is less than {superdrops::heightmax::iron}:
-#				chance of {superdrops::minerals::iron}*{_mnoznik}%:
-#					{_smelt.mode} is true:
-#						drop 1 iron ingot
-#					else:
-#						drop 1 iron ore
-#==============================={ ZŁOTO }===============================#
-#	if player's tool is iron pickaxe or diamond pickaxe:
-#		if event-block's y coordinate is less than {superdrops::heightmin::gold}:
-#			if event-block's y coordinate is less than {superdrops::heightmax::gold}:
-#				chance of {superdrops::minerals::gold*{_mnoznik}%:
-#					{_smelt.mode} is true:
-#						drop 1 gold ingot
-#					else:
-#						drop 1 gold ore
 
 
 
