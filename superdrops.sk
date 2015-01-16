@@ -162,12 +162,10 @@ on click:
 			send "%{superdrops::replace::%loop-value%::message}%"
 
 on explode:
+	cancel event
 	loop {superdrops::replace::*}:
-		loop {superdrops::re}
-		cancel event
-		loop blocks in radius 4 of event-location:
-			if loop-block is any ore or emerald ore:
-				set loop-block to {@zamienw}
-			if loop-block is quartz ore:
-				set loop-block to {@zamienwnether}
-		uncancel event
+		loop {superdrops::replace::%loop-value%::*}:
+			loop blocks in radius 4 of event-location:
+				if loop-block is loop-value-2:
+					set loop-block to {superdrops::replace::%loop-value-1%::%loop-value-2%::block}
+			uncancel event
