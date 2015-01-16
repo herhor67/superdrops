@@ -25,18 +25,6 @@ options:
 	redstone: 1.9
 	kwarc: 1.9
 	drewno: 2.7
- 
-#szansa z kilofem fortune I
-	fortune1: 1.5
- 
-#szansa z kilofem forune II
-	fortune2: 2
- 
-#szansa z kilofem fortune III
-	fortune3: 2.5
-
-#szansa superkilofem
-	super: 10
 
 #inneinfo:
 	diamentmax: 16
@@ -48,12 +36,6 @@ options:
 	zlotomax: 32
 	lapismax:32
 	redstonemax: 16
-
-#w co ma sie zamieniac ruda, jezeli wlaczone
-	zamienw: stone
-	zamienwnether: netherrack
-	wiadomosc: &4Surowce wypadają ze stone!
-	prefiks: &7[&cSuper&6Drop&7]
 
 #ilosc expa za 1 blok
 	xp: 1
@@ -178,7 +160,8 @@ on click:
 			send "%{superdrops::replace::%loop-value%::message}%"
 
 on explode:
-	{usuwac.rudy} is true:
+	loop {superdrops::replace::*}:
+		loop {superdrops::re}
 		cancel event
 		loop blocks in radius 4 of event-location:
 			if loop-block is any ore or emerald ore:
