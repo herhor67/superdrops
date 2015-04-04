@@ -48,33 +48,33 @@ on script load:
 	wait 1 second
 	if file "plugins/Skript/superdrops/multipliers.yml" doesn't exists:
 		download "https://raw.githubusercontent.com/herhor67/superdrops/master/multipliers.yml" to "plugins/Skript/superdrops/multipliers.yml"
-	wait 1 second
+#w	wait 1 second
 #------------#
-	clear {superdrops::multipliers::*}   
-	set {superdrops::multipliers::*} to configuration section "multipliers" get of "plugins/Skript/superdrops/multipliers.yml"
-	loop {superdrops::multipliers::*}:
-		set {superdrops::multipliers::%loop-value%::*} to configuration section "multipliers.%loop-value%" get of "plugins/Skript/superdrops/multipliers.yml"
-		loop {superdrops::multipliers::%loop-value%::*}:
-			set {superdrops::multipliers::%loop-value-1%::%loop-value-2%} to single value "multipliers.%loop-value-1%.%loop-value-2%" get of "plugins/Skript/superdrops/multipliers.yml" parsed as number
-			broadcast "%{superdrops::multipliers::%loop-value-1%::%loop-value-2%}%"
+#	clear {superdrops::multipliers::*}   
+#	set {superdrops::multipliers::*} to configuration section "multipliers" get of "plugins/Skript/superdrops/multipliers.yml"
+#	loop {superdrops::multipliers::*}:
+#		set {superdrops::multipliers::%loop-value%::*} to configuration section "multipliers.%loop-value%" get of "plugins/Skript/superdrops/multipliers.yml"
+#		loop {superdrops::multipliers::%loop-value%::*}:
+#			set {superdrops::multipliers::%loop-value-1%::%loop-value-2%} to single value "multipliers.%loop-value-1%.%loop-value-2%" get of "plugins/Skript/superdrops/multipliers.yml" parsed as number
+#			broadcast "%{superdrops::multipliers::%loop-value-1%::%loop-value-2%}%"
 #------------#
-	clear {superdrops::drop::*}
-	set {superdrops::drop::*} to configuration section "drop" get of "plugins/Skript/superdrops/config.yml"
-	loop {superdrops::drop::*}:
-		set {superdrops::drop::%loop-value%::*} to configuration section "drop.%loop-value%" get of "plugins/Skript/superdrops/config.yml"
-		loop {superdrops::drop::%loop-value%::*}:
-			set {superdrops::drop::%loop-value-1%::%loop-value-2%::*} to configuration section "drop.%loop-value-1%.%loop-value-2%" get of "plugins/Skript/superdrops/config.yml"
-			loop {superdrops::drop::%loop-value-1%::%loop-value-2%::*}:
-				set {superdrops::drop::%loop-value-1%::%loop-value-2%::%loop-value-3%} to single value "drop.%loop-value-1%.%loop-value-2%.%loop-value-3%" get of "plugins/Skript/superdrops/config.yml"
+#	clear {superdrops::drop::*}
+#	set {superdrops::drop::*} to configuration section "drop" get of "plugins/Skript/superdrops/config.yml"
+#	loop {superdrops::drop::*}:
+#		set {superdrops::drop::%loop-value%::*} to configuration section "drop.%loop-value%" get of "plugins/Skript/superdrops/config.yml"
+#		loop {superdrops::drop::%loop-value%::*}:
+#			set {superdrops::drop::%loop-value-1%::%loop-value-2%::*} to configuration section "drop.%loop-value-1%.%loop-value-2%" get of "plugins/Skript/superdrops/config.yml"
+#			loop {superdrops::drop::%loop-value-1%::%loop-value-2%::*}:
+#				set {superdrops::drop::%loop-value-1%::%loop-value-2%::%loop-value-3%} to single value "drop.%loop-value-1%.%loop-value-2%.%loop-value-3%" get of "plugins/Skript/superdrops/config.yml"
 #				broadcast "%{superdrops::drop::%loop-value-1%::%loop-value-2%::%loop-value-3%}%"
 #------------#
-	clear {superdrops::replace::*}
-	set {superdrops::replace::*} to configuration section "replace" get of "plugins/Skript/superdrops/replace.yml"
-	loop {superdrops::replace::*}:
-		set {superdrops::replace::%loop-value%::*} to configuration section "replace.%loop-value%" get of "plugins/Skript/superdrops/replace.yml"
-		loop {superdrops::replace::%loop-value%::*}:
-			set {superdrops::replace::%loop-value-1%::%loop-value-2%} to single value "replace.%loop-value-1%.%loop-value-2%" get of "plugins/Skript/superdrops/replace.yml"
-			broadcast "%{superdrops::replace::%loop-value-1%::%loop-value-2%}%"
+#	clear {superdrops::replace::*}
+#	set {superdrops::replace::*} to configuration section "replace" get of "plugins/Skript/superdrops/replace.yml"
+#	loop {superdrops::replace::*}:
+#		set {superdrops::replace::%loop-value%::*} to configuration section "replace.%loop-value%" get of "plugins/Skript/superdrops/replace.yml"
+#		loop {superdrops::replace::%loop-value%::*}:
+#			set {superdrops::replace::%loop-value-1%::%loop-value-2%} to single value "replace.%loop-value-1%.%loop-value-2%" get of "plugins/Skript/superdrops/replace.yml"
+#			broadcast "%{superdrops::replace::%loop-value-1%::%loop-value-2%}%"
 #------------#
 	register new shaped recipe for diamond pickaxe named "&bSuperKilof" with lore "&7Fortune X" using diament, diament, diament, none, stick, none, none, stick, none
 	register new shaped recipe for diamond pickaxe named "&bSuperKilof" with lore "&7Smelting I" using diamentitem, furnace, diamentitem, none, stick, none, none, stick, none
@@ -103,8 +103,8 @@ command /superdrops [<text>] [<text>]:
 					send "%coloured {superdrops::drop::%arg 2%::%loop-value%::name}%  &f&l| &f%{_f0}%            &f&l| &f%{_f1}%           &f&l| &f%{_f2}%           &f&l| &f%{_f3}%"
 					send "&f&l----------------------------------------------------------------"
 
-on mine:
-	set {_block} to event-block
+on break:
+	set {_block} to type of event-block# parsed as itemtype
 	send "%{_block}%"
 	#loop {superdrops::drop::*}:
 		#send "dupa: %{superdrops::drop::%{_block}%::*}%"
@@ -129,27 +129,26 @@ on mine:
 #==============================={ XP }===============================#
 	give {@xp} xp to player
 #==============================={ DROP }===============================#
-	if {superdrops::drop::%{_block}%::*} is set:
-		loop {superdrops::drop::%{_block}%::*}:
-			send "%loop-index%"
-			if event-block's y-coordinate is less than {superdrops::drop::%{_block}%::%loop-value%::heightmax}:
-				if event-block's y-coordinate is greater than {superdrops::drop::%{_block}%::%loop-value%::heightmin}:
-					if player's tool is {superdrops::drop::%{_block}%::%loop-value%::tool}:
-						chance of {superdrops::drop::%{_block}%::%loop-value%::chance}*{_mnoznik}%:
-							{_smelt.mode} isn't true:
-								drop {superdrops::drop::%{_block}%::%loop-value%::item} at event-block
-							else:
-								drop {superdrop::drop::%{_block}%::%loop-value%::itemsmelted} at event-block
+	set {_firstlist::*} to configuration section "drop.%{_block}%" get of "plugins/Skript/superdrops/config.yml"
+	loop {_firstlist::*}:
+		send "%loop-index% => %loop-value%"
+		set {_heightmin}
+		if event-block's y-coordinate is less than {superdrops::drop::%{_block}%::%loop-value%::heightmax}:
+			if event-block's y-coordinate is greater than {superdrops::drop::%{_block}%::%loop-value%::heightmin}:
+				if player's tool is {superdrops::drop::%{_block}%::%loop-value%::tool}:
+					chance of {superdrops::drop::%{_block}%::%loop-value%::chance}*{_mnoznik}%:
+						{_smelt.mode} isn't true:
+							drop {superdrops::drop::%{_block}%::%loop-value%::item} at event-block
 						else:
-							send "brak szansy!"
+							drop {superdrop::drop::%{_block}%::%loop-value%::itemsmelted} at event-block
 					else:
-						send "zle narzedzie!"
+						send "brak szansy!"
 				else:
-					send "za wysoko!"
+					send "zle narzedzie!"
 			else:
-				send "za nisko!"
-	else:
-		send "nie w configu!"
+				send "za wysoko!"
+		else:
+			send "za nisko!"
 
 
 
@@ -160,14 +159,14 @@ command /sdadmin [<text>]:
 			arg 1 is "odswiez" or "reload":
 				execute player command "/sk reload %script%"
 
-on click:
-	set {_block} to type of event-block
-	loop {superdrops::replace::*}:
-		if loop-value is {_block}:
-			set clicked block to {superdrops::replace::%loop-value%::block}
-			send "%{superdrops::replace::%loop-value%::message}%"
-		else:
-			send "nie w configu!"
+#on click:
+#	set {_block} to type of event-block
+#	loop {superdrops::replace::*}:
+#		if loop-value is {_block}:
+#			set clicked block to {superdrops::replace::%loop-value%::block}
+#			send "%{superdrops::replace::%loop-value%::message}%"
+#		else:
+#			send "nie w configu!"
 
 on explode:
 	cancel event
