@@ -1,3 +1,5 @@
+superdrops.sk
+
 #hercore superdrops
 #=============================================#
 #   Skrypt napisany przez: herhor67           #
@@ -105,42 +107,50 @@ command /superdrops [<text>] [<text>]:
 
 on break:
 	set {_block} to type of event-block# parsed as itemtype
-	send "%{_block}%"
-	#loop {superdrops::drop::*}:
-		#send "dupa: %{superdrops::drop::%{_block}%::*}%"
-#==============================={ MNOŻNIKI }===============================#
-#	loop {superdrop::multipliers::permissions::*}:
-#		if player has permission "superdrops.%loop-index%":
-#			set {_w} to loop-value
-#			set {_mnoznik} to {_mnoznik}*{_w}
-#			exit loop
-#	player's tool is diamond pickaxe named "&bSuperKilof" with lore "&7Fortune X":
-#		set {_mnoznik} to {_mnoznik}*{superdrops::mnoznik::superkilof}
-#	player's tool is diamond pickaxe named "&bSuperKilof" with lore "&7Smelting I":
-#		set {_smelt.mode} to true
-#	player's tool is any tool of Fortune 3:
-#		set {_mnoznik} to {_mnoznik}*{superdrops::mnoznik::fortune3}
-#	player's tool is any tool of Fortune 2:
-#		set {_mnoznik} to {_mnoznik}*{superdrops::mnoznik::fortune2}
-#	player's tool is any tool of Fortune 1:
-#		set {_mnoznik} to {_mnoznik}*{superdrops::mnoznik::fortune1}
-#	if {superdrops::turbodrop} is set:
-#		set {_mnoznik} to {_mnoznik}*{superdrops::turbodrop}
-#==============================={ XP }===============================#
+	send "Kopiesz: %{_block}%"
+#==============================={ MULTIPLIERS }===============================#
+	set {_multiplier} to 1
+	 set {_firstmulti::*} to configuration section "multipliers.permissions" get of "plugins/Skript/superdrops/config.yml"
+	 loop {_firstmulti::*}:
+			if player has permission "superdrops.multiplier.%loop-value%":
+				set {_permission} to single value "multipliers.permissions.%loop-value%" get of "plugins/Skript/superdrops/config.yml"
+				set {_multiplier} to {_multiplier}*{_permission}
+				exit loop
+	name of player's tool contains "&bSuper":
+		first line of lore of player's tool is "&7Fortune X":
+			set {_mnoznik} to {_mnoznik}*{superdrops::mno}
+	player's tool is diamond pickaxe named "&bSuperKilof" with lore "&7Smelting I":
+		set {_smelt.mode} to true
+	player's tool is any tool of Fortune 3:
+		set {_mnoznik} to {_mnoznik}*{superdrops::mnoznik::fortune3}
+	player's tool is any tool of Fortune 2:
+		set {_mnoznik} to {_mnoznik}*{superdrops::mnoznik::fortune2}
+	player's tool is any tool of Fortune 1:
+		set {_mnoznik} to {_mnoznik}*{superdrops::mnoznik::fortune1}
+	if {superdrops::turbodrop} is set:
+		set {_mnoznik} to {_mnoznik}*{superdrops::turbodrop}
+#=========={ XP }==========#
 	give {@xp} xp to player
-#==============================={ DROP }===============================#
+#=========={ CONFIG }==========#
 	set {_firstlist::*} to configuration section "drop.%{_block}%" get of "plugins/Skript/superdrops/config.yml"
 	loop {_firstlist::*}:
 		send "%loop-index% => %loop-value%"
-		set {_heightmin}
-		if event-block's y-coordinate is less than {superdrops::drop::%{_block}%::%loop-value%::heightmax}:
-			if event-block's y-coordinate is greater than {superdrops::drop::%{_block}%::%loop-value%::heightmin}:
-				if player's tool is {superdrops::drop::%{_block}%::%loop-value%::tool}:
-					chance of {superdrops::drop::%{_block}%::%loop-value%::chance}*{_mnoznik}%:
+		set {_secondlist::*} to configuration section "drop.%{_block}%.%loop-value%" get of "plugins/Skript/superdrops/config.yml"
+		loop {_secondlist::*}:
+			if loop-value isn't "tools":
+				set {_config::%loop-value-2%} to single value "drop.%{_block}%.%loop-value-1%.%loop-value-2%" get of "plugins/Skript/superdrops/config.yml"
+		 set {_config::tools::*} to value list "drop.%{_block}%.%loop-value-1%.tool" get of "plugins/Skript/superdrops/config.yml"
+#=========={ DROPPING }==========#
+		if event-block's y-coordinate is less than {_config::heightmax}:
+			if event-block's y-coordinate is greater than {_config::heightmin}:
+				if player's tool is any element of {_config::tools::*}:
+					chance of {_config::chance}*{_mnoznik}/100:
 						{_smelt.mode} isn't true:
-							drop {superdrops::drop::%{_block}%::%loop-value%::item} at event-block
+							drop {_config::item} at event-block
+							send "Wydropiles item: %{_config::item}%!"
 						else:
-							drop {superdrop::drop::%{_block}%::%loop-value%::itemsmelted} at event-block
+							drop {_config::itemsmelted} at event-block
+							send "Wydropiles itemsmelted: %{_config::itemsmelted}%!"
 					else:
 						send "brak szansy!"
 				else:
@@ -149,8 +159,6 @@ on break:
 				send "za wysoko!"
 		else:
 			send "za nisko!"
-
-
 
 command /sdadmin [<text>]:
 	aliases: superdropsadmin
@@ -170,9 +178,5 @@ command /sdadmin [<text>]:
 
 on explode:
 	cancel event
-	loop {superdrops::replace::*}:
-		loop {superdrops::replace::%loop-value%::*}:
-			loop blocks in radius 4 of event-location:
-				if loop-block is loop-value-2:
-					set loop-block to {superdrops::replace::%loop-value-1%::%loop-value-2%::block}
-			uncancel event
+	broadcast "Jebs!"
+	uncancel event
