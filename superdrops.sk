@@ -1,5 +1,3 @@
-superdrops.sk
-
 #hercore superdrops
 #=============================================#
 #   Skrypt napisany przez: herhor67           #
@@ -78,8 +76,14 @@ on script load:
 #			set {superdrops::replace::%loop-value-1%::%loop-value-2%} to single value "replace.%loop-value-1%.%loop-value-2%" get of "plugins/Skript/superdrops/replace.yml"
 #			broadcast "%{superdrops::replace::%loop-value-1%::%loop-value-2%}%"
 #------------#
-	register new shaped recipe for diamond pickaxe named "&bSuperKilof" with lore "&7Fortune X" using diament, diament, diament, none, stick, none, none, stick, none
-	register new shaped recipe for diamond pickaxe named "&bSuperKilof" with lore "&7Smelting I" using diamentitem, furnace, diamentitem, none, stick, none, none, stick, none
+	register new shaped recipe for diamond pickaxe named "&bSuperPickaxe" with lore "&7Fortune X" using diament, diament, diament, none, stick, none, none, stick, none
+	register new shaped recipe for diamond pickaxe named "&bSuperPickaxe" with lore "&7Smelting I" using diamentitem, diamentitem, diamentitem, none, furnace, none, none, stick, none
+#----------
+	register new shaped recipe for diamond axe named "&bSuperAxe" with lore "&7Fortune X" using diament, diament, none, diament, stick, none, none, stick, none
+	register new shaped recipe for diamond axe named "&bSuperAxe" with lore "&7Smelting I" using diamentitem, diamentitem, none, diamentitem, furnace, none, none, stick, none
+#----------
+	register new shaped recipe for diamond shovel named "&bSuperShovel" with lore "&7Fortune X" using none, diament, none, none, stick, none, none, stick, none
+	register new shaped recipe for diamond shovel named "&bSuperShovel" with lore "&7Smelting I" using none, diamentitem, none, none, furnace, none, none, stick, none
 
 command /superdrops [<text>] [<text>]:
 	aliases: sd, superdrop
@@ -110,47 +114,63 @@ on break:
 	send "Kopiesz: %{_block}%"
 #==============================={ MULTIPLIERS }===============================#
 	set {_multiplier} to 1
-	 set {_firstmulti::*} to configuration section "multipliers.permissions" get of "plugins/Skript/superdrops/config.yml"
-	 loop {_firstmulti::*}:
-			if player has permission "superdrops.multiplier.%loop-value%":
-				set {_permission} to single value "multipliers.permissions.%loop-value%" get of "plugins/Skript/superdrops/config.yml"
-				set {_multiplier} to {_multiplier}*{_permission}
-				exit loop
-	name of player's tool contains "&bSuper":
-		first line of lore of player's tool is "&7Fortune X":
-			set {_mnoznik} to {_mnoznik}*{superdrops::mno}
-	player's tool is diamond pickaxe named "&bSuperKilof" with lore "&7Smelting I":
-		set {_smelt.mode} to true
-	player's tool is any tool of Fortune 3:
-		set {_mnoznik} to {_mnoznik}*{superdrops::mnoznik::fortune3}
-	player's tool is any tool of Fortune 2:
-		set {_mnoznik} to {_mnoznik}*{superdrops::mnoznik::fortune2}
-	player's tool is any tool of Fortune 1:
-		set {_mnoznik} to {_mnoznik}*{superdrops::mnoznik::fortune1}
+	set {_smelt.mode} to false
+	send "&c%{_multiplier}%"
+	set {_firstmulti::*} to configuration section "multipliers.permissions" get of "plugins/Skript/superdrops/config.yml"
+	loop {_firstmulti::*}:
+		send "%loop-value%"
+		if player has permission "superdrops.multiplier.%loop-value%":
+			set {_permission} to single value "multipliers.permissions.%loop-value%" get of "plugins/Skript/superdrops/config.yml" parsed as number
+			set {_multiplier} to {_multiplier}*{_permission}
+			exit loop
+	name of player's tool is "&bSuperPickaxe" or "&bSuperAxe" or "&bSuperShovel":
+		1st line of lore of player's tool is "&7Fortune X":
+			set {_super} to single value "multipliers.other.super" get of "plugins/Skript/superdrops/config.yml" parsed as number
+			set {_multiplier} to {_multiplier}*{_super}
+		1st line of lore of player's tool is "&7Smelting I":
+			set {_smelt.mode} to true
+#	player's tool is any tool of Fortune 3:
+#		set {_mnoznik} to {_mnoznik}*{superdrops::mnoznik::fortune3}
+#	player's tool is any tool of Fortune 2:
+#		set {_mnoznik} to {_mnoznik}*{superdrops::mnoznik::fortune2}
+#	player's tool is any tool of Fortune 1:
+#		set {_mnoznik} to {_mnoznik}*{superdrops::mnoznik::fortune1}
 	if {superdrops::turbodrop} is set:
 		set {_mnoznik} to {_mnoznik}*{superdrops::turbodrop}
-#=========={ XP }==========#
-	give {@xp} xp to player
+	send "&c%{_multiplier}%"
 #=========={ CONFIG }==========#
 	set {_firstlist::*} to configuration section "drop.%{_block}%" get of "plugins/Skript/superdrops/config.yml"
 	loop {_firstlist::*}:
 		send "%loop-index% => %loop-value%"
-		set {_secondlist::*} to configuration section "drop.%{_block}%.%loop-value%" get of "plugins/Skript/superdrops/config.yml"
-		loop {_secondlist::*}:
-			if loop-value isn't "tools":
-				set {_config::%loop-value-2%} to single value "drop.%{_block}%.%loop-value-1%.%loop-value-2%" get of "plugins/Skript/superdrops/config.yml"
-		 set {_config::tools::*} to value list "drop.%{_block}%.%loop-value-1%.tool" get of "plugins/Skript/superdrops/config.yml"
+		send "-----------------------"
+		set {_config::item} to single value "drop.%{_block}%.%loop-value%.item" get of "plugins/Skript/superdrops/config.yml" parsed as itemtype
+		set {_config::itemsmelted} to single value "drop.%{_block}%.%loop-value%.itemsmelted" get of "plugins/Skript/superdrops/config.yml" parsed as itemtype
+		set {_config::chance} to single value "drop.%{_block}%.%loop-value%.chance" get of "plugins/Skript/superdrops/config.yml" parsed as integer
+		set {_config::heightmin} to single value "drop.%{_block}%.%loop-value%.heightmin" get of "plugins/Skript/superdrops/config.yml" parsed as integer
+		set {_config::heightmax} to single value "drop.%{_block}%.%loop-value%.heightmax" get of "plugins/Skript/superdrops/config.yml" parsed as integer
+		set {_config::tools::*} to value list "drop.%{_block}%.%loop-value%.tools" get of "plugins/Skript/superdrops/config.yml"
 #=========={ DROPPING }==========#
-		if event-block's y-coordinate is less than {_config::heightmax}:
-			if event-block's y-coordinate is greater than {_config::heightmin}:
-				if player's tool is any element of {_config::tools::*}:
-					chance of {_config::chance}*{_mnoznik}/100:
-						{_smelt.mode} isn't true:
+		if event-block's y-coordinate < {_config::heightmax}:
+			if event-block's y-coordinate > {_config::heightmin}:
+				give {@xp} xp to player
+				loop {_config::tools::*}:
+					if player's tool is (loop-value-2 parsed as itemtype):
+						set {_goodtool} to true
+						exit loop
+				if {_goodtool} is true:
+					set {_realchance} to {_config::chance}*{_multiplier}/100
+					if {_realchance} is greater than 1:
+						set {_realchance} to 1
+					send "%{_realchance}%"
+					chance of {_realchance}:
+						{_smelt.mode} is false:
 							drop {_config::item} at event-block
 							send "Wydropiles item: %{_config::item}%!"
-						else:
+							add 1 to {superdrops::topdrops::%{_config::item}%::%player%}
+						else if {_smelt.mode} is true:
 							drop {_config::itemsmelted} at event-block
 							send "Wydropiles itemsmelted: %{_config::itemsmelted}%!"
+							add 1 to {superdrops::topdrops::%{_config::itemsmelted}%::%player%}
 					else:
 						send "brak szansy!"
 				else:
