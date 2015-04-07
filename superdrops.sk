@@ -43,47 +43,34 @@ options:
 aliases:
 	diament = 57
 	diamentitem = 264
+	br = 369
 
 on script load:
 	wait 1 second
 	if file "plugins/Skript/superdrops/multipliers.yml" doesn't exists:
 		download "https://raw.githubusercontent.com/herhor67/superdrops/master/multipliers.yml" to "plugins/Skript/superdrops/multipliers.yml"
-#w	wait 1 second
-#------------#
-#	clear {superdrops::multipliers::*}   
-#	set {superdrops::multipliers::*} to configuration section "multipliers" get of "plugins/Skript/superdrops/multipliers.yml"
-#	loop {superdrops::multipliers::*}:
-#		set {superdrops::multipliers::%loop-value%::*} to configuration section "multipliers.%loop-value%" get of "plugins/Skript/superdrops/multipliers.yml"
-#		loop {superdrops::multipliers::%loop-value%::*}:
-#			set {superdrops::multipliers::%loop-value-1%::%loop-value-2%} to single value "multipliers.%loop-value-1%.%loop-value-2%" get of "plugins/Skript/superdrops/multipliers.yml" parsed as number
-#			broadcast "%{superdrops::multipliers::%loop-value-1%::%loop-value-2%}%"
-#------------#
-#	clear {superdrops::drop::*}
-#	set {superdrops::drop::*} to configuration section "drop" get of "plugins/Skript/superdrops/config.yml"
-#	loop {superdrops::drop::*}:
-#		set {superdrops::drop::%loop-value%::*} to configuration section "drop.%loop-value%" get of "plugins/Skript/superdrops/config.yml"
-#		loop {superdrops::drop::%loop-value%::*}:
-#			set {superdrops::drop::%loop-value-1%::%loop-value-2%::*} to configuration section "drop.%loop-value-1%.%loop-value-2%" get of "plugins/Skript/superdrops/config.yml"
-#			loop {superdrops::drop::%loop-value-1%::%loop-value-2%::*}:
-#				set {superdrops::drop::%loop-value-1%::%loop-value-2%::%loop-value-3%} to single value "drop.%loop-value-1%.%loop-value-2%.%loop-value-3%" get of "plugins/Skript/superdrops/config.yml"
-#				broadcast "%{superdrops::drop::%loop-value-1%::%loop-value-2%::%loop-value-3%}%"
-#------------#
-#	clear {superdrops::replace::*}
-#	set {superdrops::replace::*} to configuration section "replace" get of "plugins/Skript/superdrops/replace.yml"
-#	loop {superdrops::replace::*}:
-#		set {superdrops::replace::%loop-value%::*} to configuration section "replace.%loop-value%" get of "plugins/Skript/superdrops/replace.yml"
-#		loop {superdrops::replace::%loop-value%::*}:
-#			set {superdrops::replace::%loop-value-1%::%loop-value-2%} to single value "replace.%loop-value-1%.%loop-value-2%" get of "plugins/Skript/superdrops/replace.yml"
-#			broadcast "%{superdrops::replace::%loop-value-1%::%loop-value-2%}%"
-#------------#
+#==========#
 	register new shaped recipe for diamond pickaxe named "&bSuperPickaxe" with lore "&7Fortune X" using diament, diament, diament, none, stick, none, none, stick, none
 	register new shaped recipe for diamond pickaxe named "&bSuperPickaxe" with lore "&7Smelting I" using diamentitem, diamentitem, diamentitem, none, furnace, none, none, stick, none
-#----------
+#==========#
 	register new shaped recipe for diamond axe named "&bSuperAxe" with lore "&7Fortune X" using diament, diament, none, diament, stick, none, none, stick, none
+	register new shaped recipe for diamond axe named "&bSuperAxe" with lore "&7Fortune X" using diament, diament, none, stick, diament, none, stick, none, none
+	register new shaped recipe for diamond axe named "&bSuperAxe" with lore "&7Fortune X" using none, diament, diament, none, diament, stick, none, none, stick
+#----------#
 	register new shaped recipe for diamond axe named "&bSuperAxe" with lore "&7Smelting I" using diamentitem, diamentitem, none, diamentitem, furnace, none, none, stick, none
-#----------
+	register new shaped recipe for diamond axe named "&bSuperAxe" with lore "&7Smelting I" using diamentitem, diamentitem, none, furnace, diament, none, stick, none, none
+	register new shaped recipe for diamond axe named "&bSuperAxe" with lore "&7Smelting I" using none, diamentitem, diamentitem, none, diamentitem, furnace, none, none, stick
+#==========#
 	register new shaped recipe for diamond shovel named "&bSuperShovel" with lore "&7Fortune X" using none, diament, none, none, stick, none, none, stick, none
+	register new shaped recipe for diamond shovel named "&bSuperShovel" with lore "&7Fortune X" using diament, none, none, stick, none, none, stick, none, none
+	register new shaped recipe for diamond shovel named "&bSuperShovel" with lore "&7Fortune X" using none, none, diament, none, none, stick, none, none, stick
+#----------#
 	register new shaped recipe for diamond shovel named "&bSuperShovel" with lore "&7Smelting I" using none, diamentitem, none, none, furnace, none, none, stick, none
+	register new shaped recipe for diamond shovel named "&bSuperShovel" with lore "&7Smelting I" using diamentitem, none, none, furnace, none, none, stick, none, none
+	register new shaped recipe for diamond shovel named "&bSuperShovel" with lore "&7Smelting I" using none, none, diamentitem, none, none, furnace, none, none, stick
+#==========#
+	register new shaped recipe for fishing rod named "&bSuperFishingRod" with lore "&7Luck of the Sea X" using none, none, br, none, br, string, br, none, string
+	register new shaped recipe for fishing rod named "&bSuperFishingRod" with lore "&7Smelting I" using none, none, furnace, none, stick, string, stick, none, string
 
 command /superdrops [<text>] [<text>]:
 	aliases: sd, superdrop
@@ -109,76 +96,237 @@ command /superdrops [<text>] [<text>]:
 					send "%coloured {superdrops::drop::%arg 2%::%loop-value%::name}%  &f&l| &f%{_f0}%            &f&l| &f%{_f1}%           &f&l| &f%{_f2}%           &f&l| &f%{_f3}%"
 					send "&f&l----------------------------------------------------------------"
 
+#==============================#
+#==============================#
+#==#         BLOCKS         #==#
+#==============================#
+#==============================#
 on break:
-	set {_block} to type of event-block# parsed as itemtype
-	send "Kopiesz: %{_block}%"
-#==============================={ MULTIPLIERS }===============================#
+	set {_block} to type of event-block
 	set {_multiplier} to 1
-	set {_smelt.mode} to false
-	send "&c%{_multiplier}%"
-	set {_firstmulti::*} to configuration section "multipliers.permissions" get of "plugins/Skript/superdrops/config.yml"
-	loop {_firstmulti::*}:
-		send "%loop-value%"
-		if player has permission "superdrops.multiplier.%loop-value%":
+#=========={ PERMISSIONS }==========#
+	set {_permissionslist::*} to configuration section "multipliers.permissions" get of "plugins/Skript/superdrops/config.yml"
+	loop {_permissionslist::*}:
+		if player has permission "sd.mp.blocks.%loop-value%":
 			set {_permission} to single value "multipliers.permissions.%loop-value%" get of "plugins/Skript/superdrops/config.yml" parsed as number
 			set {_multiplier} to {_multiplier}*{_permission}
 			exit loop
+#=========={ SUPER TOOLS }==========#
 	name of player's tool is "&bSuperPickaxe" or "&bSuperAxe" or "&bSuperShovel":
-		1st line of lore of player's tool is "&7Fortune X":
-			set {_super} to single value "multipliers.other.super" get of "plugins/Skript/superdrops/config.yml" parsed as number
-			set {_multiplier} to {_multiplier}*{_super}
+#----------{ smelting 1 }----------#
 		1st line of lore of player's tool is "&7Smelting I":
-			set {_smelt.mode} to true
-#	player's tool is any tool of Fortune 3:
-#		set {_mnoznik} to {_mnoznik}*{superdrops::mnoznik::fortune3}
-#	player's tool is any tool of Fortune 2:
-#		set {_mnoznik} to {_mnoznik}*{superdrops::mnoznik::fortune2}
-#	player's tool is any tool of Fortune 1:
-#		set {_mnoznik} to {_mnoznik}*{superdrops::mnoznik::fortune1}
-	if {superdrops::turbodrop} is set:
-		set {_mnoznik} to {_mnoznik}*{superdrops::turbodrop}
-	send "&c%{_multiplier}%"
+			set {_smelting.mode} to true
+		else:
+			set {_smelting.mode} to false
+#----------{ fortune 10 }----------#
+		1st line of lore of player's tool is "&7Fortune X":
+			set {_multipliers::super} to single value "multipliers.other.super" get of "plugins/Skript/superdrops/config.yml" parsed as number
+			set {_multiplier} to {_multiplier}*{_multipliers::super}
+#=========={ FORTUNES }==========#
+	player's tool is enchanted with Fortune 3:
+		set {_multipliers::fortune} to single value "multipliers.fortune.3" get of "plugins/Skript/superdrops/config.yml" parsed as number
+		set {_multiplier} to {_multiplier}*{_multipliers::fortune}
+	player's tool is enchanted with Fortune 2:
+		set {_multipliers::fortune} to single value "multipliers.fortune.2" get of "plugins/Skript/superdrops/config.yml" parsed as number
+		set {_multiplier} to {_multiplier}*{_multipliers::fortune}
+	player's tool is enchanted with Fortune 1:
+		set {_multipliers::fortune} to single value "multipliers.fortune.1" get of "plugins/Skript/superdrops/config.yml" parsed as number
+		set {_multiplier} to {_multiplier}*{_multipliers::fortune}
+#=========={ TURBODROP }==========#
+	set {_multipliers::turbodrop} to single value "multipliers.other.turbodrop" get of "plugins/Skript/superdrops/config.yml" parsed as number
+	if {_multipliers::turbodrop} is set:
+		set {_multiplier} to {_multiplier}*{_multipliers::turbodrop}
 #=========={ CONFIG }==========#
-	set {_firstlist::*} to configuration section "drop.%{_block}%" get of "plugins/Skript/superdrops/config.yml"
-	loop {_firstlist::*}:
-		send "%loop-index% => %loop-value%"
-		send "-----------------------"
-		set {_config::item} to single value "drop.%{_block}%.%loop-value%.item" get of "plugins/Skript/superdrops/config.yml" parsed as itemtype
-		set {_config::itemsmelted} to single value "drop.%{_block}%.%loop-value%.itemsmelted" get of "plugins/Skript/superdrops/config.yml" parsed as itemtype
-		set {_config::chance} to single value "drop.%{_block}%.%loop-value%.chance" get of "plugins/Skript/superdrops/config.yml" parsed as integer
-		set {_config::heightmin} to single value "drop.%{_block}%.%loop-value%.heightmin" get of "plugins/Skript/superdrops/config.yml" parsed as integer
-		set {_config::heightmax} to single value "drop.%{_block}%.%loop-value%.heightmax" get of "plugins/Skript/superdrops/config.yml" parsed as integer
-		set {_config::tools::*} to value list "drop.%{_block}%.%loop-value%.tools" get of "plugins/Skript/superdrops/config.yml"
+	set {_config::xp} to single value "blocks.%{_block}%.xp" get of "plugins/Skript/superdrops/config.yml" parsed as number
+	set {_basiclist::*} to configuration section "blocks.%{_block}%" get of "plugins/Skript/superdrops/config.yml"
+	loop {_basiclist::*}:
+		loop-value isn't "xp":
+			set {_itemlist::%loop-index%} to loop-value
+	loop {_itemlist::*}:
+		{_smelting.mode} is true:
+			set {_config::item} to single value "blocks.%{_block}%.%loop-value%.itemsmelted" get of "plugins/Skript/superdrops/config.yml" parsed as itemtype
+		else:
+			set {_config::item} to single value "blocks.%{_block}%.%loop-value%.item" get of "plugins/Skript/superdrops/config.yml" parsed as itemtype
+		set {_config::chance} to single value "blocks.%{_block}%.%loop-value%.chance" get of "plugins/Skript/superdrops/config.yml" parsed as integer
+		set {_config::tools::*} to value list "blocks.%{_block}%.%loop-value%.tools" get of "plugins/Skript/superdrops/config.yml"
+		set {_config::biomes::*} to value list "blocks.%{_block}%.%loop-value%.biomes" get of "plugins/Skript/superdrops/config.yml"
+		set {_config::heightmin} to single value "blocks.%{_block}%.%loop-value%.heightmin" get of "plugins/Skript/superdrops/config.yml" parsed as integer
+		set {_config::heightmax} to single value "blocks.%{_block}%.%loop-value%.heightmax" get of "plugins/Skript/superdrops/config.yml" parsed as integer
 #=========={ DROPPING }==========#
+		loop {_config::xp} times:
+			give 1 xp to player
 		if event-block's y-coordinate < {_config::heightmax}:
 			if event-block's y-coordinate > {_config::heightmin}:
-				give {@xp} xp to player
 				loop {_config::tools::*}:
 					if player's tool is (loop-value-2 parsed as itemtype):
 						set {_goodtool} to true
-						exit loop
 				if {_goodtool} is true:
-					set {_realchance} to {_config::chance}*{_multiplier}/100
-					if {_realchance} is greater than 1:
-						set {_realchance} to 1
-					send "%{_realchance}%"
-					chance of {_realchance}:
-						{_smelt.mode} is false:
-							drop {_config::item} at event-block
-							send "Wydropiles item: %{_config::item}%!"
-							add 1 to {superdrops::topdrops::%{_config::item}%::%player%}
-						else if {_smelt.mode} is true:
-							drop {_config::itemsmelted} at event-block
-							send "Wydropiles itemsmelted: %{_config::itemsmelted}%!"
-							add 1 to {superdrops::topdrops::%{_config::itemsmelted}%::%player%}
+					if {_config::biomes::*} is not set:
+						set {_goodbiome} to true
 					else:
-						send "brak szansy!"
-				else:
-					send "zle narzedzie!"
-			else:
-				send "za wysoko!"
+						loop {_config::biomes::*}:
+							if biome at player is (loop-value-2 parsed as biome):
+								set {_goodbiome} to true
+					if {_goodbiome} is true:
+						set {_realchance} to {_config::chance}*{_multiplier}/100
+						if {_realchance} is greater than 1:
+							set {_realchance} to 1
+						chance of {_realchance}:
+							set {_config::message} to single value "messages.dropped" get of "plugins/Skript/superdrops/config.yml"
+							drop {_config::item} at event-block
+							replace all "{ITEM}" with "%{_config::item}%" in {_config::message}
+							send "%coloured {_config::message}%"
+							add 1 to {superdrops::top::mobs::%{_config::item}%::%player%}
+
+#==============================#
+#==============================#
+#==#          MOBS          #==#
+#==============================#
+#==============================#
+on death:
+	set {_mob} to victim
+	set {_mob} to {_mob} parsed as entity type
+	set {_multiplier} to 1
+#=========={ PERMISSIONS }==========#
+	set {_permissionslist::*} to configuration section "multipliers.permissions" get of "plugins/Skript/superdrops/config.yml"
+	loop {_permissionslist::*}:
+		if attacker has permission "sd.mp.mobs.%loop-value%":
+			set {_permission} to single value "multipliers.permissions.%loop-value%" get of "plugins/Skript/superdrops/config.yml" parsed as number
+			set {_multiplier} to {_multiplier}*{_permission}
+			exit loop
+#=========={ SUPER TOOLS }==========#
+	name of attacker's tool is "&bSuperSword":
+#----------{ smelting 1 }----------#
+		1st line of lore of attacker's tool is "&7Smelting I":
+			set {_smelting.mode} to true
 		else:
-			send "za nisko!"
+			set {_smelting.mode} to false
+#----------{ fortune 10 }----------#
+		1st line of lore of attacker's tool is "&7Fortune X":
+			set {_multipliers::super} to single value "multipliers.other.super" get of "plugins/Skript/superdrops/config.yml" parsed as number
+			set {_multiplier} to {_multiplier}*{_multipliers::super}
+#=========={ FORTUNES }==========#
+	attacker's tool is enchanted with Fortune 3:
+		set {_multipliers::fortune} to single value "multipliers.fortune.3" get of "plugins/Skript/superdrops/config.yml" parsed as number
+		set {_multiplier} to {_multiplier}*{_multipliers::fortune}
+	attacker's tool is enchanted with Fortune 2:
+		set {_multipliers::fortune} to single value "multipliers.fortune.2" get of "plugins/Skript/superdrops/config.yml" parsed as number
+		set {_multiplier} to {_multiplier}*{_multipliers::fortune}
+	attacker's tool is enchanted with Fortune 1:
+		set {_multipliers::fortune} to single value "multipliers.fortune.1" get of "plugins/Skript/superdrops/config.yml" parsed as number
+		set {_multiplier} to {_multiplier}*{_multipliers::fortune}
+#=========={ TURBODROP }==========#
+	set {_multipliers::turbodrop} to single value "multipliers.other.turbodrop" get of "plugins/Skript/superdrops/config.yml" parsed as number
+	if {_multipliers::turbodrop} is set:
+		set {_multiplier} to {_multiplier}*{_multipliers::turbodrop}
+#=========={ CONFIG }==========#
+	set {_config::xp} to single value "mobs.%{_mob}%.xp" get of "plugins/Skript/superdrops/config.yml" parsed as number
+	set {_basiclist::*} to configuration section "mobs.%{_mob}%" get of "plugins/Skript/superdrops/config.yml"
+	loop {_basiclist::*}:
+		loop-value isn't "xp":
+			set {_itemlist::%loop-index%} to loop-value
+	loop {_itemlist::*}:
+		{_smelting.mode} is true:
+			set {_config::item} to single value "mobs.%{_mob}%.%loop-value%.itemsmelted" get of "plugins/Skript/superdrops/config.yml" parsed as itemtype
+		else:
+			set {_config::item} to single value "mobs.%{_mob}%.%loop-value%.item" get of "plugins/Skript/superdrops/config.yml" parsed as itemtype
+		set {_config::chance} to single value "mobs.%{_mob}%.%loop-value%.chance" get of "plugins/Skript/superdrops/config.yml" parsed as integer
+		set {_config::tools::*} to value list "mobs.%{_mob}%.%loop-value%.tools" get of "plugins/Skript/superdrops/config.yml"
+		set {_config::biomes::*} to value list "mobs.%{_mob}%.%loop-value%.biomes" get of "plugins/Skript/superdrops/config.yml"
+#=========={ DROPPING }==========#
+		loop {_config::xp} times:
+			give 1 xp to attacker
+		loop {_config::tools::*}:
+			if attacker's tool is (loop-value-2 parsed as itemtype):
+				set {_goodtool} to true
+		if {_goodtool} is true:
+			loop {_config::biomes::*}:
+				if biome at attacker is (loop-value-2 parsed as biome):
+					set {_goodbiome} to true
+			if {_goodbiome} is true:
+				set {_realchance} to {_config::chance}*{_multiplier}/100
+				if {_realchance} is greater than 1:
+					set {_realchance} to 1
+				chance of {_realchance}:
+					set {_config::message} to single value "messages.dropped" get of "plugins/Skript/superdrops/config.yml"
+					drop {_config::item} at victim
+					replace all "{ITEM}" with "%{_config::item}%" in {_config::message}
+					send "%coloured {_config::message}%" to attacker
+					add 1 to {superdrops::top::mobs::%{_config::item}%::%attacker%}
+
+#==============================#
+#==============================#
+#==#         FISHING        #==#
+#==============================#
+#==============================#
+on fishing state of caught fish:
+	set {_multiplier} to 1
+#=========={ PERMISSIONS }==========#
+	set {_permissionslist::*} to configuration section "multipliers.permissions" get of "plugins/Skript/superdrops/config.yml"
+	loop {_permissionslist::*}:
+		if player has permission "sd.mp.fishing.%loop-value%":
+			set {_permission} to single value "multipliers.permissions.%loop-value%" get of "plugins/Skript/superdrops/config.yml" parsed as number
+			set {_multiplier} to {_multiplier}*{_permission}
+			exit loop
+#=========={ SUPER TOOLS }==========#
+	name of player's tool is "&bSuperFishingRod":
+#----------{ smelting 1 }----------#
+		1st line of lore of player's tool is "&7Smelting I":
+			set {_smelting.mode} to true
+		else:
+			set {_smelting.mode} to false
+#----------{ fortune 10 }----------#
+		1st line of lore of player's tool is "&7Luck of the Sea X":
+			set {_multipliers::super} to single value "multipliers.other.super" get of "plugins/Skript/superdrops/config.yml" parsed as number
+			set {_multiplier} to {_multiplier}*{_multipliers::super}
+#=========={ FORTUNES }==========#
+	player's tool is enchanted with Luck of the Sea 3:
+		set {_multipliers::fortune} to single value "multipliers.fortune.3" get of "plugins/Skript/superdrops/config.yml" parsed as number
+		set {_multiplier} to {_multiplier}*{_multipliers::fortune}
+	player's tool is enchanted with Luck of the Sea 2:
+		set {_multipliers::fortune} to single value "multipliers.fortune.2" get of "plugins/Skript/superdrops/config.yml" parsed as number
+		set {_multiplier} to {_multiplier}*{_multipliers::fortune}
+	player's tool is enchanted with Luck of the Sea 1:
+		set {_multipliers::fortune} to single value "multipliers.fortune.1" get of "plugins/Skript/superdrops/config.yml" parsed as number
+		set {_multiplier} to {_multiplier}*{_multipliers::fortune}
+#=========={ TURBODROP }==========#
+	set {_multipliers::turbodrop} to single value "multipliers.other.turbodrop" get of "plugins/Skript/superdrops/config.yml" parsed as number
+	if {_multipliers::turbodrop} is set:
+		set {_multiplier} to {_multiplier}*{_multipliers::turbodrop}
+#=========={ CONFIG }==========#
+	set {_config::xp} to single value "fishing.xp" get of "plugins/Skript/superdrops/config.yml" parsed as number
+	set {_basiclist::*} to configuration section "fishing" get of "plugins/Skript/superdrops/config.yml"
+	loop {_basiclist::*}:
+		loop-value isn't "xp":
+			set {_itemlist::%loop-index%} to loop-value
+	loop {_itemlist::*}:
+		{_smelting.mode} is true:
+			set {_config::item} to single value "fishing.%loop-value%.itemsmelted" get of "plugins/Skript/superdrops/config.yml" parsed as itemtype
+		else:
+			set {_config::item} to single value "fishing.%loop-value%.item" get of "plugins/Skript/superdrops/config.yml" parsed as itemtype
+		set {_config::chance} to single value "fishing.%loop-value%.chance" get of "plugins/Skript/superdrops/config.yml" parsed as integer
+		set {_config::biomes::*} to value list "fishing.%loop-value%.biomes" get of "plugins/Skript/superdrops/config.yml"
+#=========={ DROPPING }==========#
+		loop {_config::xp} times:
+			give 1 xp to player
+		if {_config::biomes::*} is not set:
+			set {_goodbiome} to true
+		else:
+			loop {_config::biomes::*}:
+				if biome at player is (loop-value-2 parsed as biome):
+					set {_goodbiome} to true
+		if {_goodbiome} is true:
+			set {_realchance} to {_config::chance}*{_multiplier}/100
+			if {_realchance} is greater than 1:
+				set {_realchance} to 1
+			chance of {_realchance}:
+			#	cancel event
+			#	damage player's tool by 1
+				set {_config::message} to single value "messages.dropped" get of "plugins/Skript/superdrops/config.yml"
+				drop {_config::item} at event-location
+				replace all "{ITEM}" with "%{_config::item}%" in {_config::message}
+				send "%coloured {_config::message}%"
+				add 1 to {superdrops::top::fishing::%{_config::item}%::%player%}
 
 command /sdadmin [<text>]:
 	aliases: superdropsadmin
@@ -186,7 +334,6 @@ command /sdadmin [<text>]:
 		if player has permission "dropy.admin" or "dropy.*":
 			arg 1 is "odswiez" or "reload":
 				execute player command "/sk reload %script%"
-
 #on click:
 #	set {_block} to type of event-block
 #	loop {superdrops::replace::*}:
@@ -195,6 +342,11 @@ command /sdadmin [<text>]:
 #			send "%{superdrops::replace::%loop-value%::message}%"
 #		else:
 #			send "nie w configu!"
+command /biome:
+	trigger:
+		send "%biome at player%"
+		if biome at player is biome:
+			send "%biome at player%"
 
 on explode:
 	cancel event
