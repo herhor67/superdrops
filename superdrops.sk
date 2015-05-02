@@ -15,6 +15,7 @@
 #=============================================#
 options:
 	additionalrecipes: true
+	directory: plugins/SuperDrops
 
 aliases:
 	diament = 57
@@ -23,8 +24,8 @@ aliases:
 	signblock = 323
 
 on script load:
-	if file "plugins/Skript/superdrops/config.yml" doesn't exists:
-		download "https://raw.githubusercontent.com/herhor67/superdrops/master/config.yml" to "plugins/Skript/superdrops/config.yml"
+	if file "{@directory}/config.yml" doesn't exists:
+		download "https://raw.githubusercontent.com/herhor67/superdrops/master/config.yml" to "{@directory}/config.yml"
 #==========#
 	if {@additionalrecipes} is true:
 		register new shaped recipe for (diamond pickaxe of Fortune 10 named "&bSuperPickaxe") using diament, diament, diament, none, stick, none, none, stick, none
@@ -66,9 +67,9 @@ command /superdrops:
 command /superdropsmenu <player> [<text>] [<text>] [<text>] [<text>] [<text>]:
 	executable by: console
 	trigger:
-		set {_valuelist::*} to configuration section "menu" get of "plugins/Skript/superdrops/config.yml"
+		set {_valuelist::*} to configuration section "menu" get of "{@directory}/config.yml"
 		loop {_valuelist::*}:
-			set {_menuconfig::%loop-value%} to single value "menu.%loop-value%" get of "plugins/Skript/superdrops/config.yml"
+			set {_menuconfig::%loop-value%} to single value "menu.%loop-value%" get of "{@directory}/config.yml"
 		wait 2 ticks
 		arg 2 is not set:
 			open chest with 2 rows named "%coloured {_menuconfig::tag}%" to player-arg
@@ -86,7 +87,7 @@ command /superdropsmenu <player> [<text>] [<text>] [<text>] [<text>] [<text>]:
 				format slot 15 of player-arg with fishing rod named "%coloured {_menuconfig::fishing}%" to close then run "superdropsmenu %player-arg% chance fishing fishing"
 			arg 3 is "blocks":
 				arg 4 is not set:
-					set {_itemlist::*} to configuration section "blocks" get of "plugins/Skript/superdrops/config.yml"
+					set {_itemlist::*} to configuration section "blocks" get of "{@directory}/config.yml"
 					set {_slot} to 0
 					open chest with 5 rows named "%coloured {_menuconfig::tag}%" to player-arg
 					wait 1 tick
@@ -110,13 +111,13 @@ command /superdropsmenu <player> [<text>] [<text>] [<text>] [<text>] [<text>]:
 							format slot 4 of player-arg with arrow named "%coloured {_menuconfig::back}%" to close then run "superdropsmenu %player-arg% chance blocks %arg 4%"
 							set {_slot} to 0
 							set {_block} to arg 4 parsed as itemtype
-							set {_basiclist::*} to configuration section "blocks.%{_block}%" get of "plugins/Skript/superdrops/config.yml"
+							set {_basiclist::*} to configuration section "blocks.%{_block}%" get of "{@directory}/config.yml"
 							loop {_basiclist::*}:
 								loop-value isn't "xp":
 									set {_itemlist::%loop-index%} to loop-value
 							loop {_itemlist::*}:
-								set {_config::name} to single value "blocks.%{_block}%.%loop-value%.name" get of "plugins/Skript/superdrops/config.yml"
-								set {_config::item} to single value "blocks.%{_block}%.%loop-value%.item" get of "plugins/Skript/superdrops/config.yml" parsed as itemtype
+								set {_config::name} to single value "blocks.%{_block}%.%loop-value%.name" get of "{@directory}/config.yml"
+								set {_config::item} to single value "blocks.%{_block}%.%loop-value%.item" get of "{@directory}/config.yml" parsed as itemtype
 								format slot {_slot}+9 of player-arg with {_config::item} named "%coloured {_config::name}%" to close then run "superdropsmenu %player-arg% chance blocks %arg 4% %arg 5% %loop-value%"
 								add 1 to {_slot}
 						else:
@@ -125,26 +126,26 @@ command /superdropsmenu <player> [<text>] [<text>] [<text>] [<text>] [<text>]:
 							format slot 4 of player-arg with arrow named "%coloured {_menuconfig::back}%" to close then run "superdropsmenu %player-arg% chance blocks %arg 4%"
 							set {_block} to arg 4 parsed as itemtype
 							set {_multiplier} to 1
-							set {_permissionslist::*} to configuration section "multipliers.permissions" get of "plugins/Skript/superdrops/config.yml"
+							set {_permissionslist::*} to configuration section "multipliers.permissions" get of "{@directory}/config.yml"
 							loop {_permissionslist::*}:
 								if player-arg has permission "sd.mp.blocks.%loop-value%":
-									set {_permission} to single value "multipliers.permissions.%loop-value%" get of "plugins/Skript/superdrops/config.yml" parsed as number
+									set {_permission} to single value "multipliers.permissions.%loop-value%" get of "{@directory}/config.yml" parsed as number
 									set {_multiplier} to {_multiplier}*{_permission}
 									exit loop
-							set {_turbodrop} to single value "multipliers.other.turbodrop" get of "plugins/Skript/superdrops/config.yml" parsed as number
+							set {_turbodrop} to single value "multipliers.other.turbodrop" get of "{@directory}/config.yml" parsed as number
 							if {_turbodrop} is set:
 								set {_multiplier} to {_multiplier}*{_turbodrop}
-							set {_fortunemulti} to single value "multipliers.fortune.%arg 5%" get of "plugins/Skript/superdrops/config.yml" parsed as number
+							set {_fortunemulti} to single value "multipliers.fortune.%arg 5%" get of "{@directory}/config.yml" parsed as number
 							set {_multiplier} to {_multiplier}*{_fortunemulti}
 							set {_multiplier} to {_multiplier} parsed as number #gotowy
-							set {_config::name} to single value "blocks.%{_block}%.%arg 6%.name" get of "plugins/Skript/superdrops/config.yml"
-							set {_config::item} to single value "blocks.%{_block}%.%arg 6%.item" get of "plugins/Skript/superdrops/config.yml" parsed as itemtype
-							set {_config::itemsmelted} to single value "blocks.%{_block}%.%arg 6%.itemsmelted" get of "plugins/Skript/superdrops/config.yml" parsed as itemtype
-							set {_config::chance} to single value "blocks.%{_block}%.%arg 6%.chance" get of "plugins/Skript/superdrops/config.yml" parsed as number
-							set {_config::tools::*} to value list "blocks.%{_block}%.%arg 6%.tools" get of "plugins/Skript/superdrops/config.yml"
-							set {_config::biomes::*} to value list "blocks.%{_block}%.%arg 6%.biomes" get of "plugins/Skript/superdrops/config.yml"
-							set {_config::heightmin} to single value "blocks.%{_block}%.%arg 6%.heightmin" get of "plugins/Skript/superdrops/config.yml" parsed as integer
-							set {_config::heightmax} to single value "blocks.%{_block}%.%arg 6%.heightmax" get of "plugins/Skript/superdrops/config.yml" parsed as integer
+							set {_config::name} to single value "blocks.%{_block}%.%arg 6%.name" get of "{@directory}/config.yml"
+							set {_config::item} to single value "blocks.%{_block}%.%arg 6%.item" get of "{@directory}/config.yml" parsed as itemtype
+							set {_config::itemsmelted} to single value "blocks.%{_block}%.%arg 6%.itemsmelted" get of "{@directory}/config.yml" parsed as itemtype
+							set {_config::chance} to single value "blocks.%{_block}%.%arg 6%.chance" get of "{@directory}/config.yml" parsed as number
+							set {_config::tools::*} to value list "blocks.%{_block}%.%arg 6%.tools" get of "{@directory}/config.yml"
+							set {_config::biomes::*} to value list "blocks.%{_block}%.%arg 6%.biomes" get of "{@directory}/config.yml"
+							set {_config::heightmin} to single value "blocks.%{_block}%.%arg 6%.heightmin" get of "{@directory}/config.yml" parsed as integer
+							set {_config::heightmax} to single value "blocks.%{_block}%.%arg 6%.heightmax" get of "{@directory}/config.yml" parsed as integer
 							set {_realchance} to {_config::chance}*{_multiplier}
 							{_realchance} is greater than 100:
 								set {_realchance} to 100
@@ -163,7 +164,7 @@ command /superdropsmenu <player> [<text>] [<text>] [<text>] [<text>] [<text>]:
 								format slot 24 of player-arg with ladder named "&6&lMax height" with lore "&c%{_config::heightmax}%" to be unstealable
 			arg 3 is "entities":
 				arg 4 is not set:
-					set {_itemlist::*} to configuration section "mobs" get of "plugins/Skript/superdrops/config.yml"
+					set {_itemlist::*} to configuration section "mobs" get of "{@directory}/config.yml"
 					set {_slot} to 0
 					open chest with 5 rows named "%coloured {_menuconfig::tag}%" to player-arg
 					wait 1 tick
@@ -190,13 +191,13 @@ command /superdropsmenu <player> [<text>] [<text>] [<text>] [<text>] [<text>]:
 							format slot 4 of player-arg with arrow named "%coloured {_menuconfig::back}%" to close then run "superdropsmenu %player-arg% chance entities %arg 4%"
 							set {_slot} to 0
 							set {_mob} to arg 4 parsed as entity type
-							set {_basiclist::*} to configuration section "mobs.%{_mob}%" get of "plugins/Skript/superdrops/config.yml"
+							set {_basiclist::*} to configuration section "mobs.%{_mob}%" get of "{@directory}/config.yml"
 							loop {_basiclist::*}:
 								loop-value isn't "xp":
 									set {_itemlist::%loop-index%} to loop-value
 							loop {_itemlist::*}:
-								set {_config::name} to single value "mobs.%{_mob}%.%loop-value%.name" get of "plugins/Skript/superdrops/config.yml"
-								set {_config::item} to single value "mobs.%{_mob}%.%loop-value%.item" get of "plugins/Skript/superdrops/config.yml" parsed as itemtype
+								set {_config::name} to single value "mobs.%{_mob}%.%loop-value%.name" get of "{@directory}/config.yml"
+								set {_config::item} to single value "mobs.%{_mob}%.%loop-value%.item" get of "{@directory}/config.yml" parsed as itemtype
 								format slot {_slot}+9 of player-arg with {_config::item} named "%coloured {_config::name}%" to close then run "superdropsmenu %player-arg% chance entities %arg 4% %arg 5% %loop-value%"
 								add 1 to {_slot}
 						else:
@@ -205,24 +206,24 @@ command /superdropsmenu <player> [<text>] [<text>] [<text>] [<text>] [<text>]:
 							format slot 4 of player-arg with arrow named "%coloured {_menuconfig::back}%" to close then run "superdropsmenu %player-arg% chance entities %arg 4%"
 							set {_mob} to arg 4 parsed as entity type
 							set {_multiplier} to 1
-							set {_permissionslist::*} to configuration section "multipliers.permissions" get of "plugins/Skript/superdrops/config.yml"
+							set {_permissionslist::*} to configuration section "multipliers.permissions" get of "{@directory}/config.yml"
 							loop {_permissionslist::*}:
 								if player-arg has permission "sd.mp.mobs.%loop-value%":
-									set {_permission} to single value "multipliers.permissions.%loop-value%" get of "plugins/Skript/superdrops/config.yml" parsed as number
+									set {_permission} to single value "multipliers.permissions.%loop-value%" get of "{@directory}/config.yml" parsed as number
 									set {_multiplier} to {_multiplier}*{_permission}
 									exit loop
-							set {_turbodrop} to single value "multipliers.other.turbodrop" get of "plugins/Skript/superdrops/config.yml" parsed as number
+							set {_turbodrop} to single value "multipliers.other.turbodrop" get of "{@directory}/config.yml" parsed as number
 							if {_turbodrop} is set:
 								set {_multiplier} to {_multiplier}*{_turbodrop}
-							set {_fortunemulti} to single value "multipliers.fortune.%arg 5%" get of "plugins/Skript/superdrops/config.yml" parsed as number
+							set {_fortunemulti} to single value "multipliers.fortune.%arg 5%" get of "{@directory}/config.yml" parsed as number
 							set {_multiplier} to {_multiplier}*{_fortunemulti}
 							set {_multiplier} to {_multiplier} parsed as number #gotowy
-							set {_config::name} to single value "mobs.%{_mob}%.%arg 6%.name" get of "plugins/Skript/superdrops/config.yml"
-							set {_config::item} to single value "mobs.%{_mob}%.%arg 6%.item" get of "plugins/Skript/superdrops/config.yml" parsed as itemtype
-							set {_config::itemsmelted} to single value "mobs.%{_mob}%.%arg 6%.itemsmelted" get of "plugins/Skript/superdrops/config.yml" parsed as itemtype
-							set {_config::chance} to single value "mobs.%{_mob}%.%arg 6%.chance" get of "plugins/Skript/superdrops/config.yml" parsed as number
-							set {_config::tools::*} to value list "mobs.%{_mob}%.%arg 6%.tools" get of "plugins/Skript/superdrops/config.yml"
-							set {_config::biomes::*} to value list "mobs.%{_mob}%.%arg 6%.biomes" get of "plugins/Skript/superdrops/config.yml"
+							set {_config::name} to single value "mobs.%{_mob}%.%arg 6%.name" get of "{@directory}/config.yml"
+							set {_config::item} to single value "mobs.%{_mob}%.%arg 6%.item" get of "{@directory}/config.yml" parsed as itemtype
+							set {_config::itemsmelted} to single value "mobs.%{_mob}%.%arg 6%.itemsmelted" get of "{@directory}/config.yml" parsed as itemtype
+							set {_config::chance} to single value "mobs.%{_mob}%.%arg 6%.chance" get of "{@directory}/config.yml" parsed as number
+							set {_config::tools::*} to value list "mobs.%{_mob}%.%arg 6%.tools" get of "{@directory}/config.yml"
+							set {_config::biomes::*} to value list "mobs.%{_mob}%.%arg 6%.biomes" get of "{@directory}/config.yml"
 							set {_realchance} to {_config::chance}*{_multiplier}
 							{_realchance} is greater than 100:
 								set {_realchance} to 100
@@ -252,13 +253,13 @@ command /superdropsmenu <player> [<text>] [<text>] [<text>] [<text>] [<text>]:
 						wait 1 tick
 						format slot 4 of player-arg with arrow named "%coloured {_menuconfig::back}%" to close then run "superdropsmenu %player-arg% chance fishing fishing"
 						set {_slot} to 0
-						set {_basiclist::*} to configuration section "fishing" get of "plugins/Skript/superdrops/config.yml"
+						set {_basiclist::*} to configuration section "fishing" get of "{@directory}/config.yml"
 						loop {_basiclist::*}:
 							loop-value isn't "xp":
 								set {_itemlist::%loop-index%} to loop-value
 						loop {_itemlist::*}:
-							set {_config::name} to single value "fishing.%loop-value%.name" get of "plugins/Skript/superdrops/config.yml"
-							set {_config::item} to single value "fishing.%loop-value%.item" get of "plugins/Skript/superdrops/config.yml" parsed as itemtype
+							set {_config::name} to single value "fishing.%loop-value%.name" get of "{@directory}/config.yml"
+							set {_config::item} to single value "fishing.%loop-value%.item" get of "{@directory}/config.yml" parsed as itemtype
 							format slot {_slot}+9 of player-arg with {_config::item} named "%coloured {_config::name}%" to close then run "superdropsmenu %player-arg% chance fishing fishing %arg 5% %loop-value%"
 							add 1 to {_slot}
 					else:
@@ -267,24 +268,24 @@ command /superdropsmenu <player> [<text>] [<text>] [<text>] [<text>] [<text>]:
 						format slot 4 of player-arg with arrow named "%coloured {_menuconfig::back}%" to close then run "superdropsmenu %player-arg% chance fishing %arg 4%"
 						set {_mob} to arg 4 parsed as entity type
 						set {_multiplier} to 1
-						set {_permissionslist::*} to configuration section "multipliers.permissions" get of "plugins/Skript/superdrops/config.yml"
+						set {_permissionslist::*} to configuration section "multipliers.permissions" get of "{@directory}/config.yml"
 						loop {_permissionslist::*}:
 							if player-arg has permission "sd.mp.fishing.%loop-value%":
-								set {_permission} to single value "multipliers.permissions.%loop-value%" get of "plugins/Skript/superdrops/config.yml" parsed as number
+								set {_permission} to single value "multipliers.permissions.%loop-value%" get of "{@directory}/config.yml" parsed as number
 								set {_multiplier} to {_multiplier}*{_permission}
 								exit loop
-						set {_turbodrop} to single value "multipliers.other.turbodrop" get of "plugins/Skript/superdrops/config.yml" parsed as number
+						set {_turbodrop} to single value "multipliers.other.turbodrop" get of "{@directory}/config.yml" parsed as number
 						if {_turbodrop} is set:
 							set {_multiplier} to {_multiplier}*{_turbodrop}
-						set {_fortunemulti} to single value "multipliers.fortune.%arg 5%" get of "plugins/Skript/superdrops/config.yml" parsed as number
+						set {_fortunemulti} to single value "multipliers.fortune.%arg 5%" get of "{@directory}/config.yml" parsed as number
 						set {_multiplier} to {_multiplier}*{_fortunemulti}
 						set {_multiplier} to {_multiplier} parsed as number #gotowy
-						set {_config::name} to single value "fishing.%arg 6%.name" get of "plugins/Skript/superdrops/config.yml"
-						set {_config::item} to single value "fishing.%arg 6%.item" get of "plugins/Skript/superdrops/config.yml" parsed as itemtype
-						set {_config::itemsmelted} to single value "fishing.%arg 6%.itemsmelted" get of "plugins/Skript/superdrops/config.yml" parsed as itemtype
-						set {_config::chance} to single value "fishing.%arg 6%.chance" get of "plugins/Skript/superdrops/config.yml" parsed as number
-						set {_config::tools::*} to value list "fishing.%arg 6%.tools" get of "plugins/Skript/superdrops/config.yml"
-						set {_config::biomes::*} to value list "fishing.%arg 6%.biomes" get of "plugins/Skript/superdrops/config.yml"
+						set {_config::name} to single value "fishing.%arg 6%.name" get of "{@directory}/config.yml"
+						set {_config::item} to single value "fishing.%arg 6%.item" get of "{@directory}/config.yml" parsed as itemtype
+						set {_config::itemsmelted} to single value "fishing.%arg 6%.itemsmelted" get of "{@directory}/config.yml" parsed as itemtype
+						set {_config::chance} to single value "fishing.%arg 6%.chance" get of "{@directory}/config.yml" parsed as number
+						set {_config::tools::*} to value list "fishing.%arg 6%.tools" get of "{@directory}/config.yml"
+						set {_config::biomes::*} to value list "fishing.%arg 6%.biomes" get of "{@directory}/config.yml"
 						set {_realchance} to {_config::chance}*{_multiplier}
 						{_realchance} is greater than 100:
 							set {_realchance} to 100
@@ -308,17 +309,18 @@ command /superdropsmenu <player> [<text>] [<text>] [<text>] [<text>] [<text>]:
 					open chest with 6 rows named "%coloured {_menuconfig::tag}%" to player-arg
 					wait 1 tick
 					format slot 4 of player-arg with arrow named "%coloured {_menuconfig::back}%" to close then run "superdropsmenu %player-arg%"
-					set {_list::*} to configuration section "dropped.%arg 3%" get of "plugins/Skript/superdrops/stats.yml"
+					set {_list::*} to configuration section "dropped.%arg 3%" get of "{@directory}/stats.yml"
+					set {_itemname} to single value "menu.clicktoshowtop" get of "{@directory}/config.yml"
 					loop {_list::*}:
-						format slot {_slot}+9 of player-arg with (loop-value parsed as item) named "&6Click to show top10" to close then run "superdropstop %player-arg% %arg 3% %loop-value%"
+						format slot {_slot}+9 of player-arg with (loop-value parsed as item) named "%coloured {_itemname}%" to close then run "superdropstop %player-arg% %arg 3% %loop-value%"
 						add 1 to {_slot}
 
 command /superdropstop <player> <text> <text>:
 	executable by: console
 	trigger:
-		set {_top::*} to configuration section "dropped.%arg 2%.%arg 3%" get of "plugins/Skript/superdrops/stats.yml"
+		set {_top::*} to configuration section "dropped.%arg 2%.%arg 3%" get of "{@directory}/stats.yml"
 		loop {_top::*}:
-			set {_score} to single value "dropped.%arg 2%.%arg 3%.%loop-value%" get of "plugins/Skript/superdrops/stats.yml"
+			set {_score} to single value "dropped.%arg 2%.%arg 3%.%loop-value%" get of "{@directory}/stats.yml"
 			set {_topready::%loop-value%} to {_score} parsed as number
 		loop (size of {_topready::*}) times:
 			set {_wynik} to 0
@@ -328,7 +330,7 @@ command /superdropstop <player> <text> <text>:
 					set {_nick} to loop-index
 			clear {_topready::%{_nick}%}
 			{_nick} is set:
-				set {_format} to single value "messages.topformat" get of "plugins/Skript/superdrops/config.yml"
+				set {_format} to single value "messages.topformat" get of "{@directory}/config.yml"
 				replace all "{NUMBER}" with "%loop-number%" in {_format}
 				replace all "{NICK}" with "%{_nick}%" in {_format}
 				replace all "{SCORE}" with "%{_wynik}%" in {_format}
@@ -343,10 +345,10 @@ on break:
 	set {_block} to type of event-block
 	set {_multiplier} to 1
 #=========={ PERMISSIONS }==========#
-	set {_permissionslist::*} to configuration section "multipliers.permissions" get of "plugins/Skript/superdrops/config.yml"
+	set {_permissionslist::*} to configuration section "multipliers.permissions" get of "{@directory}/config.yml"
 	loop {_permissionslist::*}:
 		if player has permission "sd.mp.blocks.%loop-value%":
-			set {_permission} to single value "multipliers.permissions.%loop-value%" get of "plugins/Skript/superdrops/config.yml" parsed as number
+			set {_permission} to single value "multipliers.permissions.%loop-value%" get of "{@directory}/config.yml" parsed as number
 			set {_multiplier} to {_multiplier}*{_permission}
 			exit loop
 #=========={ SUPER TOOLS }==========#
@@ -358,38 +360,38 @@ on break:
 			set {_smelting.mode} to false
 #----------{ fortune 10 }----------#
 		player's tool is enchanted with Fortune 10:
-			set {_multipliers::super} to single value "multipliers.other.super" get of "plugins/Skript/superdrops/config.yml" parsed as number
+			set {_multipliers::super} to single value "multipliers.other.super" get of "{@directory}/config.yml" parsed as number
 			set {_multiplier} to {_multiplier}*{_multipliers::super}
 #=========={ FORTUNES }==========#
 	player's tool is enchanted with Fortune 3:
-		set {_multipliers::fortune} to single value "multipliers.fortune.3" get of "plugins/Skript/superdrops/config.yml" parsed as number
+		set {_multipliers::fortune} to single value "multipliers.fortune.3" get of "{@directory}/config.yml" parsed as number
 		set {_multiplier} to {_multiplier}*{_multipliers::fortune}
 	player's tool is enchanted with Fortune 2:
-		set {_multipliers::fortune} to single value "multipliers.fortune.2" get of "plugins/Skript/superdrops/config.yml" parsed as number
+		set {_multipliers::fortune} to single value "multipliers.fortune.2" get of "{@directory}/config.yml" parsed as number
 		set {_multiplier} to {_multiplier}*{_multipliers::fortune}
 	player's tool is enchanted with Fortune 1:
-		set {_multipliers::fortune} to single value "multipliers.fortune.1" get of "plugins/Skript/superdrops/config.yml" parsed as number
+		set {_multipliers::fortune} to single value "multipliers.fortune.1" get of "{@directory}/config.yml" parsed as number
 		set {_multiplier} to {_multiplier}*{_multipliers::fortune}
 #=========={ TURBODROP }==========#
-	set {_multipliers::turbodrop} to single value "multipliers.other.turbodrop" get of "plugins/Skript/superdrops/config.yml" parsed as number
+	set {_multipliers::turbodrop} to single value "multipliers.other.turbodrop" get of "{@directory}/config.yml" parsed as number
 	if {_multipliers::turbodrop} is set:
 		set {_multiplier} to {_multiplier}*{_multipliers::turbodrop}
 #=========={ CONFIG }==========#
-	set {_config::xp} to single value "blocks.%{_block}%.xp" get of "plugins/Skript/superdrops/config.yml" parsed as number
-	set {_basiclist::*} to configuration section "blocks.%{_block}%" get of "plugins/Skript/superdrops/config.yml"
+	set {_config::xp} to single value "blocks.%{_block}%.xp" get of "{@directory}/config.yml" parsed as number
+	set {_basiclist::*} to configuration section "blocks.%{_block}%" get of "{@directory}/config.yml"
 	loop {_basiclist::*}:
 		loop-value isn't "xp":
 			set {_itemlist::%loop-index%} to loop-value
 	loop {_itemlist::*}:
 		{_smelting.mode} is true:
-			set {_config::item} to single value "blocks.%{_block}%.%loop-value%.itemsmelted" get of "plugins/Skript/superdrops/config.yml" parsed as itemtype
+			set {_config::item} to single value "blocks.%{_block}%.%loop-value%.itemsmelted" get of "{@directory}/config.yml" parsed as itemtype
 		else:
-			set {_config::item} to single value "blocks.%{_block}%.%loop-value%.item" get of "plugins/Skript/superdrops/config.yml" parsed as itemtype
-		set {_config::chance} to single value "blocks.%{_block}%.%loop-value%.chance" get of "plugins/Skript/superdrops/config.yml" parsed as integer
-		set {_config::tools::*} to value list "blocks.%{_block}%.%loop-value%.tools" get of "plugins/Skript/superdrops/config.yml"
-		set {_config::biomes::*} to value list "blocks.%{_block}%.%loop-value%.biomes" get of "plugins/Skript/superdrops/config.yml"
-		set {_config::heightmin} to single value "blocks.%{_block}%.%loop-value%.heightmin" get of "plugins/Skript/superdrops/config.yml" parsed as integer
-		set {_config::heightmax} to single value "blocks.%{_block}%.%loop-value%.heightmax" get of "plugins/Skript/superdrops/config.yml" parsed as integer
+			set {_config::item} to single value "blocks.%{_block}%.%loop-value%.item" get of "{@directory}/config.yml" parsed as itemtype
+		set {_config::chance} to single value "blocks.%{_block}%.%loop-value%.chance" get of "{@directory}/config.yml" parsed as integer
+		set {_config::tools::*} to value list "blocks.%{_block}%.%loop-value%.tools" get of "{@directory}/config.yml"
+		set {_config::biomes::*} to value list "blocks.%{_block}%.%loop-value%.biomes" get of "{@directory}/config.yml"
+		set {_config::heightmin} to single value "blocks.%{_block}%.%loop-value%.heightmin" get of "{@directory}/config.yml" parsed as integer
+		set {_config::heightmax} to single value "blocks.%{_block}%.%loop-value%.heightmax" get of "{@directory}/config.yml" parsed as integer
 #=========={ DROPPING }==========#
 		loop {_config::xp} times:
 			give 1 xp to player
@@ -410,14 +412,14 @@ on break:
 						if {_realchance} is greater than 1:
 							set {_realchance} to 1
 						chance of {_realchance}:
-							set {_config::message} to single value "messages.dropped" get of "plugins/Skript/superdrops/config.yml"
+							set {_config::message} to single value "messages.dropped" get of "{@directory}/config.yml"
 							drop {_config::item} at event-block
 							replace all "{ITEM}" with "%{_config::item}%" in {_config::message}
 							send "%coloured {_config::message}%"
 							set {_item} to {_config::item} parsed as string
-							set {_score} to single value "dropped.blocks.%{_config::item}%.%player%" get of "plugins/Skript/superdrops/stats.yml" parsed as number
+							set {_score} to single value "dropped.blocks.%{_config::item}%.%player%" get of "{@directory}/stats.yml" parsed as number
 							add 1 to {_score}
-							set "dropped.blocks.%{_config::item}%.%player%" to "%{_score}%" in yml file "plugins/Skript/superdrops/stats.yml"
+							set "dropped.blocks.%{_config::item}%.%player%" to "%{_score}%" in yml file "{@directory}/stats.yml"
 
 #==============================#
 #==============================#
@@ -429,10 +431,10 @@ on death:
 	set {_mob} to {_mob} parsed as entity type
 	set {_multiplier} to 1
 #=========={ PERMISSIONS }==========#
-	set {_permissionslist::*} to configuration section "multipliers.permissions" get of "plugins/Skript/superdrops/config.yml"
+	set {_permissionslist::*} to configuration section "multipliers.permissions" get of "{@directory}/config.yml"
 	loop {_permissionslist::*}:
 		if attacker has permission "sd.mp.mobs.%loop-value%":
-			set {_permission} to single value "multipliers.permissions.%loop-value%" get of "plugins/Skript/superdrops/config.yml" parsed as number
+			set {_permission} to single value "multipliers.permissions.%loop-value%" get of "{@directory}/config.yml" parsed as number
 			set {_multiplier} to {_multiplier}*{_permission}
 			exit loop
 #=========={ SUPER TOOLS }==========#
@@ -444,36 +446,36 @@ on death:
 			set {_smelting.mode} to false
 #----------{ fortune 10 }----------#
 		player's tool is enchanted with Fortune 10:
-			set {_multipliers::super} to single value "multipliers.other.super" get of "plugins/Skript/superdrops/config.yml" parsed as number
+			set {_multipliers::super} to single value "multipliers.other.super" get of "{@directory}/config.yml" parsed as number
 			set {_multiplier} to {_multiplier}*{_multipliers::super}
 #=========={ FORTUNES }==========#
 	attacker's tool is enchanted with Fortune 3:
-		set {_multipliers::fortune} to single value "multipliers.fortune.3" get of "plugins/Skript/superdrops/config.yml" parsed as number
+		set {_multipliers::fortune} to single value "multipliers.fortune.3" get of "{@directory}/config.yml" parsed as number
 		set {_multiplier} to {_multiplier}*{_multipliers::fortune}
 	attacker's tool is enchanted with Fortune 2:
-		set {_multipliers::fortune} to single value "multipliers.fortune.2" get of "plugins/Skript/superdrops/config.yml" parsed as number
+		set {_multipliers::fortune} to single value "multipliers.fortune.2" get of "{@directory}/config.yml" parsed as number
 		set {_multiplier} to {_multiplier}*{_multipliers::fortune}
 	attacker's tool is enchanted with Fortune 1:
-		set {_multipliers::fortune} to single value "multipliers.fortune.1" get of "plugins/Skript/superdrops/config.yml" parsed as number
+		set {_multipliers::fortune} to single value "multipliers.fortune.1" get of "{@directory}/config.yml" parsed as number
 		set {_multiplier} to {_multiplier}*{_multipliers::fortune}
 #=========={ TURBODROP }==========#
-	set {_multipliers::turbodrop} to single value "multipliers.other.turbodrop" get of "plugins/Skript/superdrops/config.yml" parsed as number
+	set {_multipliers::turbodrop} to single value "multipliers.other.turbodrop" get of "{@directory}/config.yml" parsed as number
 	if {_multipliers::turbodrop} is set:
 		set {_multiplier} to {_multiplier}*{_multipliers::turbodrop}
 #=========={ CONFIG }==========#
-	set {_config::xp} to single value "mobs.%{_mob}%.xp" get of "plugins/Skript/superdrops/config.yml" parsed as number
-	set {_basiclist::*} to configuration section "mobs.%{_mob}%" get of "plugins/Skript/superdrops/config.yml"
+	set {_config::xp} to single value "mobs.%{_mob}%.xp" get of "{@directory}/config.yml" parsed as number
+	set {_basiclist::*} to configuration section "mobs.%{_mob}%" get of "{@directory}/config.yml"
 	loop {_basiclist::*}:
 		loop-value isn't "xp":
 			set {_itemlist::%loop-index%} to loop-value
 	loop {_itemlist::*}:
 		{_smelting.mode} is true:
-			set {_config::item} to single value "mobs.%{_mob}%.%loop-value%.itemsmelted" get of "plugins/Skript/superdrops/config.yml" parsed as itemtype
+			set {_config::item} to single value "mobs.%{_mob}%.%loop-value%.itemsmelted" get of "{@directory}/config.yml" parsed as itemtype
 		else:
-			set {_config::item} to single value "mobs.%{_mob}%.%loop-value%.item" get of "plugins/Skript/superdrops/config.yml" parsed as itemtype
-		set {_config::chance} to single value "mobs.%{_mob}%.%loop-value%.chance" get of "plugins/Skript/superdrops/config.yml" parsed as integer
-		set {_config::tools::*} to value list "mobs.%{_mob}%.%loop-value%.tools" get of "plugins/Skript/superdrops/config.yml"
-		set {_config::biomes::*} to value list "mobs.%{_mob}%.%loop-value%.biomes" get of "plugins/Skript/superdrops/config.yml"
+			set {_config::item} to single value "mobs.%{_mob}%.%loop-value%.item" get of "{@directory}/config.yml" parsed as itemtype
+		set {_config::chance} to single value "mobs.%{_mob}%.%loop-value%.chance" get of "{@directory}/config.yml" parsed as integer
+		set {_config::tools::*} to value list "mobs.%{_mob}%.%loop-value%.tools" get of "{@directory}/config.yml"
+		set {_config::biomes::*} to value list "mobs.%{_mob}%.%loop-value%.biomes" get of "{@directory}/config.yml"
 #=========={ DROPPING }==========#
 		loop {_config::xp} times:
 			give 1 xp to attacker
@@ -492,13 +494,13 @@ on death:
 				if {_realchance} is greater than 1:
 					set {_realchance} to 1
 				chance of {_realchance}:
-					set {_config::message} to single value "messages.dropped" get of "plugins/Skript/superdrops/config.yml"
+					set {_config::message} to single value "messages.dropped" get of "{@directory}/config.yml"
 					drop {_config::item} at victim
 					replace all "{ITEM}" with "%{_config::item}%" in {_config::message}
 					send "%coloured {_config::message}%" to attacker
-					set {_score} to single value "dropped.mobs.%{_config::item}%.%attacker%" get of "plugins/Skript/superdrops/stats.yml" parsed as number
+					set {_score} to single value "dropped.mobs.%{_config::item}%.%attacker%" get of "{@directory}/stats.yml" parsed as number
 					add 1 to {_score}
-					set "dropped.mobs.%{_config::item}%.%attacker%" to "%{_score}%" in yml file "plugins/Skript/superdrops/stats.yml"
+					set "dropped.mobs.%{_config::item}%.%attacker%" to "%{_score}%" in yml file "{@directory}/stats.yml"
 
 #==============================#
 #==============================#
@@ -508,10 +510,10 @@ on death:
 on fishing state of caught fish:
 	set {_multiplier} to 1
 #=========={ PERMISSIONS }==========#
-	set {_permissionslist::*} to configuration section "multipliers.permissions" get of "plugins/Skript/superdrops/config.yml"
+	set {_permissionslist::*} to configuration section "multipliers.permissions" get of "{@directory}/config.yml"
 	loop {_permissionslist::*}:
 		if player has permission "sd.mp.fishing.%loop-value%":
-			set {_permission} to single value "multipliers.permissions.%loop-value%" get of "plugins/Skript/superdrops/config.yml" parsed as number
+			set {_permission} to single value "multipliers.permissions.%loop-value%" get of "{@directory}/config.yml" parsed as number
 			set {_multiplier} to {_multiplier}*{_permission}
 			exit loop
 #=========={ SUPER TOOLS }==========#
@@ -523,35 +525,35 @@ on fishing state of caught fish:
 			set {_smelting.mode} to false
 #----------{ fortune 10 }----------#
 		player's tool is enchanted with Luck of the Sea 10:
-			set {_multipliers::super} to single value "multipliers.other.super" get of "plugins/Skript/superdrops/config.yml" parsed as number
+			set {_multipliers::super} to single value "multipliers.other.super" get of "{@directory}/config.yml" parsed as number
 			set {_multiplier} to {_multiplier}*{_multipliers::super}
 #=========={ FORTUNES }==========#
 	player's tool is enchanted with Luck of the Sea 3:
-		set {_multipliers::fortune} to single value "multipliers.fortune.3" get of "plugins/Skript/superdrops/config.yml" parsed as number
+		set {_multipliers::fortune} to single value "multipliers.fortune.3" get of "{@directory}/config.yml" parsed as number
 		set {_multiplier} to {_multiplier}*{_multipliers::fortune}
 	player's tool is enchanted with Luck of the Sea 2:
-		set {_multipliers::fortune} to single value "multipliers.fortune.2" get of "plugins/Skript/superdrops/config.yml" parsed as number
+		set {_multipliers::fortune} to single value "multipliers.fortune.2" get of "{@directory}/config.yml" parsed as number
 		set {_multiplier} to {_multiplier}*{_multipliers::fortune}
 	player's tool is enchanted with Luck of the Sea 1:
-		set {_multipliers::fortune} to single value "multipliers.fortune.1" get of "plugins/Skript/superdrops/config.yml" parsed as number
+		set {_multipliers::fortune} to single value "multipliers.fortune.1" get of "{@directory}/config.yml" parsed as number
 		set {_multiplier} to {_multiplier}*{_multipliers::fortune}
 #=========={ TURBODROP }==========#
-	set {_multipliers::turbodrop} to single value "multipliers.other.turbodrop" get of "plugins/Skript/superdrops/config.yml" parsed as number
+	set {_multipliers::turbodrop} to single value "multipliers.other.turbodrop" get of "{@directory}/config.yml" parsed as number
 	if {_multipliers::turbodrop} is set:
 		set {_multiplier} to {_multiplier}*{_multipliers::turbodrop}
 #=========={ CONFIG }==========#
-	set {_config::xp} to single value "fishing.xp" get of "plugins/Skript/superdrops/config.yml" parsed as number
-	set {_basiclist::*} to configuration section "fishing" get of "plugins/Skript/superdrops/config.yml"
+	set {_config::xp} to single value "fishing.xp" get of "{@directory}/config.yml" parsed as number
+	set {_basiclist::*} to configuration section "fishing" get of "{@directory}/config.yml"
 	loop {_basiclist::*}:
 		loop-value isn't "xp":
 			set {_itemlist::%loop-index%} to loop-value
 	loop {_itemlist::*}:
 		{_smelting.mode} is true:
-			set {_config::item} to single value "fishing.%loop-value%.itemsmelted" get of "plugins/Skript/superdrops/config.yml" parsed as itemtype
+			set {_config::item} to single value "fishing.%loop-value%.itemsmelted" get of "{@directory}/config.yml" parsed as itemtype
 		else:
-			set {_config::item} to single value "fishing.%loop-value%.item" get of "plugins/Skript/superdrops/config.yml" parsed as itemtype
-		set {_config::chance} to single value "fishing.%loop-value%.chance" get of "plugins/Skript/superdrops/config.yml" parsed as integer
-		set {_config::biomes::*} to value list "fishing.%loop-value%.biomes" get of "plugins/Skript/superdrops/config.yml"
+			set {_config::item} to single value "fishing.%loop-value%.item" get of "{@directory}/config.yml" parsed as itemtype
+		set {_config::chance} to single value "fishing.%loop-value%.chance" get of "{@directory}/config.yml" parsed as integer
+		set {_config::biomes::*} to value list "fishing.%loop-value%.biomes" get of "{@directory}/config.yml"
 #=========={ DROPPING }==========#
 		loop {_config::xp} times:
 			give 1 xp to player
@@ -568,35 +570,28 @@ on fishing state of caught fish:
 			chance of {_realchance}:
 			#	cancel event
 			#	damage player's tool by 1
-				set {_config::message} to single value "messages.dropped" get of "plugins/Skript/superdrops/config.yml"
+				set {_config::message} to single value "messages.dropped" get of "{@directory}/config.yml"
 				drop {_config::item} at event-location
 				replace all "{ITEM}" with "%{_config::item}%" in {_config::message}
 				send "%coloured {_config::message}%"
 				set {_topitem} to {_config::item} parsed as string
-				set {_score} to single value "dropped.fishing.%{_config::item}%.%player%" get of "plugins/Skript/superdrops/stats.yml" parsed as number
+				set {_score} to single value "dropped.fishing.%{_config::item}%.%player%" get of "{@directory}/config.yml" parsed as number
 				add 1 to {_score}
-				set "dropped.fishing.%{_config::item}%.%player%" to "%{_score}%" in yml file "plugins/Skript/superdrops/stats.yml"
+				set "dropped.fishing.%{_config::item}%.%player%" to "%{_score}%" in yml file "{@directory}/config.yml"
 
 command /sdadmin [<text>]:
 	aliases: superdropsadmin
 	trigger:
 		if player has permission "dropy.admin" or "dropy.*":
-			arg 1 is "odswiez" or "reload":
+			arg 1 is "odswiez" or "reload" or "relaod":
 				execute player command "/sk reload %script%"
-#on click:
-#	set {_block} to type of event-block
-#	loop {superdrops::replace::*}:
-#		if loop-value is {_block}:
-#			set clicked block to {superdrops::replace::%loop-value%::block}
-#			send "%{superdrops::replace::%loop-value%::message}%"
-#		else:
-#			send "nie w configu!"
+
 
 on explode:
 	#cancel event
 	loop blocks in radius 6 of event-location:
 		set {_block} to type of loop-block
-		set {_config::replacewith} to single value "replace.%{_block}%.replacewith" get of "plugins/Skript/superdrops/config.yml" parsed as itemtype
+		set {_config::replacewith} to single value "replace.%{_block}%.replacewith" get of "{@directory}/config.yml" parsed as itemtype
 		{_config::replacewith} is set:
 			set loop-block to {_config::replacewith}
 			broadcast "replaced"
@@ -606,8 +601,8 @@ on explode:
 
 on click:
 	set {_block} to type of event-block
-	set {_config::replacewith} to single value "replace.%{_block}%.replacewith" get of "plugins/Skript/superdrops/config.yml" parsed as itemtype
+	set {_config::replacewith} to single value "replace.%{_block}%.replacewith" get of "{@directory}/config.yml" parsed as itemtype
 	{_config::replacewith} is set:
 		set event-block to {_config::replacewith}
-		set {_config::message} to single value "replace.%{_block}%.message" get of "plugins/Skript/superdrops/config.yml"
+		set {_config::message} to single value "replace.%{_block}%.message" get of "{@directory}/config.yml"
 		send "%coloured {_config::message}%"
