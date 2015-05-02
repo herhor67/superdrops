@@ -1,33 +1,103 @@
 multipliers:
-  vip: '1.3'
-  vip+: '1.5'
+    permissions:
+      mvip+: '1.4'
+      mvip: '1.3'
+      vip+: '1.2'
+      vip: '1.1'
+    fortune:
+      0: '1.0'
+      1: '1.1'
+      2: '1.2'
+      3: '1.3'
+    other:
+      super: '10'
+      turbodrop: '3'
 
-  fortune1: '1.5'
-  fortune2: '2.0'
-  fortune3: '2.5'
-  superkilof: '10'
+messages:
+  # replace name of dropped item with {ITEM}
+  dropped: '&6You have found &c{ITEM}'
+  topformat: '&4{NUMBER}. &6{NICK} - &c{SCORE}'
 
-drop:
+menu:
+  tag: '         &4&lSuperDrops'
+  back: '&4&l<- &7Back'
+  blocks: '&8&lBlocks'
+  entities: '&c&lMobs'
+  fishing: '&6&lFishing'
+  clicktoshow: '&6Click to show drops'
+  clicktoshowtop: '&6Click to show statistics'
+  fortune: '&c&lFortune' #will be shown as eg. &c&lFortune I
+  
+blocks:
   stone:
-    wegiel:
-      name: '&0WĘGIEL       '
-      item: 'coal'
-      itemsmelted: 'coal'
-      chance: '1.6'
-      tool: 'any pickaxe'
+    xp: '1'
+    carbon:
+      name: '&0&lCOAL'
+      item: 'coal item'
+      itemsmelted: 'charcoal'
+      chance: '5'
+      tools:
+        - 'any pickaxe'
+      heightmin: '10'
+      heightmax: '128'
+    daimondz:
+      name: '&b&lDIAMOND'
+      item: 'diamond'
+      itemsmelted: 'diamond'
+      chance: '5'
+      tools:
+        - 'any pickaxe'
       heightmin: '10'
       heightmax: '128'
   netherrack:
-    kwarc:
-      name: '&fQUARTZ       '
-      item: 'quartz'
-      itemsmelted: 'quartz'
-      chance: '3.5'
-      tool: 'any pickaxe'
-      heightmin: '0'
+    xp: '2'
+    prasiolite:
+      name: '&f&lQUARTZ'
+      item: 'quartz item'
+      itemsmelted: 'quartz item'
+      chance: '5'
+      tools:
+        - 'any pickaxe'
+      heightmin: '50'
       heightmax: '128'
 
+mobs:
+  cow:
+    xp: '5'
+    mlego:
+      name: '&f&lMILK'
+      item: 'milk bucket'
+      itemsmelted: 'milk bucket'
+      chance: '1'
+      tools:
+        - 'any sword'
+      biomes:
+        - 'desert'
+        - 'hell'
+        - 'beach'
+        - 'desert hills'
+        - 'jungle'
+        - 'jungle hills'
+  pig:
+    xp: '5'
+    kupa:
+      name: '&6Gunwo'
+      item: 'dirt'
+      itemsmelted: 'dirt'
+      chance: '10'
+      tools:
+        - 'any sword'
+
+fishing:
+  xp: '3'
+  treasure:
+    name: '&fMILK'
+    item: 'milk bucket'
+    itemsmelted: 'milk bucket'
+    chance: '100'
+
 replace:
-  coalore:
-    block: 'stone'
-    message: '%{superdrops:tag}% &cWęgiel wypada ze stone!"
+  coal ore:
+    replacewith: 'stone'
+    message: '&cTen surowiec wypada ze stone!'
+   
