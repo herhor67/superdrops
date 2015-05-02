@@ -586,18 +586,13 @@ command /sdadmin [<text>]:
 			arg 1 is "odswiez" or "reload" or "relaod":
 				execute player command "/sk reload %script%"
 
-
 on explode:
-	#cancel event
 	loop blocks in radius 6 of event-location:
 		set {_block} to type of loop-block
 		set {_config::replacewith} to single value "replace.%{_block}%.replacewith" get of "{@directory}/config.yml" parsed as itemtype
 		{_config::replacewith} is set:
 			set loop-block to {_config::replacewith}
-			broadcast "replaced"
 			clear {_config::replacewith}
-	#uncancel event
-	broadcast "jebs"
 
 on click:
 	set {_block} to type of event-block
