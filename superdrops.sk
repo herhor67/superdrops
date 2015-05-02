@@ -25,6 +25,7 @@ aliases:
 
 on script load:
 	if file "{@directory}/config.yml" doesn't exists:
+		create file "{@directory}/config.yml"
 		download "https://raw.githubusercontent.com/herhor67/superdrops/master/config.yml" to "{@directory}/config.yml"
 #==========#
 	if {@additionalrecipes} is true:
@@ -74,9 +75,11 @@ command /superdropsmenu <player> [<text>] [<text>] [<text>] [<text>] [<text>]:
 		arg 2 is not set:
 			open chest with 2 rows named "%coloured {_menuconfig::tag}%" to player-arg
 			wait 1 tick
+			set {_top} to single value "menu.top" get of "{@directory}/config.yml"
+			set {_chance} to single value "menu.chance" get of "{@directory}/config.yml"
 			format slot 4 of player-arg with arrow named "%coloured {_menuconfig::back}%" to close
-			format slot 11 of player-arg with signblock named "top" to close then run "superdropsmenu %player-arg% top"
-			format slot 15 of player-arg with command block named "chance" to close then run "superdropsmenu %player-arg% chance"
+			format slot 11 of player-arg with signblock named "%coloured {_top}%" to close then run "superdropsmenu %player-arg% top"
+			format slot 15 of player-arg with command block named "%coloured {_chance}%" to close then run "superdropsmenu %player-arg% chance"
 		arg 2 is "chance":
 			arg 3 is not set:
 				open chest with 2 rows named "%coloured {_menuconfig::tag}%" to player-arg
@@ -89,7 +92,7 @@ command /superdropsmenu <player> [<text>] [<text>] [<text>] [<text>] [<text>]:
 				arg 4 is not set:
 					set {_itemlist::*} to configuration section "blocks" get of "{@directory}/config.yml"
 					set {_slot} to 0
-					open chest with 5 rows named "%coloured {_menuconfig::tag}%" to player-arg
+					open chest with 6 rows named "%coloured {_menuconfig::tag}%" to player-arg
 					wait 1 tick
 					format slot 4 of player-arg with arrow named "%coloured {_menuconfig::back}%" to close then run "superdropsmenu %player-arg% chance"
 					loop {_itemlist::*}:
@@ -106,7 +109,7 @@ command /superdropsmenu <player> [<text>] [<text>] [<text>] [<text>] [<text>]:
 						format slot 16 of player-arg with enchanted book named "%coloured {_menuconfig::fortune}% III" to close then run "superdropsmenu %player-arg% chance blocks %arg 4% 3"
 					else:
 						if arg 6 is not set:
-							open chest with 5 rows named "%coloured {_menuconfig::tag}%" to player-arg
+							open chest with 6 rows named "%coloured {_menuconfig::tag}%" to player-arg
 							wait 1 tick
 							format slot 4 of player-arg with arrow named "%coloured {_menuconfig::back}%" to close then run "superdropsmenu %player-arg% chance blocks %arg 4%"
 							set {_slot} to 0
@@ -121,7 +124,7 @@ command /superdropsmenu <player> [<text>] [<text>] [<text>] [<text>] [<text>]:
 								format slot {_slot}+9 of player-arg with {_config::item} named "%coloured {_config::name}%" to close then run "superdropsmenu %player-arg% chance blocks %arg 4% %arg 5% %loop-value%"
 								add 1 to {_slot}
 						else:
-							open chest with 5 rows named "%coloured {_menuconfig::tag}%" to player-arg
+							open chest with 4 rows named "%coloured {_menuconfig::tag}%" to player-arg
 							wait 1 tick
 							format slot 4 of player-arg with arrow named "%coloured {_menuconfig::back}%" to close then run "superdropsmenu %player-arg% chance blocks %arg 4%"
 							set {_block} to arg 4 parsed as itemtype
@@ -166,7 +169,7 @@ command /superdropsmenu <player> [<text>] [<text>] [<text>] [<text>] [<text>]:
 				arg 4 is not set:
 					set {_itemlist::*} to configuration section "mobs" get of "{@directory}/config.yml"
 					set {_slot} to 0
-					open chest with 5 rows named "%coloured {_menuconfig::tag}%" to player-arg
+					open chest with 6 rows named "%coloured {_menuconfig::tag}%" to player-arg
 					wait 1 tick
 					format slot 4 of player-arg with arrow named "%coloured {_menuconfig::back}%" to close then run "superdropsmenu %player-arg% chance"
 					loop {_itemlist::*}:
@@ -201,7 +204,7 @@ command /superdropsmenu <player> [<text>] [<text>] [<text>] [<text>] [<text>]:
 								format slot {_slot}+9 of player-arg with {_config::item} named "%coloured {_config::name}%" to close then run "superdropsmenu %player-arg% chance entities %arg 4% %arg 5% %loop-value%"
 								add 1 to {_slot}
 						else:
-							open chest with 5 rows named "%coloured {_menuconfig::tag}%" to player-arg
+							open chest with 4 rows named "%coloured {_menuconfig::tag}%" to player-arg
 							wait 1 tick
 							format slot 4 of player-arg with arrow named "%coloured {_menuconfig::back}%" to close then run "superdropsmenu %player-arg% chance entities %arg 4%"
 							set {_mob} to arg 4 parsed as entity type
@@ -228,7 +231,7 @@ command /superdropsmenu <player> [<text>] [<text>] [<text>] [<text>] [<text>]:
 							{_realchance} is greater than 100:
 								set {_realchance} to 100
 							set {_item} to {_config::item}
-							{_item} is set: #player chance mobs pig 1
+							{_item} is set:
 								format slot 13 of player-arg with signblock named "%coloured {_config::name}%" to be unstealable
 								format slot 18 of player-arg with 1 of {_item} named "&6&lItem" with lore "&c%{_config::item}%" to be unstealable
 								format slot 19 of player-arg with 1 of {_config::itemsmelted} named "&6&lSmelted item" with lore "&c%{_config::itemsmelted}%" to be unstealable
@@ -263,7 +266,7 @@ command /superdropsmenu <player> [<text>] [<text>] [<text>] [<text>] [<text>]:
 							format slot {_slot}+9 of player-arg with {_config::item} named "%coloured {_config::name}%" to close then run "superdropsmenu %player-arg% chance fishing fishing %arg 5% %loop-value%"
 							add 1 to {_slot}
 					else:
-						open chest with 5 rows named "%coloured {_menuconfig::tag}%" to player-arg
+						open chest with 4 rows named "%coloured {_menuconfig::tag}%" to player-arg
 						wait 1 tick
 						format slot 4 of player-arg with arrow named "%coloured {_menuconfig::back}%" to close then run "superdropsmenu %player-arg% chance fishing %arg 4%"
 						set {_mob} to arg 4 parsed as entity type
