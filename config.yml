@@ -14,13 +14,14 @@ multipliers:
       turbodrop: '3'
 
 messages:
-  # replace name of dropped item with {ITEM}
   dropped: '&6You have found &c{ITEM}'
   topformat: '&4{NUMBER}. &6{NICK} - &c{SCORE}'
 
 menu:
   tag: '         &4&lSuperDrops'
   back: '&4&l<- &7Back'
+  chance: '&cClick to show CHANCE'
+  top: '&cClick to show TOP'
   blocks: '&8&lBlocks'
   entities: '&c&lMobs'
   fishing: '&6&lFishing'
@@ -94,10 +95,10 @@ fishing:
     name: '&fMILK'
     item: 'milk bucket'
     itemsmelted: 'milk bucket'
-    chance: '100'
+    chance: '10'
 
 replace:
   coal ore:
     replacewith: 'stone'
-    message: '&cTen surowiec wypada ze stone!'
+    message: '&cThis item drops from stone!'
    
