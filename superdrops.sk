@@ -1,7 +1,10 @@
-#hercore superdrops
+#hercore hershops
+#================#
+#DO NOT REMOVE OR MODIFY LINES 1-3! #
+
 #=============================================#
 #   Skrypt napisany przez: herhor67           #
-#   Nazwa: SuperDrops                         #
+#   Nazwa: HerSHOPS                           #
 #=============================================#
 #  Licencja skryptu:                          #
 # * Nie zezwalam na:                          #
@@ -10,611 +13,654 @@
 # - Używanie kodu skryptu w swoich skryptach! #
 # - Zarabianie na skrypcie!                   #
 # - Wrzucanie skryptu do internetu!           #
-# - Dodawanie kodu na swoja potrzebe!         #
-# - Modyfikowanie kodu na swoja potrzebe!     #
 #=============================================#
-#don't modify aliases
-aliases:
-	diament = 57
-	diamentitem = 264
-	br = 369
-	signblock = 323
-#you can modify options
+
+#Przykładowa tabliczka
+#     ,,,,,,,,,,,,,,,,,,
+#     |   [HerSHOPS]   |
+#     |      #123      |
+#     |    Otwarte     | <=> Zamknięte
+#     |                |  => Do odnowienia => Na sprzedaż
+#     ``````````````````
+
 options:
-	additionalrecipes: true
-	directory: plugins/SuperDrops
+# teksty #
+	line1: &7&l[&4&lHer&1&lSHOPS&7&l]# linia pierwsza na tabliczce
+	tag: &7&l[&4&lHer&1&lSHOPS&7&l]# tag w wiadomościach, nie zmieniaj ;_;
+	cpanel: &6&lControlPanel# tekst w GUI
+	buyshop: &6&lKup sklep# tekst w GUI
+	opened: &aOtwarte# linia 3 na tabliczce
+	closed: &cZamknięte# linia 3 na tabliczce
+	renewable: &eDo odnowienia# linia 4 na tabliczce
+	forsale: &eNa sprzedaż# linia 4 na tabliczce
 
-#don't modify anything below this line
+# liczby #
+	cenazarzad: 20# ile ma kosztować jeden rząd slotów, przy kupowaniu i odnawianiu
+	mnoznikczasu: 7*24*60# 7d * 24h * 60min; jak długo sklep ma być aktywny po kupieniu (minuty)
+	maxdooplacenia: 24*60# 24h * 60min; ile przed usunięciem można go przedłużyć (zapobiega zajmowaniu na bardzo długi czas, minuty)
+	displayedtime: 24 godziny# ta sama liczba tylko w "normalnym" formacie :P
+	defaultrows: 1# ile rzędów w sklepie przy kupieniu
+	maxmessages: 20# ile wiadomości wyświetlać na raz
+	
+# ilość itemów #
+	slot0: 1
+	slot1: 2
+	slot2: 5
+	slot3: 10
+	slot4: 16
+	slot5: 20
+	slot6: 32
+	slot7: 48
+	slot8: 64
 
-command /superdrops:
-	aliases: sd, superdrop
-	trigger:
-		execute server command "/superdropsmenu %player%"
+# tak/nie #
+	claimoncreate: false#czy sklep po założeniu ma należeć do zakładającego
+	destroyondelete: true#czy po usunięciu sklepu tabliczka i skrzynia mają zostać zniszczone
 
-#command /superdropsmenu dlakogo chance   blocks   <block>  fortune  item:
-command /superdropsmenu <player> [<text>] [<text>] [<text>] [<text>] [<text>]:
-	executable by: console
-	trigger:
-		set {_valuelist::*} to configuration section "menu" get of "{@directory}/config.yml"
-		loop {_valuelist::*}:
-			set {_menuconfig::%loop-value%} to single value "menu.%loop-value%" get of "{@directory}/config.yml"
-		wait 2 ticks
-		arg 2 is not set:
-			open chest with 2 rows named "%coloured {_menuconfig::tag}%" to player-arg
-			wait 1 tick
-			set {_top} to single value "menu.top" get of "{@directory}/config.yml"
-			set {_chance} to single value "menu.chance" get of "{@directory}/config.yml"
-			format slot 4 of player-arg with arrow named "%coloured {_menuconfig::back}%" to close
-			format slot 11 of player-arg with signblock named "%coloured {_top}%" to close then run "superdropsmenu %player-arg% top"
-			format slot 15 of player-arg with command block named "%coloured {_chance}%" to close then run "superdropsmenu %player-arg% chance"
-		arg 2 is "chance":
-			arg 3 is not set:
-				open chest with 2 rows named "%coloured {_menuconfig::tag}%" to player-arg
-				wait 1 tick
-				format slot 4 of player-arg with arrow named "%coloured {_menuconfig::back}%" to close then run "superdropsmenu %player-arg%"
-				format slot 11 of player-arg with stone named "%coloured {_menuconfig::blocks}%" to close then run "superdropsmenu %player-arg% chance blocks"
-				format slot 13 of player-arg with spawn egg named "%coloured {_menuconfig::entities}%" to close then run "superdropsmenu %player-arg% chance entities"
-				format slot 15 of player-arg with fishing rod named "%coloured {_menuconfig::fishing}%" to close then run "superdropsmenu %player-arg% chance fishing fishing"
-			arg 3 is "blocks":
-				arg 4 is not set:
-					set {_itemlist::*} to configuration section "blocks" get of "{@directory}/config.yml"
-					set {_slot} to 0
-					open chest with 6 rows named "%coloured {_menuconfig::tag}%" to player-arg
-					wait 1 tick
-					format slot 4 of player-arg with arrow named "%coloured {_menuconfig::back}%" to close then run "superdropsmenu %player-arg% chance"
-					loop {_itemlist::*}:
-						format slot {_slot}+9 of player-arg with (loop-value parsed as itemtype) with lore "%coloured {_menuconfig::clicktoshow}%" to close then run "superdropsmenu %player-arg% chance blocks %loop-value%"
-						add 1 to {_slot}
-				else:
-					if arg 5 is not set:
-						open chest with 2 rows named "%coloured {_menuconfig::tag}%" to player-arg
-						wait 1 tick
-						format slot 4 of player-arg with arrow named "%coloured {_menuconfig::back}%" to close then run "superdropsmenu %player-arg% chance blocks"
-						format slot 10 of player-arg with book named "%coloured {_menuconfig::fortune}% 0" to close then run "superdropsmenu %player-arg% chance blocks %arg 4% 0"
-						format slot 12 of player-arg with enchanted book named "%coloured {_menuconfig::fortune}% I" to close then run "superdropsmenu %player-arg% chance blocks %arg 4% 1"
-						format slot 14 of player-arg with enchanted book named "%coloured {_menuconfig::fortune}% II" to close then run "superdropsmenu %player-arg% chance blocks %arg 4% 2"
-						format slot 16 of player-arg with enchanted book named "%coloured {_menuconfig::fortune}% III" to close then run "superdropsmenu %player-arg% chance blocks %arg 4% 3"
-					else:
-						if arg 6 is not set:
-							open chest with 6 rows named "%coloured {_menuconfig::tag}%" to player-arg
-							wait 1 tick
-							format slot 4 of player-arg with arrow named "%coloured {_menuconfig::back}%" to close then run "superdropsmenu %player-arg% chance blocks %arg 4%"
-							set {_slot} to 0
-							set {_block} to arg 4 parsed as itemtype
-							set {_basiclist::*} to configuration section "blocks.%{_block}%" get of "{@directory}/config.yml"
-							loop {_basiclist::*}:
-								loop-value isn't "xp":
-									set {_itemlist::%loop-index%} to loop-value
-							loop {_itemlist::*}:
-								set {_config::name} to single value "blocks.%{_block}%.%loop-value%.name" get of "{@directory}/config.yml"
-								set {_config::item} to single value "blocks.%{_block}%.%loop-value%.item" get of "{@directory}/config.yml" parsed as itemtype
-								format slot {_slot}+9 of player-arg with {_config::item} named "%coloured {_config::name}%" to close then run "superdropsmenu %player-arg% chance blocks %arg 4% %arg 5% %loop-value%"
-								add 1 to {_slot}
-						else:
-							open chest with 4 rows named "%coloured {_menuconfig::tag}%" to player-arg
-							wait 1 tick
-							format slot 4 of player-arg with arrow named "%coloured {_menuconfig::back}%" to close then run "superdropsmenu %player-arg% chance blocks %arg 4%"
-							set {_block} to arg 4 parsed as itemtype
-							set {_multiplier} to 1
-							set {_permissionslist::*} to configuration section "multipliers.permissions" get of "{@directory}/config.yml"
-							loop {_permissionslist::*}:
-								if player-arg has permission "sd.mp.blocks.%loop-value%":
-									set {_permission} to single value "multipliers.permissions.%loop-value%" get of "{@directory}/config.yml" parsed as number
-									set {_multiplier} to {_multiplier}*{_permission}
-									exit loop
-							set {_turbodrop} to single value "multipliers.other.turbodrop" get of "{@directory}/config.yml" parsed as number
-							if {_turbodrop} is set:
-								set {_multiplier} to {_multiplier}*{_turbodrop}
-							set {_fortunemulti} to single value "multipliers.fortune.%arg 5%" get of "{@directory}/config.yml" parsed as number
-							set {_multiplier} to {_multiplier}*{_fortunemulti}
-							set {_multiplier} to {_multiplier} parsed as number #gotowy
-							set {_config::name} to single value "blocks.%{_block}%.%arg 6%.name" get of "{@directory}/config.yml"
-							set {_config::item} to single value "blocks.%{_block}%.%arg 6%.item" get of "{@directory}/config.yml" parsed as itemtype
-							set {_config::itemsmelted} to single value "blocks.%{_block}%.%arg 6%.itemsmelted" get of "{@directory}/config.yml" parsed as itemtype
-							set {_config::chance} to single value "blocks.%{_block}%.%arg 6%.chance" get of "{@directory}/config.yml" parsed as number
-							set {_config::tools::*} to value list "blocks.%{_block}%.%arg 6%.tools" get of "{@directory}/config.yml"
-							set {_config::biomes::*} to value list "blocks.%{_block}%.%arg 6%.biomes" get of "{@directory}/config.yml"
-							set {_config::heightmin} to single value "blocks.%{_block}%.%arg 6%.heightmin" get of "{@directory}/config.yml" parsed as integer
-							set {_config::heightmax} to single value "blocks.%{_block}%.%arg 6%.heightmax" get of "{@directory}/config.yml" parsed as integer
-							set {_realchance} to {_config::chance}*{_multiplier}
-							{_realchance} is greater than 100:
-								set {_realchance} to 100
-							set {_item} to {_config::item}
-							{_item} is set:
-								format slot 13 of player-arg with signblock named "%coloured {_config::name}%" to be unstealable
-								format slot 18 of player-arg with 1 of {_item} named "&6&lItem" with lore "&c%{_config::item}%" to be unstealable
-								format slot 19 of player-arg with 1 of {_config::itemsmelted} named "&6&lSmelted item" with lore "&c%{_config::itemsmelted}%" to be unstealable
-								format slot 20 of player-arg with command block named "&6&lChance" with lore "&c%{_realchance}%%%" to be unstealable
-								format slot 21 of player-arg with diamond pickaxe named "&6&lTools" with lore "&c%{_config::tools::*}%" to be unstealable
-								{_config::biomes::*} is set:
-									format slot 22 of player-arg with mycelium named "&6&lBiomes" with lore "&c%{_config::biomes::*}%" to be unstealable
-								else:
-									format slot 22 of player-arg with mycelium named "&6&lBiomes" with lore "&cany biome" to be unstealable
-								format slot 23 of player-arg with ladder named "&6&lMin height" with lore "&c%{_config::heightmin}%" to be unstealable
-								format slot 24 of player-arg with ladder named "&6&lMax height" with lore "&c%{_config::heightmax}%" to be unstealable
-			arg 3 is "entities":
-				arg 4 is not set:
-					set {_itemlist::*} to configuration section "mobs" get of "{@directory}/config.yml"
-					set {_slot} to 0
-					open chest with 6 rows named "%coloured {_menuconfig::tag}%" to player-arg
-					wait 1 tick
-					format slot 4 of player-arg with arrow named "%coloured {_menuconfig::back}%" to close then run "superdropsmenu %player-arg% chance"
-					loop {_itemlist::*}:
-						set {_mob} to loop-value
-						#set {_mob} to {_mob} parsed as entity type
-						#set {_item} to {_mob}'s spawn egg parsed as itemtype
-						format slot {_slot}+9 of player-arg with spawn egg named "&6&l%loop-value%" with lore "%coloured {_menuconfig::clicktoshow}%" to close then run "superdropsmenu %player-arg% chance entities %loop-value%"
-						add 1 to {_slot}
-				else:
-					if arg 5 is not set:
-						open chest with 2 rows named "%coloured {_menuconfig::tag}%" to player-arg
-						wait 1 tick
-						format slot 4 of player-arg with arrow named "%coloured {_menuconfig::back}%" to close then run "superdropsmenu %player-arg% chance entities"
-						format slot 10 of player-arg with book named "%coloured {_menuconfig::fortune}% 0" to close then run "superdropsmenu %player-arg% chance entities %arg 4% 0"
-						format slot 12 of player-arg with enchanted book named "%coloured {_menuconfig::fortune}% I" to close then run "superdropsmenu %player-arg% chance entities %arg 4% 1"
-						format slot 14 of player-arg with enchanted book named "%coloured {_menuconfig::fortune}% II" to close then run "superdropsmenu %player-arg% chance entities %arg 4% 2"
-						format slot 16 of player-arg with enchanted book named "%coloured {_menuconfig::fortune}% III" to close then run "superdropsmenu %player-arg% chance entities %arg 4% 3"
-					else:
-						if arg 6 is not set:
-							open chest with 6 rows named "%coloured {_menuconfig::tag}%" to player-arg
-							wait 1 tick
-							format slot 4 of player-arg with arrow named "%coloured {_menuconfig::back}%" to close then run "superdropsmenu %player-arg% chance entities %arg 4%"
-							set {_slot} to 0
-							set {_mob} to arg 4 parsed as entity type
-							set {_basiclist::*} to configuration section "mobs.%{_mob}%" get of "{@directory}/config.yml"
-							loop {_basiclist::*}:
-								loop-value isn't "xp":
-									set {_itemlist::%loop-index%} to loop-value
-							loop {_itemlist::*}:
-								set {_config::name} to single value "mobs.%{_mob}%.%loop-value%.name" get of "{@directory}/config.yml"
-								set {_config::item} to single value "mobs.%{_mob}%.%loop-value%.item" get of "{@directory}/config.yml" parsed as itemtype
-								format slot {_slot}+9 of player-arg with {_config::item} named "%coloured {_config::name}%" to close then run "superdropsmenu %player-arg% chance entities %arg 4% %arg 5% %loop-value%"
-								add 1 to {_slot}
-						else:
-							open chest with 4 rows named "%coloured {_menuconfig::tag}%" to player-arg
-							wait 1 tick
-							format slot 4 of player-arg with arrow named "%coloured {_menuconfig::back}%" to close then run "superdropsmenu %player-arg% chance entities %arg 4%"
-							set {_mob} to arg 4 parsed as entity type
-							set {_multiplier} to 1
-							set {_permissionslist::*} to configuration section "multipliers.permissions" get of "{@directory}/config.yml"
-							loop {_permissionslist::*}:
-								if player-arg has permission "sd.mp.mobs.%loop-value%":
-									set {_permission} to single value "multipliers.permissions.%loop-value%" get of "{@directory}/config.yml" parsed as number
-									set {_multiplier} to {_multiplier}*{_permission}
-									exit loop
-							set {_turbodrop} to single value "multipliers.other.turbodrop" get of "{@directory}/config.yml" parsed as number
-							if {_turbodrop} is set:
-								set {_multiplier} to {_multiplier}*{_turbodrop}
-							set {_fortunemulti} to single value "multipliers.fortune.%arg 5%" get of "{@directory}/config.yml" parsed as number
-							set {_multiplier} to {_multiplier}*{_fortunemulti}
-							set {_multiplier} to {_multiplier} parsed as number #gotowy
-							set {_config::name} to single value "mobs.%{_mob}%.%arg 6%.name" get of "{@directory}/config.yml"
-							set {_config::item} to single value "mobs.%{_mob}%.%arg 6%.item" get of "{@directory}/config.yml" parsed as itemtype
-							set {_config::itemsmelted} to single value "mobs.%{_mob}%.%arg 6%.itemsmelted" get of "{@directory}/config.yml" parsed as itemtype
-							set {_config::chance} to single value "mobs.%{_mob}%.%arg 6%.chance" get of "{@directory}/config.yml" parsed as number
-							set {_config::tools::*} to value list "mobs.%{_mob}%.%arg 6%.tools" get of "{@directory}/config.yml"
-							set {_config::biomes::*} to value list "mobs.%{_mob}%.%arg 6%.biomes" get of "{@directory}/config.yml"
-							set {_realchance} to {_config::chance}*{_multiplier}
-							{_realchance} is greater than 100:
-								set {_realchance} to 100
-							set {_item} to {_config::item}
-							{_item} is set:
-								format slot 13 of player-arg with signblock named "%coloured {_config::name}%" to be unstealable
-								format slot 18 of player-arg with 1 of {_item} named "&6&lItem" with lore "&c%{_config::item}%" to be unstealable
-								format slot 19 of player-arg with 1 of {_config::itemsmelted} named "&6&lSmelted item" with lore "&c%{_config::itemsmelted}%" to be unstealable
-								format slot 20 of player-arg with command block named "&6&lChance" with lore "&c%{_realchance}%%%" to be unstealable
-								format slot 21 of player-arg with diamond pickaxe named "&6&lTools" with lore "&c%{_config::tools::*}%" to be unstealable
-								{_config::biomes::*} is set:
-									format slot 22 of player-arg with mycelium named "&6&lBiomes" with lore "&c%{_config::biomes::*}%" to be unstealable
-								else:
-									format slot 22 of player-arg with mycelium named "&6&lBiomes" with lore "&cany biome" to be unstealable
-			arg 3 is "fishing":
-				if arg 5 is not set:
-					open chest with 2 rows named "%coloured {_menuconfig::tag}%" to player-arg
-					wait 1 tick
-					format slot 4 of player-arg with arrow named "%coloured {_menuconfig::back}%" to close then run "superdropsmenu %player-arg% chance"
-					format slot 10 of player-arg with book named "%coloured {_menuconfig::fortune}% 0" to close then run "superdropsmenu %player-arg% chance fishing fishing 0"
-					format slot 12 of player-arg with enchanted book named "%coloured {_menuconfig::fortune}% I" to close then run "superdropsmenu %player-arg% chance fishing fishing 1"
-					format slot 14 of player-arg with enchanted book named "%coloured {_menuconfig::fortune}% II" to close then run "superdropsmenu %player-arg% chance fishing fishing 2"
-					format slot 16 of player-arg with enchanted book named "%coloured {_menuconfig::fortune}% III" to close then run "superdropsmenu %player-arg% chance fishing fishing 3"
-				else:
-					if arg 6 is not set:
-						open chest with 6 rows named "%coloured {_menuconfig::tag}%" to player-arg
-						wait 1 tick
-						format slot 4 of player-arg with arrow named "%coloured {_menuconfig::back}%" to close then run "superdropsmenu %player-arg% chance fishing fishing"
-						set {_slot} to 0
-						set {_basiclist::*} to configuration section "fishing" get of "{@directory}/config.yml"
-						loop {_basiclist::*}:
-							loop-value isn't "xp":
-								set {_itemlist::%loop-index%} to loop-value
-						loop {_itemlist::*}:
-							set {_config::name} to single value "fishing.%loop-value%.name" get of "{@directory}/config.yml"
-							set {_config::item} to single value "fishing.%loop-value%.item" get of "{@directory}/config.yml" parsed as itemtype
-							format slot {_slot}+9 of player-arg with {_config::item} named "%coloured {_config::name}%" to close then run "superdropsmenu %player-arg% chance fishing fishing %arg 5% %loop-value%"
-							add 1 to {_slot}
-					else:
-						open chest with 4 rows named "%coloured {_menuconfig::tag}%" to player-arg
-						wait 1 tick
-						format slot 4 of player-arg with arrow named "%coloured {_menuconfig::back}%" to close then run "superdropsmenu %player-arg% chance fishing %arg 4%"
-						set {_mob} to arg 4 parsed as entity type
-						set {_multiplier} to 1
-						set {_permissionslist::*} to configuration section "multipliers.permissions" get of "{@directory}/config.yml"
-						loop {_permissionslist::*}:
-							if player-arg has permission "sd.mp.fishing.%loop-value%":
-								set {_permission} to single value "multipliers.permissions.%loop-value%" get of "{@directory}/config.yml" parsed as number
-								set {_multiplier} to {_multiplier}*{_permission}
-								exit loop
-						set {_turbodrop} to single value "multipliers.other.turbodrop" get of "{@directory}/config.yml" parsed as number
-						if {_turbodrop} is set:
-							set {_multiplier} to {_multiplier}*{_turbodrop}
-						set {_fortunemulti} to single value "multipliers.fortune.%arg 5%" get of "{@directory}/config.yml" parsed as number
-						set {_multiplier} to {_multiplier}*{_fortunemulti}
-						set {_multiplier} to {_multiplier} parsed as number #gotowy
-						set {_config::name} to single value "fishing.%arg 6%.name" get of "{@directory}/config.yml"
-						set {_config::item} to single value "fishing.%arg 6%.item" get of "{@directory}/config.yml" parsed as itemtype
-						set {_config::itemsmelted} to single value "fishing.%arg 6%.itemsmelted" get of "{@directory}/config.yml" parsed as itemtype
-						set {_config::chance} to single value "fishing.%arg 6%.chance" get of "{@directory}/config.yml" parsed as number
-						set {_config::tools::*} to value list "fishing.%arg 6%.tools" get of "{@directory}/config.yml"
-						set {_config::biomes::*} to value list "fishing.%arg 6%.biomes" get of "{@directory}/config.yml"
-						set {_realchance} to {_config::chance}*{_multiplier}
-						{_realchance} is greater than 100:
-							set {_realchance} to 100
-						set {_item} to {_config::item}
-						{_item} is set: #player chance mobs pig 1
-							format slot 13 of player-arg with signblock named "%coloured {_config::name}%" to be unstealable
-							format slot 18 of player-arg with 1 of {_item} named "&6&lItem" with lore "&c%{_config::item}%" to be unstealable
-							format slot 19 of player-arg with 1 of {_config::itemsmelted} named "&6&lSmelted item" with lore "&c%{_config::itemsmelted}%" to be unstealable
-							format slot 20 of player-arg with command block named "&6&lChance" with lore "&c%{_realchance}%%%" to be unstealable
-		arg 2 is "top":
-			arg 3 is not set:
-				open chest with 2 rows named "%coloured {_menuconfig::tag}%" to player-arg
-				wait 1 tick
-				format slot 4 of player-arg with arrow named "%coloured {_menuconfig::back}%" to close then run "superdropsmenu %player-arg%"
-				format slot 11 of player-arg with stone named "%coloured {_menuconfig::blocks}%" to close then run "superdropsmenu %player-arg% top blocks"
-				format slot 13 of player-arg with spawn egg named "%coloured {_menuconfig::entities}%" to close then run "superdropsmenu %player-arg% top entities"
-				format slot 15 of player-arg with fishing rod named "%coloured {_menuconfig::fishing}%" to close then run "superdropsmenu %player-arg% top fishing"
-			else:
-				arg 4 is not set:
-					set {_slot} to 0
-					open chest with 6 rows named "%coloured {_menuconfig::tag}%" to player-arg
-					wait 1 tick
-					format slot 4 of player-arg with arrow named "%coloured {_menuconfig::back}%" to close then run "superdropsmenu %player-arg%"
-					set {_list::*} to configuration section "dropped.%arg 3%" get of "{@directory}/stats.yml"
-					set {_itemname} to single value "menu.clicktoshowtop" get of "{@directory}/config.yml"
-					loop {_list::*}:
-						format slot {_slot}+9 of player-arg with (loop-value parsed as item) named "%coloured {_itemname}%" to close then run "superdropstop %player-arg% %arg 3% %loop-value%"
-						add 1 to {_slot}
 
-command /superdropstop <player> <text> <text>:
-	executable by: console
-	trigger:
-		set {_top::*} to configuration section "dropped.%arg 2%.%arg 3%" get of "{@directory}/stats.yml"
-		loop {_top::*}:
-			set {_score} to single value "dropped.%arg 2%.%arg 3%.%loop-value%" get of "{@directory}/stats.yml"
-			set {_topready::%loop-value%} to {_score} parsed as number
-		loop (size of {_topready::*}) times:
-			set {_wynik} to 0
-			loop {_topready::*}:
-				loop-value is greater than {_wynik}:
-					set {_wynik} to loop-value
-					set {_nick} to loop-index
-			clear {_topready::%{_nick}%}
-			{_nick} is set:
-				set {_format} to single value "messages.topformat" get of "{@directory}/config.yml"
-				replace all "{NUMBER}" with "%loop-number%" in {_format}
-				replace all "{NICK}" with "%{_nick}%" in {_format}
-				replace all "{SCORE}" with "%{_wynik}%" in {_format}
-				send "%coloured {_format}%" to player-arg
+aliases:
+	signitem = 323
 
-command /sdadmin [<text>]:
-	aliases: superdropsadmin
-	trigger:
-		if player has permission "dropy.admin" or "dropy.*":
-			arg 1 is "odswiez" or "reload" or "relaod":
-				execute player command "/sk reload %script%"
-#==============================#
-#==============================#
-#==#         RECIPES        #==#
-#==============================#
-#==============================#
+#======================================#
+#                 EVENTY               #
+#======================================#
 
+#=========={ ODCZYT OPCJI DO LISTY }==========#
 on script load:
-	if file "{@directory}/config.yml" doesn't exists:
-		create file "{@directory}/config.yml"
-		download "https://raw.githubusercontent.com/herhor67/superdrops/master/config.yml" to "{@directory}/config.yml"
-#==========#
-	if {@additionalrecipes} is true:
-		register new shaped recipe for (diamond pickaxe of Fortune 10 named "&bSuperPickaxe") using diament, diament, diament, none, stick, none, none, stick, none
-		register new shaped recipe for (diamond pickaxe of Flame 1 named "&bSuperPickaxe") using diamentitem, diamentitem, diamentitem, none, furnace, none, none, stick, none
-	#==========#
-		register new shaped recipe for (diamond axe of Fortune 10 named "&bSuperAxe") using diament, diament, none, diament, stick, none, none, stick, none
-		register new shaped recipe for (diamond axe of Fortune 10 named "&bSuperAxe") using diament, diament, none, stick, diament, none, stick, none, none
-		register new shaped recipe for (diamond axe of Fortune 10 named "&bSuperAxe") using none, diament, diament, none, diament, stick, none, none, stick
-	#----------#
-		register new shaped recipe for (diamond axe of Flame 1 named "&bSuperAxe") using diamentitem, diamentitem, none, diamentitem, furnace, none, none, stick, none
-		register new shaped recipe for (diamond axe of Flame 1 named "&bSuperAxe") using diamentitem, diamentitem, none, furnace, diament, none, stick, none, none
-		register new shaped recipe for (diamond axe of Flame 1 named "&bSuperAxe") using none, diamentitem, diamentitem, none, diamentitem, furnace, none, none, stick
-	#==========#
-		register new shaped recipe for (diamond shovel of Fortune 10 named "&bSuperShovel") using none, diament, none, none, stick, none, none, stick, none
-		register new shaped recipe for (diamond shovel of Fortune 10 named "&bSuperShovel") using diament, none, none, stick, none, none, stick, none, none
-		register new shaped recipe for (diamond shovel of Fortune 10 named "&bSuperShovel") using none, none, diament, none, none, stick, none, none, stick
-	#----------#
-		register new shaped recipe for (diamond shovel of Flame 1 named "&bSuperShovel") using none, diamentitem, none, none, furnace, none, none, stick, none
-		register new shaped recipe for (diamond shovel of Flame 1 named "&bSuperShovel") using diamentitem, none, none, furnace, none, none, stick, none, none
-		register new shaped recipe for (diamond shovel of Flame 1 named "&bSuperShovel") using none, none, diamentitem, none, none, furnace, none, none, stick
-	#==========#
-		register new shaped recipe for (diamond sword of Fortune 10 named "&bSuperSword") using none, diament, none, none, diament, none, none, stick, none
-		register new shaped recipe for (diamond sword of Fortune 10 named "&bSuperSword") using diament, none, none, diament, none, none, stick, none, none
-		register new shaped recipe for (diamond sword of Fortune 10 named "&bSuperSword") using none, none, diament, none, none, diament, none, none, stick
-	#----------#
-		register new shaped recipe for (diamond sword of Flame 1 named "&bSuperSword") using none, diamentitem, none, none, diamentitem, none, none, furnace, none
-		register new shaped recipe for (diamond sword of Flame 1 named "&bSuperSword") using diamentitem, none, none, diamentitem, none, none, furnace, none, none
-		register new shaped recipe for (diamond sword of Flame 1 named "&bSuperSword") using none, none, diamentitem, none, none, diamentitem, none, none, furnace
-	#==========#
-		register new shaped recipe for (fishing rod of Luck of the Sea 10 named "&bSuperFishingRod") using none, none, br, none, br, string, br, none, string
-		register new shaped recipe for (fishing rod of Flame 1 named "&bSuperFishingRod") using none, none, furnace, none, stick, string, stick, none, string
+	set {hssettings::slot::0} to {@slot0}
+	set {hssettings::slot::1} to {@slot1}
+	set {hssettings::slot::2} to {@slot2}
+	set {hssettings::slot::3} to {@slot3}
+	set {hssettings::slot::4} to {@slot4}
+	set {hssettings::slot::5} to {@slot5}
+	set {hssettings::slot::6} to {@slot6}
+	set {hssettings::slot::7} to {@slot7}
+	set {hssettings::slot::8} to {@slot8}
 
-#==============================#
-#==============================#
-#==#         BLOCKS         #==#
-#==============================#
-#==============================#
-on break:
-	set {_block} to type of event-block
-	set {_multiplier} to 1
-#=========={ PERMISSIONS }==========#
-	set {_permissionslist::*} to configuration section "multipliers.permissions" get of "{@directory}/config.yml"
-	loop {_permissionslist::*}:
-		if player has permission "sd.mp.blocks.%loop-value%":
-			set {_permission} to single value "multipliers.permissions.%loop-value%" get of "{@directory}/config.yml" parsed as number
-			set {_multiplier} to {_multiplier}*{_permission}
-			exit loop
-#=========={ SUPER TOOLS }==========#
-	name of player's tool is "&bSuperPickaxe" or "&bSuperAxe" or "&bSuperShovel":
-#----------{ smelting 1 }----------#
-		player's tool is enchanted with Flame 1:
-			set {_smelting.mode} to true
-		else:
-			set {_smelting.mode} to false
-#----------{ fortune 10 }----------#
-		player's tool is enchanted with Fortune 10:
-			set {_multipliers::super} to single value "multipliers.other.super" get of "{@directory}/config.yml" parsed as number
-			set {_multiplier} to {_multiplier}*{_multipliers::super}
-#=========={ FORTUNES }==========#
-	player's tool is enchanted with Fortune 3:
-		set {_multipliers::fortune} to single value "multipliers.fortune.3" get of "{@directory}/config.yml" parsed as number
-		set {_multiplier} to {_multiplier}*{_multipliers::fortune}
-	player's tool is enchanted with Fortune 2:
-		set {_multipliers::fortune} to single value "multipliers.fortune.2" get of "{@directory}/config.yml" parsed as number
-		set {_multiplier} to {_multiplier}*{_multipliers::fortune}
-	player's tool is enchanted with Fortune 1:
-		set {_multipliers::fortune} to single value "multipliers.fortune.1" get of "{@directory}/config.yml" parsed as number
-		set {_multiplier} to {_multiplier}*{_multipliers::fortune}
-#=========={ TURBODROP }==========#
-	set {_multipliers::turbodrop} to single value "multipliers.other.turbodrop" get of "{@directory}/config.yml" parsed as number
-	if {_multipliers::turbodrop} is set:
-		set {_multiplier} to {_multiplier}*{_multipliers::turbodrop}
-#=========={ CONFIG }==========#
-	set {_config::xp} to single value "blocks.%{_block}%.xp" get of "{@directory}/config.yml" parsed as integer
-	set {_basiclist::*} to configuration section "blocks.%{_block}%" get of "{@directory}/config.yml"
-	loop {_basiclist::*}:
-		loop-value isn't "xp":
-			set {_itemlist::%loop-index%} to loop-value
-	loop {_itemlist::*}:
-		{_smelting.mode} is true:
-			set {_config::item} to single value "blocks.%{_block}%.%loop-value%.itemsmelted" get of "{@directory}/config.yml" parsed as itemtype
-		else:
-			set {_config::item} to single value "blocks.%{_block}%.%loop-value%.item" get of "{@directory}/config.yml" parsed as itemtype
-		set {_config::chance} to single value "blocks.%{_block}%.%loop-value%.chance" get of "{@directory}/config.yml" parsed as number
-		set {_config::tools::*} to value list "blocks.%{_block}%.%loop-value%.tools" get of "{@directory}/config.yml"
-		set {_config::biomes::*} to value list "blocks.%{_block}%.%loop-value%.biomes" get of "{@directory}/config.yml"
-		set {_config::heightmin} to single value "blocks.%{_block}%.%loop-value%.heightmin" get of "{@directory}/config.yml" parsed as integer
-		set {_config::heightmax} to single value "blocks.%{_block}%.%loop-value%.heightmax" get of "{@directory}/config.yml" parsed as integer
-#=========={ DROPPING }==========#
-		loop {_config::xp} times:
-			give 1 xp to player
-		if event-block's y-coordinate < {_config::heightmax}:
-			if event-block's y-coordinate > {_config::heightmin}:
-				loop {_config::tools::*}:
-					if player's tool is (loop-value-2 parsed as itemtype):
-						set {_goodtool} to true
-				if {_goodtool} is true:
-					if {_config::biomes::*} is not set:
-						set {_goodbiome} to true
-					else:
-						loop {_config::biomes::*}:
-							if biome at player is (loop-value-2 parsed as biome):
-								set {_goodbiome} to true
-					if {_goodbiome} is true:
-						set {_realchance} to {_config::chance}*{_multiplier}/100
-						if {_realchance} is greater than 1:
-							set {_realchance} to 1
-						chance of {_realchance}:
-							set {_config::message} to single value "messages.dropped" get of "{@directory}/config.yml"
-							drop {_config::item} at event-block
-							{_config::message} is set:
-								replace all "{ITEM}" with "%{_config::item}%" in {_config::message}
-								send "%coloured {_config::message}%"
-							set {_item} to {_config::item} parsed as string
-							set {_score} to single value "dropped.blocks.%{_config::item}%.%player%" get of "{@directory}/stats.yml" parsed as integer
-							add 1 to {_score}
-							set "dropped.blocks.%{_config::item}%.%player%" to "%{_score}%" in yml file "{@directory}/stats.yml"
-
-#==============================#
-#==============================#
-#==#          MOBS          #==#
-#==============================#
-#==============================#
-on death:
-	set {_mob} to victim
-	set {_mob} to {_mob} parsed as entity type
-	set {_multiplier} to 1
-#=========={ PERMISSIONS }==========#
-	set {_permissionslist::*} to configuration section "multipliers.permissions" get of "{@directory}/config.yml"
-	loop {_permissionslist::*}:
-		if attacker has permission "sd.mp.mobs.%loop-value%":
-			set {_permission} to single value "multipliers.permissions.%loop-value%" get of "{@directory}/config.yml" parsed as number
-			set {_multiplier} to {_multiplier}*{_permission}
-			exit loop
-#=========={ SUPER TOOLS }==========#
-	name of attacker's tool is "&bSuperSword":
-#----------{ smelting 1 }----------#
-		player's tool is enchanted with Flame 1:
-			set {_smelting.mode} to true
-		else:
-			set {_smelting.mode} to false
-#----------{ fortune 10 }----------#
-		player's tool is enchanted with Fortune 10:
-			set {_multipliers::super} to single value "multipliers.other.super" get of "{@directory}/config.yml" parsed as number
-			set {_multiplier} to {_multiplier}*{_multipliers::super}
-#=========={ FORTUNES }==========#
-	attacker's tool is enchanted with Fortune 3:
-		set {_multipliers::fortune} to single value "multipliers.fortune.3" get of "{@directory}/config.yml" parsed as number
-		set {_multiplier} to {_multiplier}*{_multipliers::fortune}
-	attacker's tool is enchanted with Fortune 2:
-		set {_multipliers::fortune} to single value "multipliers.fortune.2" get of "{@directory}/config.yml" parsed as number
-		set {_multiplier} to {_multiplier}*{_multipliers::fortune}
-	attacker's tool is enchanted with Fortune 1:
-		set {_multipliers::fortune} to single value "multipliers.fortune.1" get of "{@directory}/config.yml" parsed as number
-		set {_multiplier} to {_multiplier}*{_multipliers::fortune}
-#=========={ TURBODROP }==========#
-	set {_multipliers::turbodrop} to single value "multipliers.other.turbodrop" get of "{@directory}/config.yml" parsed as number
-	if {_multipliers::turbodrop} is set:
-		set {_multiplier} to {_multiplier}*{_multipliers::turbodrop}
-#=========={ CONFIG }==========#
-	set {_config::xp} to single value "mobs.%{_mob}%.xp" get of "{@directory}/config.yml" parsed as integer
-	set {_basiclist::*} to configuration section "mobs.%{_mob}%" get of "{@directory}/config.yml"
-	loop {_basiclist::*}:
-		loop-value isn't "xp":
-			set {_itemlist::%loop-index%} to loop-value
-	loop {_itemlist::*}:
-		{_smelting.mode} is true:
-			set {_config::item} to single value "mobs.%{_mob}%.%loop-value%.itemsmelted" get of "{@directory}/config.yml" parsed as itemtype
-		else:
-			set {_config::item} to single value "mobs.%{_mob}%.%loop-value%.item" get of "{@directory}/config.yml" parsed as itemtype
-		set {_config::chance} to single value "mobs.%{_mob}%.%loop-value%.chance" get of "{@directory}/config.yml" parsed as number
-		set {_config::tools::*} to value list "mobs.%{_mob}%.%loop-value%.tools" get of "{@directory}/config.yml"
-		set {_config::biomes::*} to value list "mobs.%{_mob}%.%loop-value%.biomes" get of "{@directory}/config.yml"
-#=========={ DROPPING }==========#
-		loop {_config::xp} times:
-			give 1 xp to attacker
-		loop {_config::tools::*}:
-			if attacker's tool is (loop-value-2 parsed as itemtype):
-				set {_goodtool} to true
-		if {_goodtool} is true:
-			if {_config::biomes::*} is not set:
-				set {_goodbiome} to true
+#=========={ TWORZENIE SKLEPU (ADMIN) }==========#
+on sign edit:
+	line 1 is ":hershops:" or ":hershop:":
+		player has permission "hershops.admin" or "hershops.create":
+			block behind event-block is chest or trapped chest:
+				add 1 to {hs::shops.count}
+				set {_id} to {hs::shops.count}
+				set line 1 to "{@line1}"
+				set line 2 to "##%{_id}%"
+				set line 3 to "{@opened}"
+				set line 4 to "{@forsale}"
+				set {hs::location::%{_id}%} to location of event-block
+				set {hs::rows::%{_id}%} to {@defaultrows}
+				set {hs::store::%{_id}%} to block behind event-block
+				if {@claimoncreate} is true:
+					set {hs::time::%{_id}%} to {@mnoznikczasu}
+					set {hs::owner::%{_id}%} to player
+					set {hs::owner.store::%block behind event-block%} to player
+					set line 4 to ""
+				send "{@tag} &aStworzono sklep &l##%{_id}%&a!"
 			else:
-				loop {_config::biomes::*}:
-					if biome at attacker is (loop-value-2 parsed as biome):
-						set {_goodbiome} to true
-			if {_goodbiome} is true:
-				set {_realchance} to {_config::chance}*{_multiplier}/100
-				if {_realchance} is greater than 1:
-					set {_realchance} to 1
-				chance of {_realchance}:
-					set {_config::message} to single value "messages.dropped" get of "{@directory}/config.yml"
-					drop {_config::item} at victim
-					{_config::message} is set:
-						replace all "{ITEM}" with "%{_config::item}%" in {_config::message}
-						send "%coloured {_config::message}%" to attacker
-					set {_score} to single value "dropped.mobs.%{_config::item}%.%attacker%" get of "{@directory}/stats.yml" parsed as integer
-					add 1 to {_score}
-					set "dropped.mobs.%{_config::item}%.%attacker%" to "%{_score}%" in yml file "{@directory}/stats.yml"
-
-#==============================#
-#==============================#
-#==#         FISHING        #==#
-#==============================#
-#==============================#
-on fishing state of caught fish:
-	set {_multiplier} to 1
-#=========={ PERMISSIONS }==========#
-	set {_permissionslist::*} to configuration section "multipliers.permissions" get of "{@directory}/config.yml"
-	loop {_permissionslist::*}:
-		if player has permission "sd.mp.fishing.%loop-value%":
-			set {_permission} to single value "multipliers.permissions.%loop-value%" get of "{@directory}/config.yml" parsed as number
-			set {_multiplier} to {_multiplier}*{_permission}
-			exit loop
-#=========={ SUPER TOOLS }==========#
-	name of player's tool is "&bSuperFishingRod":
-#----------{ smelting 1 }----------#
-		player's tool is enchanted with Flame 1:
-			set {_smelting.mode} to true
+				cancel event
+				set event-block to air
+				player's gamemode isn't creative:
+					drop 1 sign at event-location
+				send "{@tag} &cNajpierw postaw skrzynię lub skrzynię-pułapkę!"
 		else:
-			set {_smelting.mode} to false
-#----------{ fortune 10 }----------#
-		player's tool is enchanted with Luck of the Sea 10:
-			set {_multipliers::super} to single value "multipliers.other.super" get of "{@directory}/config.yml" parsed as number
-			set {_multiplier} to {_multiplier}*{_multipliers::super}
-#=========={ FORTUNES }==========#
-	player's tool is enchanted with Luck of the Sea 3:
-		set {_multipliers::fortune} to single value "multipliers.fortune.3" get of "{@directory}/config.yml" parsed as number
-		set {_multiplier} to {_multiplier}*{_multipliers::fortune}
-	player's tool is enchanted with Luck of the Sea 2:
-		set {_multipliers::fortune} to single value "multipliers.fortune.2" get of "{@directory}/config.yml" parsed as number
-		set {_multiplier} to {_multiplier}*{_multipliers::fortune}
-	player's tool is enchanted with Luck of the Sea 1:
-		set {_multipliers::fortune} to single value "multipliers.fortune.1" get of "{@directory}/config.yml" parsed as number
-		set {_multiplier} to {_multiplier}*{_multipliers::fortune}
-#=========={ TURBODROP }==========#
-	set {_multipliers::turbodrop} to single value "multipliers.other.turbodrop" get of "{@directory}/config.yml" parsed as number
-	if {_multipliers::turbodrop} is set:
-		set {_multiplier} to {_multiplier}*{_multipliers::turbodrop}
-#=========={ CONFIG }==========#
-	set {_config::xp} to single value "fishing.xp" get of "{@directory}/config.yml" parsed as integer
-	set {_basiclist::*} to configuration section "fishing" get of "{@directory}/config.yml"
-	loop {_basiclist::*}:
-		loop-value isn't "xp":
-			set {_itemlist::%loop-index%} to loop-value
-	loop {_itemlist::*}:
-		{_smelting.mode} is true:
-			set {_config::item} to single value "fishing.%loop-value%.itemsmelted" get of "{@directory}/config.yml" parsed as itemtype
-		else:
-			set {_config::item} to single value "fishing.%loop-value%.item" get of "{@directory}/config.yml" parsed as itemtype
-		set {_config::chance} to single value "fishing.%loop-value%.chance" get of "{@directory}/config.yml" parsed as number
-		set {_config::biomes::*} to value list "fishing.%loop-value%.biomes" get of "{@directory}/config.yml"
-#=========={ DROPPING }==========#
-		loop {_config::xp} times:
-			give 1 xp to player
-		if {_config::biomes::*} is not set:
-			set {_goodbiome} to true
-		else:
-			loop {_config::biomes::*}:
-				if biome at player is (loop-value-2 parsed as biome):
-					set {_goodbiome} to true
-		if {_goodbiome} is true:
-			set {_realchance} to {_config::chance}*{_multiplier}/100
-			if {_realchance} is greater than 1:
-				set {_realchance} to 1
-			chance of {_realchance}:
-			#	cancel event
-			#	damage player's tool by 1
-				set {_config::message} to single value "messages.dropped" get of "{@directory}/config.yml"
-				drop {_config::item} at event-location
-				{_config::message} is set:
-					replace all "{ITEM}" with "%{_config::item}%" in {_config::message}
-					send "%coloured {_config::message}%"
-				set {_topitem} to {_config::item} parsed as string
-				set {_score} to single value "dropped.fishing.%{_config::item}%.%player%" get of "{@directory}/config.yml" parsed as integer
-				add 1 to {_score}
-				set "dropped.fishing.%{_config::item}%.%player%" to "%{_score}%" in yml file "{@directory}/config.yml"
+			cancel event
+			set event-block to air
+			player's gamemode isn't creative:
+				drop 1 sign at event-location
+			send "{@tag} &cNie masz uprawnień aby tworzyć sklepy!"
 
-on explode:
-	cancel event
-	loop exploded blocks:
-		set {_block} to type of loop-block
-		set {_config::replacewith} to single value "replace.%{_block}%.replacewith" get of "{@directory}/config.yml" parsed as itemtype
-		{_config::replacewith} is set:
-			set loop-block to {_config::replacewith}
-			clear {_config::replacewith}
-	uncancel event
+#=========={ BLOKADA OTWIERANIA CZYJEGOŚ MAGAZYNU }==========#
+on rightclick on chest:
+	{hs::owner.store::%event-block%} isn't name of player:
+		player doesn't have permission "hershops.open.others" or "hershops.admin":
+			cancel event
+			send "{@tag} &cTo nie twój sklep, nie możesz nim zarządzać!"
 
-on leftclick:
-	player's gamemode isn't creative:
-		set {_block} to type of event-block
-		set {_config::replacewith} to single value "replace.%{_block}%.replacewith" get of "{@directory}/config.yml" parsed as itemtype
-	{_config::replacewith} is set:
-		set event-block to {_config::replacewith}
-		set {_config::message} to single value "replace.%{_block}%.message" get of "{@directory}/config.yml"
-		send "%coloured {_config::message}%"
+#=========={ BLOKADA NISZCZENIA SKLEPU }==========#
+on break:
+	event-block is chest:
+		{hs::owner.store::%event-block%} is set:
+			cancel event
+			send "{@tag} &cNie możesz niszczyć sklepu! Musisz go najpierw usunąć!"
+	event-block is sign:
+		line 1 is "{@line1}":
+			set {_id} to line 2
+			replace all "##" with "" in {_id}
+			{hs::location::%{_id}%} is event-block:
+				cancel event
+				send "{@tag} &cNie możesz niszczyć sklepu! Musisz go najpierw usunąć!"
+
+#=========={ DODAWANIE ITEMÓW part1 }==========#
+on drop:
+	{hsplayers::hs.mode::%player%} is "chooseitem":
+		player is sneaking:
+			cancel event
+			set {_i} to event-item # {_i} trzyma item
+			set {_i} to {_i} parsed as itemtype # {_i} trzyma itemtype
+			send "{@tag} &6Dodajesz: &c&l%{_i}%" to player
+			set {hsplayers::dodaj.item::%player%} to {_i}
+			send "%{hsplayers::dodaj.item::%player%}%"
+			send "{@tag} &6Wpisz na chacie cenę tego przedmiotu!" to player
+			set {hsplayers::hs.mode::%player%} to "chooseprice"
+		else:
+			send "{@tag} &cMusisz kucnąć!" to player
+
+#=========={ DODAWANIE ITEMÓW part2 }==========#
+on chat:
+	{hsplayers::hs.mode::%player%} is "chooseprice":
+		cancel event
+		set {_cena} to message parsed as number
+		{_cena} is greater than 0:
+			{hsplayers::kategoria::%player%} is "buy":
+				set {_przedmioty} to size of {hs::items.buy::%{hsplayers::sklep::%player%}%::*}
+				{_przedmioty} is not set:
+					set {_przedmioty} to 0
+				{_przedmioty} is less than 9 * {hs::rows::%{hsplayers::sklep::%player%}%}:
+					set {_przedmioty} to {_przedmioty}+1
+					set {hs::items.buy::%{hsplayers::sklep::%player%}%::%{_przedmioty}%} to {hsplayers::dodaj.item::%player%}
+					set {hs::price.buy::%{hsplayers::sklep::%player%}%::%{_przedmioty}%} to {_cena}
+					send "{@tag} &aPomyślnie dodano przedmiot do sklepu!"
+				else:
+					send "{@tag} &cW twoim sklepie brakuje miejsca!"
+			else if {hsplayers::kategoria::%player%} is "sell":
+				set {_przedmioty} to size of {hs::items.sell::%{hsplayers::sklep::%player%}%::*}
+				{_przedmioty} is not set:
+					set {_przedmioty} to 0
+				{_przedmioty} is less than 9 * {hs::rows::%{hsplayers::sklep::%player%}%}:
+					set {_przedmioty} to {_przedmioty}+1
+					set {hs::items.sell::%{hsplayers::sklep::%player%}%::%{_przedmioty}%} to {hsplayers::dodaj.item::%player%}
+					set {hs::price.sell::%{hsplayers::sklep::%player%}%::%{_przedmioty}%} to {_cena}
+					send "{@tag} &aPomyślnie dodano przedmiot do sklepu!"
+				else:
+					send "{@tag} &cW twoim sklepie brakuje miejsca!"
+			else:
+				if player has permission "hershop.admin":
+					send "{@tag} Zła kategoria! Czyżbyś mieszał w kodzie?"
+				else:
+					send "{@tag} &cWystąpił błąd! Prosimy zgłosić to administracji i spróbować później!"
+			clear {hsplayers::dodaj.item::%player%}
+			clear {hsplayers::hs.mode::%player%}
+			clear {hsplayers::sklep::%player%}
+			clear {hsplayers::kategoria::%player%}
+		else:
+			send "{@tag} &cPodaj liczbę większą od 0!"
+
+#=========={ OTWIERANIE OKIEN (SKLEP, CPANEL) }==========#
+on click on sign:
+	line 1 is "{@line1}":
+		set {_id} to line 2
+		replace all "##" with "" in {_id}
+		{hs::location::%{_id}%} is set
+		cancel event
+#----------{ NA SPRZEDAŻ }
+		line 4 is "{@forsale}":
+			execute server command "/hsmenucpanel %player% kup %{_id}%"
+			stop
+#----------{ CONTROL PANEL }
+		player is sneaking:
+			if {hs::owner::%{_id}%} is name of player:
+				execute server command "/hsmenucpanel %player% glowna %{_id}%" 
+			else if player has permission "hershops.admin" or "hershops.manage.others":
+				execute server command "/hsmenucpanel %player% glowna %{_id}%" 
+			else:
+				send "&cTo nie twój sklep!"
+#----------{ SKLEP }
+		else:	
+#----------{ ZABLOKOWANY }
+			line 3 is "{@closed}":
+				send "&cTen sklep jest zablokowany!"
+				stop
+			else if line 3 is "{@opened}":
+				execute server command "/hsmenu %player% glowna %{_id}%"
+
+
+#======================================#
+#           KOMENDY KONSOLI            #
+#======================================#
+
+#=========={ KOMENDA OGARNIAJĄCA SKLEP }==========#
+# Ta komenda KIEDYŚ ewoluuje i będzie funkcją xD
+
+#command /hsmenu <komu> <strona> <id_sklepu> [<item>]
+command /hsmenu <player> <text> <number> [<number>]:
+	executable by: console
+	trigger:
+		wait 2 ticks
+		arg 2 is "glowna":
+			open chest with 1 rows named "&6&lSklep: &c&l%{hs::owner::%number-arg-1%}%" to player-arg
+			wait 1 tick
+			format slot 0 of player-arg with light green wool named "&a&lKup" to close then run "hsmenu %player-arg% listakup %number-arg-1%"
+			format slot 4 of player-arg with sunflower named "&6Pieniądze: &l%player-arg's balance%" to be unstealable
+			format slot 5 of player-arg with player head named "&6Właściciel: &c&l%{hs::owner::%number-arg-1%}%" to be unstealable
+			format slot 8 of player-arg with blue wool named "&b&lSprzedaj" to close then run "hsmenu %player-arg% listasprzedaj %number-arg-1%"
+#=========={ WYBÓR PRZEDMIOTU KUPNO }==========#
+		arg 2 is "listakup":
+			open chest with {hs::rows::%number-arg-1%} rows named "&a&lKup przedmiot" to player-arg
+			wait 1 tick
+			loop {hs::items.buy::%number-arg-1%::*}:
+				add 1 to {_slot}
+				set {_item} to loop-value
+				set {_ilosc} to number of {_item} in {hs::store::%number-arg-1%}
+				format slot {_slot}-1 of player-arg with {_item} with lore "&aKup||&6W magazynie: &l%{_ilosc}%" to close then run "hsmenu %player-arg% kupitemwybierzilosc %number-arg-1% %loop-index%"
+#=========={ WYBÓR ILOŚCI KUPNO }==========#
+		arg 2 is "kupitemwybierzilosc":
+			open chest with 1 rows named "&a&lKup item" to player-arg
+			wait 1 tick
+			set {_item} to {hs::items.buy::%number-arg-1%::%number-arg-2%}#jaki item
+			set {_countinshop} to number of {_item} in {hs::store::%number-arg-1%} #ile ich jest
+			set {_money} to player-arg's balance
+			set {_slot} to 0
+			loop {hssettings::slot::*}:
+				set {_count} to loop-value #ile ich ma być
+				set {_price} to {_count}*{hs::price.buy::%number-arg-1%::%number-arg-2%} #cena za taką ilość
+				set {_itemwithcount} to "%{_count}% of %{_item}%" parsed as item #stack takich przedmiotów
+				if {_countinshop} is greater than or equal to {_count}:
+					if {_money} is greater than or equal to {_price}:
+						format slot {_slot} of player-arg with {_itemwithcount} with lore "&aDostępny||&6Cena: &a&l%{_price}%" to close then run "dajitemy %player-arg% %number-arg-1% %{_count}% %number-arg-2%"
+					else:
+						format slot {_slot} of player-arg with {_itemwithcount} with lore "&aDostępny||&6Cena: &c&l%{_price}%" to be unstealable
+				else:
+					format slot {_slot} of player-arg with {_itemwithcount} with lore "&cNiedostępny" to be unstealable
+				add 1 to {_slot}
+#=========={ WYBÓR PRZEDMIOTU SPRZEDAŻ }==========#
+		arg 2 is "listasprzedaj":
+			open chest with {hs::rows::%number-arg-1%} rows named "&c&lSprzedaj item" to player-arg
+			wait 1 tick
+			loop {hs::items.sell::%number-arg-1%::*}:
+				add 1 to {_slot}
+				set {_item} to loop-value
+				format slot {_slot}-1 of player-arg with {_item} with lore "&cSprzedaj item" to close then run "hsmenu %player-arg% sprzedajitemwybierzilosc %number-arg-1% %loop-index%"
+#=========={ WYBÓR ILOŚCI SPRZEDAŻ }==========#
+		arg 2 is "sprzedajitemwybierzilosc":
+			open chest with 1 rows named "&a&lSprzedaj item" to player-arg
+			wait 1 tick
+			set {_item} to {hs::items.sell::%number-arg-1%::%number-arg-2%}#jaki item
+			set {_countineq} to number of {_item} in player-arg's inventory #ile ich jest
+			set {_money} to ({hs::owner::%number-arg-1%} parsed as player)'s balance
+			set {_slot} to 0
+			loop {hssettings::slot::*}:
+				set {_count} to loop-value #ile ich ma być
+				set {_reward} to {_count}*{hs::price.sell::%number-arg-1%::%number-arg-2%} #cena za taką ilość
+				set {_itemwithcount} to "%{_count}% of %{_item}%" parsed as item #stack takich przedmiotów
+				if {_countineq} is greater than or equal to {_count}:
+					if {_money} is greater than or equal to {_reward}:
+						format slot {_slot} of player-arg with {_itemwithcount} with lore "&aDostępny||&6Zapłata: &a&l%{_reward}%" to close then run "wezitemy %player-arg% %number-arg-1% %{_count}% %number-arg-2%"
+					else:
+						format slot {_slot} of player-arg with {_itemwithcount} with lore "&aDostępny||&6Zapłata: &c&l%{_reward}%" to be unstealable
+				else:
+					format slot {_slot} of player-arg with {_itemwithcount} with lore "&cNiedostępny" to be unstealable
+				add 1 to {_slot}
+
+#=========={ DAJE ITEMY ZE SKLEPU DO EQ I BIERZE KASE }=========#
+
+#command /dajitemy <komu> <idsklepu> <ilosc> <idtowaru>
+command /dajitemy <player> <number> <number> <number>:
+	executable by: console
+	trigger:
+		set {_sklep} to number-arg-1
+		set {_ilosc} to number-arg-2
+		set {_idtowaru} to number-arg-3
+		set {_towar} to {hs::items.buy::%{_sklep}%::%{_idtowaru}%}
+		set {_cena} to {hs::price.buy::%{_sklep}%::%{_idtowaru}%}
+		set {_cenawsumie} to {_ilosc}*{_cena}
+		player-arg's balance is greater than or equal to {_cenawsumie}:
+			loop {_ilosc} times:
+				if player-arg can hold {_towar}:
+					set {_ilewsklepie} to number of {_towar} in {hs::store::%{_sklep}%}
+					if {_ilewsklepie} is greater than 0:
+						remove {_towar} from block at {hs::store::%{_sklep}%}
+						remove {_cena} from player-arg's balance
+						add {_cena} to ({hs::owner::%{_sklep}%} parsed as player)'s balance
+						add {_cena} to {_kosztwsumie}
+						add {_towar} to player-arg's inventory
+						add 1 to {_dodanytowar}
+					else:
+						{_dodanytowar} is not set:
+							set {_dodanytowar} to 0
+						send "{@tag} &cW magazynie zabrakło towaru! Kupiono &l%{_dodanytowar}% &csztuk(i) &l%{_towar}% &cza &l%{_kosztwsumie}%$" to player-arg
+						add "&e&l%now% &6Gracz &c%player-arg% &6kupił w sklepie &c&l##%{_sklep}% %{_dodanytowar}% &6sztuk(i) &c&l%{_towar}%&6 za &c&l%{_kosztwsumie}%$&6. Zabrakło towaru w magazynie!" to {hsplayers::messagelist::%{hs::owner::%{_sklep}%}%::*}
+						stop
+				else:
+					{_dodanytowar} is not set:
+						set {_dodanytowar} to 0
+					send "{@tag} &cW ekwipunku zabrakło miejsca! Kupiono &l%{_dodanytowar}% &csztuk(i) &l%{_towar}% &cza &l%{_kosztwsumie}%$" to player-arg
+					add "&e&l%now% &6Gracz &c%player-arg% &6kupił w sklepie &c&l##%{_sklep}% %{_dodanytowar}% &6sztuk(i) &c&l%{_towar}%&6za &c&l%{_kosztwsumie}%$&6. Zabrakło mu miejsca w eq!" to {hsplayers::messagelist::%{hs::owner::%{_sklep}%}%::*}     
+					stop
+			send "{@tag} &aTransakcja przebiegła pomyślnie! Kupiono &l%{_dodanytowar}% &asztuk(i) &l%{_towar}% &aza &l%{_kosztwsumie}%$" to player-arg
+			add "&e&l%now% &6Gracz &c%player-arg% &6kupił w sklepie &c&l##%{_sklep}% %{_dodanytowar}% &6sztuk(i) &c&l%{_towar}% &6za &c&l%{_kosztwsumie}%$&6. Transakcja przebiegła pomyślnie!" to {hsplayers::messagelist::%{hs::owner::%{_sklep}%}%::*}
+		else:
+			send "{@tag} &cNie masz tyle $!" to player-arg
+
+#=========={ BIERZE ITEMY Z EQ DO SKLEPU I WYPŁACA HAJS }==========#
+
+#command /wezitemy <komu> <idsklepu> <ilosc> <idtowaru>
+command /wezitemy <player> <number> <number> <number>:
+	executable by: console
+	trigger:
+		set {_sklep} to number-arg-1
+		set {_ilosc} to number-arg-2
+		set {_idtowaru} to number-arg-3
+		set {_towar} to {hs::items.sell::%{_sklep}%::%{_idtowaru}%}
+		set {_reward} to {hs::price.sell::%{_sklep}%::%{_idtowaru}%}
+		set {_cenawsumie} to {_ilosc}*{_reward}
+		({hs::owner::%{_sklep}%} parsed as player)'s balance is greater than or equal to {_cenawsumie}:
+			loop {_ilosc} times:
+				if block at {hs::store::%{_sklep}%} can hold {_towar}:
+					set {_ileweq} to number of {_towar} in player-arg's inventory
+					if {_ileweq} is greater than 0:
+						remove {_towar} from player-arg's inventory
+						remove {_reward} from ({hs::owner::%{_sklep}%} parsed as player)'s balance
+						add {_reward} to player-arg's balance
+						add {_reward} to {_totalreward}
+						add {_towar} to block at {hs::store::%{_sklep}%}
+						add 1 to {_dodanytowar}
+					else:
+						{_dodanytowar} is not set:
+							set {_dodanytowar} to 0
+						send "{@tag} &cZabrakło towaru w ekwipunku! Sprzedano &l%{_dodanytowar}% &csztuk(i) &l%{_towar}% &cza &l%{_totalreward}%$" to player-arg
+						add "&e&l%now% &6Gracz &c%player-arg% &6sprzedał w Twoim sklepie &c&l##%{_sklep}% %{_dodanytowar}% &6sztuk(i) &c&l%{_towar}% &6za &c&l%{_totalreward}%$&6. Zabrakło mu towaru!" to {hsplayers::messagelist::%{hs::owner::%{_sklep}%}%::*}
+						stop
+				else:
+					{_dodanytowar} is not set:
+						set {_dodanytowar} to 0
+					send "{@tag} &cZabrakło miejsca w magazynie! Sprzedano &l%{_dodanytowar}% &csztuk(i) &l%{_towar}% &cza &l%{_totalreward}%$" to player-arg
+					add "&e&l%now% &6Gracz &c%player-arg% &6sprzedał w Twoim sklepie &c&l##%{_sklep}% %{_dodanytowar}% &6sztuk(i) &c&l%{_towar}% &6za &c&l%{_totalreward}%$&6. Zabrakło miejsca w magazynie!" to {hsplayers::messagelist::%{hs::owner::%{_sklep}%}%::*}
+					stop
+			send "{@tag} &aTransakcja przebiegła pomyślnie! Sprzedano &l%{_dodanytowar}% &asztuk(i) &l%{_towar}% &aza &l%{_totalreward}%$" to player-arg
+			add "&e&l%now% &6Gracz &c%player-arg% &6sprzedał w Twoim sklepie &c&l##%{_sklep}% %{_dodanytowar}% &6sztuk(i) &c&l%{_towar}% &6za &c&l%{_totalreward}%$&6. Transakcja przebiegła pomyślnie!" to {hsplayers::messagelist::%{hs::owner::%{_sklep}%}%::*}
+		else:
+			send "{@tag} &cWłaściciel nie ma tyle $!" to player-arg
+
+
+# No i ta...
+
+#command /hamenucpanel <komu> <strona> <idsklepu> [<kategoria>]
+command /hsmenucpanel <player> <text> <number> [<text>]:
+	trigger:
+		wait 2 ticks
+		arg 2 is "glowna":
+			open chest with 1 rows named "{@cpanel}" to player-arg
+			wait 1 tick
+			format slot 1 of player-arg with sugar cane named "&aDodaj przedmiot" to close then run "hsmenucpanel %player-arg% dodaj %number-arg-1%"
+			format slot 2 of player-arg with barrier named "&cUsuń przedmiot" to close then run "hsmenucpanel %player-arg% usun %number-arg-1%"
+			format slot 3 of player-arg with signitem named "&6Zmień rozmiar" to close then run "hsmenucpanel %player-arg% zmienrozmiar %number-arg-1%"
+			format slot 4 of player-arg with yellow wool named "&6Zmień status" to close then run "hsmenucpanel %player-arg% zmienstatus %number-arg-1%"
+			format slot 5 of player-arg with red wool named "&cPorzuć sklep" to close then run "hsmenucpanel %player-arg% porzucsklep %number-arg-1%"
+			format slot 6 of player-arg with clock named "&aOpłać abonament" to close then run "hsmenucpanel %player-arg% abonament %number-arg-1%"
+			player-arg has permission "hershops.admin" or "hershops.destroy":
+				format slot 8 of player-arg with barrier named "&4Usuń sklep" to close then run "hsmenucpanel %player-arg% usunsklepadmin %number-arg-1%"
+		arg 2 is "dodaj":
+			open chest with 1 rows named "{@cpanel}" to player-arg
+			wait 1 tick
+			format slot 0 of player-arg with light green wool named "&aDodaj przedmiot do kupna" to close then run "hsmenucpanel %player-arg% wybierzitem %number-arg-1% buy"
+			format slot 8 of player-arg with blue wool named "&bDodaj przedmiot do sprzedaży" to close then run "hsmenucpanel %player-arg% wybierzitem %number-arg-1% sell"
+		arg 2 is "wybierzitem":
+			set {hsplayers::hs.mode::%player-arg%} to "chooseitem"
+			set {hsplayers::sklep::%player-arg%} to number-arg-1
+			set {hsplayers::kategoria::%player-arg%} to arg 4
+			send "&6Kucnij (SHIFT) i wyrzuć 1 sztukę towaru ze swojego ekwipunku!" to player-arg
+		arg 2 is "usun":
+			open chest with 1 rows named "{@cpanel}" to player-arg
+			wait 1 tick
+			format slot 0 of player-arg with light green wool named "&aUsuń przedmiot z kupna" to close then run "hsmenucpanel %player-arg% usunitem %number-arg-1% buy"
+			format slot 8 of player-arg with blue wool named "&bUsuń przedmiot ze sprzedaży" to close then run "hsmenucpanel %player-arg% usunitem %number-arg-1% sell"
+		arg 2 is "usunitem":
+			open chest with {hs::rows::%number-arg-1%} rows named "{@cpanel}" to player-arg
+			wait 1 tick
+			arg 4 is "buy":
+				loop {hs::items.buy::%number-arg-1%::*}:
+					add 1 to {_slot}
+					format slot {_slot}-1 of player-arg with loop-value named "&4Usuń" to close then run "hsmenucpanel %player-arg% usunbuy %number-arg-1% %loop-index%"
+			arg 4 is "sell":
+				loop {hs::items.sell::%number-arg-1%::*}:
+					add 1 to {_slot}
+					format slot {_slot}-1 of player-arg with loop-value named "&4Usuń" to close then run "hsmenucpanel %player-arg% usunsell %number-arg-1% %loop-index%"
+		arg 2 is "usunbuy":
+			clear {hs::items.buy::%number-arg-1%::%arg 4%}
+			clear {hs::price.buy::%number-arg-1%::%arg 4%}
+			send "{@tag} &aUsunięto przedmiot pomyślnie!" to player-arg
+		arg 2 is "usunsell":
+			clear {hs::items.sell::%number-arg-1%::%arg 4%}
+			clear {hs::price.sell::%number-arg-1%::%arg 4%}
+			send "{@tag} &aUsunięto przedmiot pomyślnie!" to player-arg
+		arg 2 is "zmienstatus":
+			arg 4 is not set:
+				open chest with 1 rows named "{@cpanel}" to player-arg
+				wait 1 tick
+				format slot 0 of player-arg with light green wool named "&aOtwórz" to close then run "hsmenucpanel %player-arg% zmienstatus %number-arg-1% odblokuj"
+				format slot 8 of player-arg with red wool named "&cZamknij" to close then run "hsmenucpanel %player-arg% zmienstatus %number-arg-1% zablokuj"
+			arg 4 is "zablokuj":
+				set line 3 of block at {hs::location::%number-arg%} to "{@closed}"
+				send "{@tag} &aZablokowano sklep!" to player-arg
+			arg 4 is "odblokuj":
+				set line 3 of block at {hs::location::%number-arg%} to "{@opened}"
+				send "{@tag} &aOdblokowano sklep!" to player-arg
+		arg 2 is "zmienrozmiar":
+			open chest with 1 rows named "{@cpanel}" to player-arg
+			wait 1 tick
+			loop 6 times:
+				format slot loop-number of player-arg with yellow wool named "&6%loop-number% rząd" to close then run "hsmenucpanel %player-arg% ustawrozmiar %number-arg-1% %loop-number%"
+		arg 2 is "ustawrozmiar":
+			set {_rzedy} to arg 4 parsed as number
+			set {_przedmioty} to size of {hs::items.buy::%number-arg%::*}
+			set {_przedmioty} to {_przedmioty} parsed as number
+			{_przedmioty} is not set:
+				set {_przedmioty} to 0
+			{_przedmioty} is less than or equal to (9 * {_rzedy}):
+				set {_przedmioty2} to size of {hs::items.sell::%number-arg%::*}
+				set {_przedmioty2} to {_przedmioty2} parsed as number
+				{_przedmioty2} is not set:
+					set {_przedmioty2} to 0
+				{_przedmioty2} is less than or equal to (9 * {_rzedy}):
+					set {_rzedy2} to {_rzedy} - {hs::rows::%number-arg%}
+					set {_cena} to {@cenazarzad} * {_rzedy2}
+					send "%{_cena}%" to player-arg
+					set {hs::rows::%number-arg%} to {_rzedy}
+					remove {_cena} from player-arg's balance
+					send "{@tag} &aPomyślnie zmieniono ilość rzędów na %{_rzedy}%!" to player-arg
+				else:
+					send "{@tag} &cW sklepie jest za dużo przedmiotów w kategorii sprzedaż! Usuń jakieś!" to player-arg
+			else:
+				send "{@tag} &cW sklepie jest za dużo przedmiotów w kategorii kupno! Usuń jakieś!" to player-arg
+		arg 2 is "porzucsklep":
+			open chest with 1 rows named "{@cpanel}" to player-arg
+			wait 1 tick
+			loop 9 times:
+				add 1 to {_slot}
+				format slot {_slot}-1 of player-arg with red wool named "&cAnuluj" to close
+			set {_porzuc} to 0 or 1 or 2 or 3 or 4 or 5 or 6 or 7 or 8
+			format slot {_porzuc} of player-arg with light green wool named "&aPorzuć" to close then run "hsmenucpanel %player-arg% porzucskleppotwierdz %number-arg%"
+		arg 2 is "porzucskleppotwierdz":
+			set line 3 of block at {hs::location::%number-arg%} to "{@opened}"
+			set line 4 of block at {hs::location::%number-arg%} to "{@forsale}"
+			send "{@tag} &6Twój sklep &c&l##%number-arg% &6został wystawiony na sprzedaż!" to ({hs::owner::%number-arg%} parsed as player)
+			clear {hs::owner::%number-arg%}
+			clear {hs::owner.store::%number-arg%}
+			clear {hs::items.buy::%number-arg%::*}
+			clear {hs::items.sell::%number-arg%::*}
+			clear {hs::price.buy::%number-arg%::*}
+			clear {hs::price.sell::%number-arg%::*}
+			clear {hs::time::%number-arg%}
+			set {hs::rows::%number-arg%} to {@defaultrows}
+		arg 2 is "kup":
+			set {_cena} to {@cenazarzad}
+			set {_cena} to {_cena} * {@defaultrows}
+			set {_cena} to {_cena} parsed as number
+			open chest with 1 rows named "{@buyshop}" to player-arg
+			wait 1 tick
+			format slot 0 of player-arg with sunflower named "&6Koszt: %{_cena}%" to be unstealable
+			loop 8 times:
+				add 1 to {_slot}
+				format slot {_slot} of player-arg with red wool named "&cAnuluj" to close
+			set {_kup} to 1 or 2 or 3 or 4 or 5 or 6 or 7 or 8
+			format slot {_kup} of player-arg with light green wool named "&aKup" to close then run "hsmenucpanel %player-arg% zaplackupno %number-arg%"
+		arg 2 is "zaplackupno":
+			set {_cena} to {@cenazarzad}
+			set {_cena} to {_cena} * {@defaultrows}
+			set {_cena} to {_cena} parsed as number
+			player-arg's balance is greater than or equal to {_cena}:
+				set {hs::owner::%number-arg%} to name of player-arg
+				set line 3 of block at {hs::location::%number-arg%} to "{@opened}"
+				set line 4 of block at {hs::location::%number-arg%} to ""
+				set {hs::owner.store::%{hs::store::%number-arg%}%} to name of player-arg
+				set {hs::time::%number-arg%} to {@mnoznikczasu}
+				set {hs::mode::%number-arg%} to "unlocked"
+				send "{@tag} &aKupiono sklep &l##%number-arg%&a!" to player-arg
+				remove {_cena} from player-arg's balance
+			else:
+				send "{@tag} &cNie masz wystarczająco $!" to player-arg
+		arg 2 is "abonament":
+			set {_cena} to {@cenazarzad}
+			set {_cena} to {_cena} * {hs::rows::%number-arg%}
+			set {_cena} to {_cena} parsed as number
+			open chest with 1 rows named "{@cpanel}" to player-arg
+			wait 1 tick
+			format slot 0 of player-arg with sunflower named "&6Koszt: %{_cena}%" to be unstealable
+			loop 8 times:
+				add 1 to {_slot}
+				format slot {_slot} of player-arg with red wool named "&cAnuluj" to close
+			set {_kup} to 1 or 2 or 3 or 4 or 5 or 6 or 7 or 8
+			format slot {_kup} of player-arg with light green wool named "&aOpłać abonament" to close then run "hsmenucpanel %player-arg% oplacabonament %number-arg%"
+		arg 2 is "oplacabonament":
+			set {_cena} to {@cenazarzad}
+			set {_cena} to {_cena} * {hs::rows::%number-arg%}
+			set {_cena} to {_cena} parsed as number
+			player-arg's balance is greater than or equal to {_cena}:
+				set {_max} to {@maxdooplacenia}
+				set {_max} to {_max} parsed as number
+				{hs::time::%number-arg%} is less than or equal to {_max}:
+					add {@mnoznikczasu} to {hs::time::%number-arg%} 
+					send "{@tag} &aOpłacono abonament sklepu &l##%number-arg%&a!" to player-arg
+					set line 4 of block at {hs::location::%number-arg%} to ""
+					remove {_cena} from player-arg's balance
+				else:
+					send "{@tag} &cAbonament możesz opłacić maksymalnie &l{@displayedtime} &cprzed wystawieniem sklepu na sprzedaż!" to player-arg
+			else:
+				send "{@tag} &cNie masz wystarczająco $!" to player-arg
+		arg 2 is "usunsklepadmin":
+			player-arg has permission "hershops.admin" or "hershops.destroy":
+				open chest with 1 rows named "{@cpanel}" to player-arg
+				wait 1 tick
+				loop 9 times:
+					add 1 to {_slot}
+					format slot {_slot}-1 of player-arg with red wool named "&cAnuluj" to close
+				set {_usun} to 0 or 1 or 2 or 3 or 4 or 5 or 6 or 7 or 8
+				format slot {_usun} of player-arg with light green wool named "&aUsuń" to close then run "hsmenucpanel %player-arg% usunskleppotwierdz %number-arg%"
+		arg 2 is "usunskleppotwierdz":
+			player-arg has permission "hershops.admin" or "hershops.destroy":
+				set line 1 of block at {hs::location::%number-arg%} to ""
+				set line 2 of block at {hs::location::%number-arg%} to ""
+				set line 3 of block at {hs::location::%number-arg%} to ""
+				set line 4 of block at {hs::location::%number-arg%} to ""
+				send "{@tag} &aUsunąłeś sklep &l##%number-arg%&a!" to player-arg
+				add "&e&l%now% &6Twój sklep &c&l##%number-arg% &6został usunięty przez administratora!" to {hsplayers::messagelist::%{hs::owner::%number-arg%}%::*}
+				if {@destroyondelete} is true:
+					set block at {hs::location::%number-arg%} to air
+					set block at {hs::store::%number-arg%} to air
+				clear {hs::location::%number-arg%}
+				clear {hs::store::%number-arg%}
+				clear {hs::owner::%number-arg%}
+				clear {hs::owner.store::%number-arg%}
+				clear {hs::items.buy::%number-arg%::*}
+				clear {hs::items.sell::%number-arg%::*}
+				clear {hs::price.buy::%number-arg%::*}
+				clear {hs::price.sell::%number-arg%::*}
+				clear {hs::time::%number-arg%}
+				clear {hs::rows::%number-arg%}
+
+
+
+command /hershops [<text="help">]:
+	aliases: /hershop, /hs
+	trigger:
+		arg 1 is "wiadomosci":
+			set {_count} to size of {hsplayers::messagelist::%player%::*}
+			{_count} is 0:
+				send "{@tag} &6Nie masz żadnych nieprzeczytanych powiadomień!"
+			else:
+				loop {hsplayers::messagelist::%player%::*}:
+					add 1 to {_number}
+					send "&4&l%{_number}%. %loop-value%"
+					clear {hsplayers::messagelist::%player%::%loop-index%}
+					{_number} is {@maxmessages}:
+						exit loop
+				send "{@tag} &6Wyświetlono &c&l%{_number}% &6z &c&l%{_count}% &6powiadomień!"	
+		arg is "help" or "pomoc":
+			send "&c/hershops (help|pomoc) &6- wyświetla tę listę"
+			send "&c/hershops wiadomosci &6- wyświetla powiadomienia ze sklepów"
+		player has permission "hershops.admin":
+			arg is "help" or "pomoc":
+				send "&c/hershops reload &6- odświeża skrypt"
+				send "&c/hershopsdel etevar iablescon firmation &6- usuwa wszystkie zmienne skryptu, tylko KONSOLA"
+			arg is "reload":
+				execute player command "/sk reload %script%"
+#		arg is "download":
+#			send "&7[&6Skript&7] &rDownloading &6%script%.sk&r..."
+#			download "url" to "plugins/Skript/scripts/%script%.sk"
+#			send "&7[&6Skript&7] &rSuccesfully downloaded &6%script%.sk&r."
+
+
+
+
+command /hershopdel etevar iablescon firmation:
+	executable by: console
+	trigger:
+		loop {hs::owner::*}:
+			add "&e&l%now% &6Twój sklep &c&l##%loop-index% &6został usunięty przez administratora!" to {hsplayers::messagelist::%loop-value%::*}
+		loop {hs::location::*}:
+			set line 1 of block at loop-value to ""
+			set line 2 of block at loop-value to ""
+			set line 3 of block at loop-value to ""
+			set line 4 of block at loop-value to ""
+			if {@destroyondelete} is true:
+				set block at loop-value to air
+		if {@destroyondelete} is true:
+			loop {hs::store::*}:
+				set block at loop-value to air
+		clear {hs::location::*}
+		clear {hs::owner::*}
+		clear {hs::rows::*}
+		clear {hs::store::*}
+		clear {hs::time::*}
+		clear {hs::owner.store::*}
+		clear {hs::items.buy::*}
+		clear {hs::items.sell::*}
+		clear {hs::price.buy::*}
+		clear {hs::price.sell::*}
+		clear {hs::shops.count}
+		send "&4&lDeleted all shops!"
+		
+
+every minute: #odliczanie czasu aktywności sklepów
+	loop {hs::time::*}:
+		loop-value is greater than 0:
+			remove 1 from {hs::time::%loop-index%}
+			line 4 of block at {hs::location::%loop-index%} is "":
+				set {_max} to {@maxdooplacenia}
+				set {_max} to {_max} parsed as number
+				loop-value is less than or equal to {_max}:
+					set line 4 of block at {hs::location::%loop-index%} to "{@renewable}"
+					add "&e&l%now% &6Abonament za Twój sklep &c&l##%loop-index% &6może zostać przedłużony!" to {hsplayers::messagelist::%{hs::owner::%loop-index%}%::*}
+		else:
+			set line 3 of block at {hs::location::%loop-index%} to "{@opened}"
+			set line 4 of block at {hs::location::%loop-index%} to "{@forsale}"
+			add "&e&l%now% &6Twój sklep &c&l##%loop-index% &6nie został opłacony, dlatego jest wystawiony na sprzedaż!" to {hsplayers::messagelist::%{hs::owner::%loop-index%}%::*}
+			clear {hs::owner::%loop-index%}
+			clear {hs::owner.magazyn::%loop-index%}
+			clear {hs::items.buy::%loop-index%::*}
+			clear {hs::items.sell::%loop-index%::*}
+			clear {hs::price.buy::%loop-index%::*}
+			clear {hs::price.sell::%loop-index%::*}
+			clear {hs::time::%loop-index%}
+			set {hs::rows::%loop-index%} to {@defaultrows}
+	loop all players:
+		set {_ilosc} to size of {hsplayers::messagelist::%loop-player%::*}
+		{_ilosc} is greater than 0:
+			send "{@tag} &6Masz &c&l%{_ilosc}% &6powiadomień ze sklepów! Wpisz &c&l/hershops wiadomosci &6aby je odczytać." to loop-player
+		clear {_ilosc}
+		
+		
+		
+		
+( ͡° ͜ʖ ͡°)
