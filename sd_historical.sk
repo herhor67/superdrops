@@ -1,0 +1,620 @@
+#hercore superdrops
+#=============================================#
+#   Skrypt napisany przez: herhor67           #
+#   Nazwa: SuperDrops                         #
+#=============================================#
+#  Licencja skryptu:                          #
+# * Nie zezwalam na:                          #
+# - Usuwanie treści o autorze!                #
+# - Podszywanie się pod autora!               #
+# - Używanie kodu skryptu w swoich skryptach! #
+# - Zarabianie na skrypcie!                   #
+# - Wrzucanie skryptu do internetu!           #
+# - Dodawanie kodu na swoja potrzebe!         #
+# - Modyfikowanie kodu na swoja potrzebe!     #
+#=============================================#
+#don't modify aliases
+aliases:
+	diament = 57
+	diamentitem = 264
+	br = 369
+	signblock = 323
+#you can modify options
+options:
+	additionalrecipes: true
+	directory: plugins/SuperDrops
+
+#don't modify anything below this line
+
+command /superdrops:
+	aliases: sd, superdrop
+	trigger:
+		execute server command "/superdropsmenu %player%"
+
+#command /superdropsmenu dlakogo chance   blocks   <block>  fortune  item:
+command /superdropsmenu <player> [<text>] [<text>] [<text>] [<text>] [<text>]:
+	executable by: console
+	trigger:
+		set {_valuelist::*} to configuration section "menu" get of "{@directory}/config.yml"
+		loop {_valuelist::*}:
+			set {_menuconfig::%loop-value%} to single value "menu.%loop-value%" get of "{@directory}/config.yml"
+		wait 2 ticks
+		arg 2 is not set:
+			open chest with 2 rows named "%coloured {_menuconfig::tag}%" to player-arg
+			wait 1 tick
+			set {_top} to single value "menu.top" get of "{@directory}/config.yml"
+			set {_chance} to single value "menu.chance" get of "{@directory}/config.yml"
+			format slot 4 of player-arg with arrow named "%coloured {_menuconfig::back}%" to close
+			format slot 11 of player-arg with signblock named "%coloured {_top}%" to close then run "superdropsmenu %player-arg% top"
+			format slot 15 of player-arg with command block named "%coloured {_chance}%" to close then run "superdropsmenu %player-arg% chance"
+		arg 2 is "chance":
+			arg 3 is not set:
+				open chest with 2 rows named "%coloured {_menuconfig::tag}%" to player-arg
+				wait 1 tick
+				format slot 4 of player-arg with arrow named "%coloured {_menuconfig::back}%" to close then run "superdropsmenu %player-arg%"
+				format slot 11 of player-arg with stone named "%coloured {_menuconfig::blocks}%" to close then run "superdropsmenu %player-arg% chance blocks"
+				format slot 13 of player-arg with spawn egg named "%coloured {_menuconfig::entities}%" to close then run "superdropsmenu %player-arg% chance entities"
+				format slot 15 of player-arg with fishing rod named "%coloured {_menuconfig::fishing}%" to close then run "superdropsmenu %player-arg% chance fishing fishing"
+			arg 3 is "blocks":
+				arg 4 is not set:
+					set {_itemlist::*} to configuration section "blocks" get of "{@directory}/config.yml"
+					set {_slot} to 0
+					open chest with 6 rows named "%coloured {_menuconfig::tag}%" to player-arg
+					wait 1 tick
+					format slot 4 of player-arg with arrow named "%coloured {_menuconfig::back}%" to close then run "superdropsmenu %player-arg% chance"
+					loop {_itemlist::*}:
+						format slot {_slot}+9 of player-arg with (loop-value parsed as itemtype) with lore "%coloured {_menuconfig::clicktoshow}%" to close then run "superdropsmenu %player-arg% chance blocks %loop-value%"
+						add 1 to {_slot}
+				else:
+					if arg 5 is not set:
+						open chest with 2 rows named "%coloured {_menuconfig::tag}%" to player-arg
+						wait 1 tick
+						format slot 4 of player-arg with arrow named "%coloured {_menuconfig::back}%" to close then run "superdropsmenu %player-arg% chance blocks"
+						format slot 10 of player-arg with book named "%coloured {_menuconfig::fortune}% 0" to close then run "superdropsmenu %player-arg% chance blocks %arg 4% 0"
+						format slot 12 of player-arg with enchanted book named "%coloured {_menuconfig::fortune}% I" to close then run "superdropsmenu %player-arg% chance blocks %arg 4% 1"
+						format slot 14 of player-arg with enchanted book named "%coloured {_menuconfig::fortune}% II" to close then run "superdropsmenu %player-arg% chance blocks %arg 4% 2"
+						format slot 16 of player-arg with enchanted book named "%coloured {_menuconfig::fortune}% III" to close then run "superdropsmenu %player-arg% chance blocks %arg 4% 3"
+					else:
+						if arg 6 is not set:
+							open chest with 6 rows named "%coloured {_menuconfig::tag}%" to player-arg
+							wait 1 tick
+							format slot 4 of player-arg with arrow named "%coloured {_menuconfig::back}%" to close then run "superdropsmenu %player-arg% chance blocks %arg 4%"
+							set {_slot} to 0
+							set {_block} to arg 4 parsed as itemtype
+							set {_basiclist::*} to configuration section "blocks.%{_block}%" get of "{@directory}/config.yml"
+							loop {_basiclist::*}:
+								loop-value isn't "xp":
+									set {_itemlist::%loop-index%} to loop-value
+							loop {_itemlist::*}:
+								set {_config::name} to single value "blocks.%{_block}%.%loop-value%.name" get of "{@directory}/config.yml"
+								set {_config::item} to single value "blocks.%{_block}%.%loop-value%.item" get of "{@directory}/config.yml" parsed as itemtype
+								format slot {_slot}+9 of player-arg with {_config::item} named "%coloured {_config::name}%" to close then run "superdropsmenu %player-arg% chance blocks %arg 4% %arg 5% %loop-value%"
+								add 1 to {_slot}
+						else:
+							open chest with 4 rows named "%coloured {_menuconfig::tag}%" to player-arg
+							wait 1 tick
+							format slot 4 of player-arg with arrow named "%coloured {_menuconfig::back}%" to close then run "superdropsmenu %player-arg% chance blocks %arg 4%"
+							set {_block} to arg 4 parsed as itemtype
+							set {_multiplier} to 1
+							set {_permissionslist::*} to configuration section "multipliers.permissions" get of "{@directory}/config.yml"
+							loop {_permissionslist::*}:
+								if player-arg has permission "sd.mp.blocks.%loop-value%":
+									set {_permission} to single value "multipliers.permissions.%loop-value%" get of "{@directory}/config.yml" parsed as number
+									set {_multiplier} to {_multiplier}*{_permission}
+									exit loop
+							set {_turbodrop} to single value "multipliers.other.turbodrop" get of "{@directory}/config.yml" parsed as number
+							if {_turbodrop} is set:
+								set {_multiplier} to {_multiplier}*{_turbodrop}
+							set {_fortunemulti} to single value "multipliers.fortune.%arg 5%" get of "{@directory}/config.yml" parsed as number
+							set {_multiplier} to {_multiplier}*{_fortunemulti}
+							set {_multiplier} to {_multiplier} parsed as number #gotowy
+							set {_config::name} to single value "blocks.%{_block}%.%arg 6%.name" get of "{@directory}/config.yml"
+							set {_config::item} to single value "blocks.%{_block}%.%arg 6%.item" get of "{@directory}/config.yml" parsed as itemtype
+							set {_config::itemsmelted} to single value "blocks.%{_block}%.%arg 6%.itemsmelted" get of "{@directory}/config.yml" parsed as itemtype
+							set {_config::chance} to single value "blocks.%{_block}%.%arg 6%.chance" get of "{@directory}/config.yml" parsed as number
+							set {_config::tools::*} to value list "blocks.%{_block}%.%arg 6%.tools" get of "{@directory}/config.yml"
+							set {_config::biomes::*} to value list "blocks.%{_block}%.%arg 6%.biomes" get of "{@directory}/config.yml"
+							set {_config::heightmin} to single value "blocks.%{_block}%.%arg 6%.heightmin" get of "{@directory}/config.yml" parsed as integer
+							set {_config::heightmax} to single value "blocks.%{_block}%.%arg 6%.heightmax" get of "{@directory}/config.yml" parsed as integer
+							set {_realchance} to {_config::chance}*{_multiplier}
+							{_realchance} is greater than 100:
+								set {_realchance} to 100
+							set {_item} to {_config::item}
+							{_item} is set:
+								format slot 13 of player-arg with signblock named "%coloured {_config::name}%" to be unstealable
+								format slot 18 of player-arg with 1 of {_item} named "&6&lItem" with lore "&c%{_config::item}%" to be unstealable
+								format slot 19 of player-arg with 1 of {_config::itemsmelted} named "&6&lSmelted item" with lore "&c%{_config::itemsmelted}%" to be unstealable
+								format slot 20 of player-arg with command block named "&6&lChance" with lore "&c%{_realchance}%%%" to be unstealable
+								format slot 21 of player-arg with diamond pickaxe named "&6&lTools" with lore "&c%{_config::tools::*}%" to be unstealable
+								{_config::biomes::*} is set:
+									format slot 22 of player-arg with mycelium named "&6&lBiomes" with lore "&c%{_config::biomes::*}%" to be unstealable
+								else:
+									format slot 22 of player-arg with mycelium named "&6&lBiomes" with lore "&cany biome" to be unstealable
+								format slot 23 of player-arg with ladder named "&6&lMin height" with lore "&c%{_config::heightmin}%" to be unstealable
+								format slot 24 of player-arg with ladder named "&6&lMax height" with lore "&c%{_config::heightmax}%" to be unstealable
+			arg 3 is "entities":
+				arg 4 is not set:
+					set {_itemlist::*} to configuration section "mobs" get of "{@directory}/config.yml"
+					set {_slot} to 0
+					open chest with 6 rows named "%coloured {_menuconfig::tag}%" to player-arg
+					wait 1 tick
+					format slot 4 of player-arg with arrow named "%coloured {_menuconfig::back}%" to close then run "superdropsmenu %player-arg% chance"
+					loop {_itemlist::*}:
+						set {_mob} to loop-value
+						#set {_mob} to {_mob} parsed as entity type
+						#set {_item} to {_mob}'s spawn egg parsed as itemtype
+						format slot {_slot}+9 of player-arg with spawn egg named "&6&l%loop-value%" with lore "%coloured {_menuconfig::clicktoshow}%" to close then run "superdropsmenu %player-arg% chance entities %loop-value%"
+						add 1 to {_slot}
+				else:
+					if arg 5 is not set:
+						open chest with 2 rows named "%coloured {_menuconfig::tag}%" to player-arg
+						wait 1 tick
+						format slot 4 of player-arg with arrow named "%coloured {_menuconfig::back}%" to close then run "superdropsmenu %player-arg% chance entities"
+						format slot 10 of player-arg with book named "%coloured {_menuconfig::fortune}% 0" to close then run "superdropsmenu %player-arg% chance entities %arg 4% 0"
+						format slot 12 of player-arg with enchanted book named "%coloured {_menuconfig::fortune}% I" to close then run "superdropsmenu %player-arg% chance entities %arg 4% 1"
+						format slot 14 of player-arg with enchanted book named "%coloured {_menuconfig::fortune}% II" to close then run "superdropsmenu %player-arg% chance entities %arg 4% 2"
+						format slot 16 of player-arg with enchanted book named "%coloured {_menuconfig::fortune}% III" to close then run "superdropsmenu %player-arg% chance entities %arg 4% 3"
+					else:
+						if arg 6 is not set:
+							open chest with 6 rows named "%coloured {_menuconfig::tag}%" to player-arg
+							wait 1 tick
+							format slot 4 of player-arg with arrow named "%coloured {_menuconfig::back}%" to close then run "superdropsmenu %player-arg% chance entities %arg 4%"
+							set {_slot} to 0
+							set {_mob} to arg 4 parsed as entity type
+							set {_basiclist::*} to configuration section "mobs.%{_mob}%" get of "{@directory}/config.yml"
+							loop {_basiclist::*}:
+								loop-value isn't "xp":
+									set {_itemlist::%loop-index%} to loop-value
+							loop {_itemlist::*}:
+								set {_config::name} to single value "mobs.%{_mob}%.%loop-value%.name" get of "{@directory}/config.yml"
+								set {_config::item} to single value "mobs.%{_mob}%.%loop-value%.item" get of "{@directory}/config.yml" parsed as itemtype
+								format slot {_slot}+9 of player-arg with {_config::item} named "%coloured {_config::name}%" to close then run "superdropsmenu %player-arg% chance entities %arg 4% %arg 5% %loop-value%"
+								add 1 to {_slot}
+						else:
+							open chest with 4 rows named "%coloured {_menuconfig::tag}%" to player-arg
+							wait 1 tick
+							format slot 4 of player-arg with arrow named "%coloured {_menuconfig::back}%" to close then run "superdropsmenu %player-arg% chance entities %arg 4%"
+							set {_mob} to arg 4 parsed as entity type
+							set {_multiplier} to 1
+							set {_permissionslist::*} to configuration section "multipliers.permissions" get of "{@directory}/config.yml"
+							loop {_permissionslist::*}:
+								if player-arg has permission "sd.mp.mobs.%loop-value%":
+									set {_permission} to single value "multipliers.permissions.%loop-value%" get of "{@directory}/config.yml" parsed as number
+									set {_multiplier} to {_multiplier}*{_permission}
+									exit loop
+							set {_turbodrop} to single value "multipliers.other.turbodrop" get of "{@directory}/config.yml" parsed as number
+							if {_turbodrop} is set:
+								set {_multiplier} to {_multiplier}*{_turbodrop}
+							set {_fortunemulti} to single value "multipliers.fortune.%arg 5%" get of "{@directory}/config.yml" parsed as number
+							set {_multiplier} to {_multiplier}*{_fortunemulti}
+							set {_multiplier} to {_multiplier} parsed as number #gotowy
+							set {_config::name} to single value "mobs.%{_mob}%.%arg 6%.name" get of "{@directory}/config.yml"
+							set {_config::item} to single value "mobs.%{_mob}%.%arg 6%.item" get of "{@directory}/config.yml" parsed as itemtype
+							set {_config::itemsmelted} to single value "mobs.%{_mob}%.%arg 6%.itemsmelted" get of "{@directory}/config.yml" parsed as itemtype
+							set {_config::chance} to single value "mobs.%{_mob}%.%arg 6%.chance" get of "{@directory}/config.yml" parsed as number
+							set {_config::tools::*} to value list "mobs.%{_mob}%.%arg 6%.tools" get of "{@directory}/config.yml"
+							set {_config::biomes::*} to value list "mobs.%{_mob}%.%arg 6%.biomes" get of "{@directory}/config.yml"
+							set {_realchance} to {_config::chance}*{_multiplier}
+							{_realchance} is greater than 100:
+								set {_realchance} to 100
+							set {_item} to {_config::item}
+							{_item} is set:
+								format slot 13 of player-arg with signblock named "%coloured {_config::name}%" to be unstealable
+								format slot 18 of player-arg with 1 of {_item} named "&6&lItem" with lore "&c%{_config::item}%" to be unstealable
+								format slot 19 of player-arg with 1 of {_config::itemsmelted} named "&6&lSmelted item" with lore "&c%{_config::itemsmelted}%" to be unstealable
+								format slot 20 of player-arg with command block named "&6&lChance" with lore "&c%{_realchance}%%%" to be unstealable
+								format slot 21 of player-arg with diamond pickaxe named "&6&lTools" with lore "&c%{_config::tools::*}%" to be unstealable
+								{_config::biomes::*} is set:
+									format slot 22 of player-arg with mycelium named "&6&lBiomes" with lore "&c%{_config::biomes::*}%" to be unstealable
+								else:
+									format slot 22 of player-arg with mycelium named "&6&lBiomes" with lore "&cany biome" to be unstealable
+			arg 3 is "fishing":
+				if arg 5 is not set:
+					open chest with 2 rows named "%coloured {_menuconfig::tag}%" to player-arg
+					wait 1 tick
+					format slot 4 of player-arg with arrow named "%coloured {_menuconfig::back}%" to close then run "superdropsmenu %player-arg% chance"
+					format slot 10 of player-arg with book named "%coloured {_menuconfig::fortune}% 0" to close then run "superdropsmenu %player-arg% chance fishing fishing 0"
+					format slot 12 of player-arg with enchanted book named "%coloured {_menuconfig::fortune}% I" to close then run "superdropsmenu %player-arg% chance fishing fishing 1"
+					format slot 14 of player-arg with enchanted book named "%coloured {_menuconfig::fortune}% II" to close then run "superdropsmenu %player-arg% chance fishing fishing 2"
+					format slot 16 of player-arg with enchanted book named "%coloured {_menuconfig::fortune}% III" to close then run "superdropsmenu %player-arg% chance fishing fishing 3"
+				else:
+					if arg 6 is not set:
+						open chest with 6 rows named "%coloured {_menuconfig::tag}%" to player-arg
+						wait 1 tick
+						format slot 4 of player-arg with arrow named "%coloured {_menuconfig::back}%" to close then run "superdropsmenu %player-arg% chance fishing fishing"
+						set {_slot} to 0
+						set {_basiclist::*} to configuration section "fishing" get of "{@directory}/config.yml"
+						loop {_basiclist::*}:
+							loop-value isn't "xp":
+								set {_itemlist::%loop-index%} to loop-value
+						loop {_itemlist::*}:
+							set {_config::name} to single value "fishing.%loop-value%.name" get of "{@directory}/config.yml"
+							set {_config::item} to single value "fishing.%loop-value%.item" get of "{@directory}/config.yml" parsed as itemtype
+							format slot {_slot}+9 of player-arg with {_config::item} named "%coloured {_config::name}%" to close then run "superdropsmenu %player-arg% chance fishing fishing %arg 5% %loop-value%"
+							add 1 to {_slot}
+					else:
+						open chest with 4 rows named "%coloured {_menuconfig::tag}%" to player-arg
+						wait 1 tick
+						format slot 4 of player-arg with arrow named "%coloured {_menuconfig::back}%" to close then run "superdropsmenu %player-arg% chance fishing %arg 4%"
+						set {_mob} to arg 4 parsed as entity type
+						set {_multiplier} to 1
+						set {_permissionslist::*} to configuration section "multipliers.permissions" get of "{@directory}/config.yml"
+						loop {_permissionslist::*}:
+							if player-arg has permission "sd.mp.fishing.%loop-value%":
+								set {_permission} to single value "multipliers.permissions.%loop-value%" get of "{@directory}/config.yml" parsed as number
+								set {_multiplier} to {_multiplier}*{_permission}
+								exit loop
+						set {_turbodrop} to single value "multipliers.other.turbodrop" get of "{@directory}/config.yml" parsed as number
+						if {_turbodrop} is set:
+							set {_multiplier} to {_multiplier}*{_turbodrop}
+						set {_fortunemulti} to single value "multipliers.fortune.%arg 5%" get of "{@directory}/config.yml" parsed as number
+						set {_multiplier} to {_multiplier}*{_fortunemulti}
+						set {_multiplier} to {_multiplier} parsed as number #gotowy
+						set {_config::name} to single value "fishing.%arg 6%.name" get of "{@directory}/config.yml"
+						set {_config::item} to single value "fishing.%arg 6%.item" get of "{@directory}/config.yml" parsed as itemtype
+						set {_config::itemsmelted} to single value "fishing.%arg 6%.itemsmelted" get of "{@directory}/config.yml" parsed as itemtype
+						set {_config::chance} to single value "fishing.%arg 6%.chance" get of "{@directory}/config.yml" parsed as number
+						set {_config::tools::*} to value list "fishing.%arg 6%.tools" get of "{@directory}/config.yml"
+						set {_config::biomes::*} to value list "fishing.%arg 6%.biomes" get of "{@directory}/config.yml"
+						set {_realchance} to {_config::chance}*{_multiplier}
+						{_realchance} is greater than 100:
+							set {_realchance} to 100
+						set {_item} to {_config::item}
+						{_item} is set: #player chance mobs pig 1
+							format slot 13 of player-arg with signblock named "%coloured {_config::name}%" to be unstealable
+							format slot 18 of player-arg with 1 of {_item} named "&6&lItem" with lore "&c%{_config::item}%" to be unstealable
+							format slot 19 of player-arg with 1 of {_config::itemsmelted} named "&6&lSmelted item" with lore "&c%{_config::itemsmelted}%" to be unstealable
+							format slot 20 of player-arg with command block named "&6&lChance" with lore "&c%{_realchance}%%%" to be unstealable
+		arg 2 is "top":
+			arg 3 is not set:
+				open chest with 2 rows named "%coloured {_menuconfig::tag}%" to player-arg
+				wait 1 tick
+				format slot 4 of player-arg with arrow named "%coloured {_menuconfig::back}%" to close then run "superdropsmenu %player-arg%"
+				format slot 11 of player-arg with stone named "%coloured {_menuconfig::blocks}%" to close then run "superdropsmenu %player-arg% top blocks"
+				format slot 13 of player-arg with spawn egg named "%coloured {_menuconfig::entities}%" to close then run "superdropsmenu %player-arg% top entities"
+				format slot 15 of player-arg with fishing rod named "%coloured {_menuconfig::fishing}%" to close then run "superdropsmenu %player-arg% top fishing"
+			else:
+				arg 4 is not set:
+					set {_slot} to 0
+					open chest with 6 rows named "%coloured {_menuconfig::tag}%" to player-arg
+					wait 1 tick
+					format slot 4 of player-arg with arrow named "%coloured {_menuconfig::back}%" to close then run "superdropsmenu %player-arg%"
+					set {_list::*} to configuration section "dropped.%arg 3%" get of "{@directory}/stats.yml"
+					set {_itemname} to single value "menu.clicktoshowtop" get of "{@directory}/config.yml"
+					loop {_list::*}:
+						format slot {_slot}+9 of player-arg with (loop-value parsed as item) named "%coloured {_itemname}%" to close then run "superdropstop %player-arg% %arg 3% %loop-value%"
+						add 1 to {_slot}
+
+command /superdropstop <player> <text> <text>:
+	executable by: console
+	trigger:
+		set {_top::*} to configuration section "dropped.%arg 2%.%arg 3%" get of "{@directory}/stats.yml"
+		loop {_top::*}:
+			set {_score} to single value "dropped.%arg 2%.%arg 3%.%loop-value%" get of "{@directory}/stats.yml"
+			set {_topready::%loop-value%} to {_score} parsed as number
+		loop (size of {_topready::*}) times:
+			set {_wynik} to 0
+			loop {_topready::*}:
+				loop-value is greater than {_wynik}:
+					set {_wynik} to loop-value
+					set {_nick} to loop-index
+			clear {_topready::%{_nick}%}
+			{_nick} is set:
+				set {_format} to single value "messages.topformat" get of "{@directory}/config.yml"
+				replace all "{NUMBER}" with "%loop-number%" in {_format}
+				replace all "{NICK}" with "%{_nick}%" in {_format}
+				replace all "{SCORE}" with "%{_wynik}%" in {_format}
+				send "%coloured {_format}%" to player-arg
+
+command /sdadmin [<text>]:
+	aliases: superdropsadmin
+	trigger:
+		if player has permission "dropy.admin" or "dropy.*":
+			arg 1 is "odswiez" or "reload" or "relaod":
+				execute player command "/sk reload %script%"
+#==============================#
+#==============================#
+#==#         RECIPES        #==#
+#==============================#
+#==============================#
+
+on script load:
+	if file "{@directory}/config.yml" doesn't exists:
+		create file "{@directory}/config.yml"
+		download "https://raw.githubusercontent.com/herhor67/superdrops/master/config.yml" to "{@directory}/config.yml"
+#==========#
+	if {@additionalrecipes} is true:
+		register new shaped recipe for (diamond pickaxe of Fortune 10 named "&bSuperPickaxe") using diament, diament, diament, none, stick, none, none, stick, none
+		register new shaped recipe for (diamond pickaxe of Flame 1 named "&bSuperPickaxe") using diamentitem, diamentitem, diamentitem, none, furnace, none, none, stick, none
+	#==========#
+		register new shaped recipe for (diamond axe of Fortune 10 named "&bSuperAxe") using diament, diament, none, diament, stick, none, none, stick, none
+		register new shaped recipe for (diamond axe of Fortune 10 named "&bSuperAxe") using diament, diament, none, stick, diament, none, stick, none, none
+		register new shaped recipe for (diamond axe of Fortune 10 named "&bSuperAxe") using none, diament, diament, none, diament, stick, none, none, stick
+	#----------#
+		register new shaped recipe for (diamond axe of Flame 1 named "&bSuperAxe") using diamentitem, diamentitem, none, diamentitem, furnace, none, none, stick, none
+		register new shaped recipe for (diamond axe of Flame 1 named "&bSuperAxe") using diamentitem, diamentitem, none, furnace, diament, none, stick, none, none
+		register new shaped recipe for (diamond axe of Flame 1 named "&bSuperAxe") using none, diamentitem, diamentitem, none, diamentitem, furnace, none, none, stick
+	#==========#
+		register new shaped recipe for (diamond shovel of Fortune 10 named "&bSuperShovel") using none, diament, none, none, stick, none, none, stick, none
+		register new shaped recipe for (diamond shovel of Fortune 10 named "&bSuperShovel") using diament, none, none, stick, none, none, stick, none, none
+		register new shaped recipe for (diamond shovel of Fortune 10 named "&bSuperShovel") using none, none, diament, none, none, stick, none, none, stick
+	#----------#
+		register new shaped recipe for (diamond shovel of Flame 1 named "&bSuperShovel") using none, diamentitem, none, none, furnace, none, none, stick, none
+		register new shaped recipe for (diamond shovel of Flame 1 named "&bSuperShovel") using diamentitem, none, none, furnace, none, none, stick, none, none
+		register new shaped recipe for (diamond shovel of Flame 1 named "&bSuperShovel") using none, none, diamentitem, none, none, furnace, none, none, stick
+	#==========#
+		register new shaped recipe for (diamond sword of Fortune 10 named "&bSuperSword") using none, diament, none, none, diament, none, none, stick, none
+		register new shaped recipe for (diamond sword of Fortune 10 named "&bSuperSword") using diament, none, none, diament, none, none, stick, none, none
+		register new shaped recipe for (diamond sword of Fortune 10 named "&bSuperSword") using none, none, diament, none, none, diament, none, none, stick
+	#----------#
+		register new shaped recipe for (diamond sword of Flame 1 named "&bSuperSword") using none, diamentitem, none, none, diamentitem, none, none, furnace, none
+		register new shaped recipe for (diamond sword of Flame 1 named "&bSuperSword") using diamentitem, none, none, diamentitem, none, none, furnace, none, none
+		register new shaped recipe for (diamond sword of Flame 1 named "&bSuperSword") using none, none, diamentitem, none, none, diamentitem, none, none, furnace
+	#==========#
+		register new shaped recipe for (fishing rod of Luck of the Sea 10 named "&bSuperFishingRod") using none, none, br, none, br, string, br, none, string
+		register new shaped recipe for (fishing rod of Flame 1 named "&bSuperFishingRod") using none, none, furnace, none, stick, string, stick, none, string
+
+#==============================#
+#==============================#
+#==#         BLOCKS         #==#
+#==============================#
+#==============================#
+on break:
+	set {_block} to type of event-block
+	set {_multiplier} to 1
+#=========={ PERMISSIONS }==========#
+	set {_permissionslist::*} to configuration section "multipliers.permissions" get of "{@directory}/config.yml"
+	loop {_permissionslist::*}:
+		if player has permission "sd.mp.blocks.%loop-value%":
+			set {_permission} to single value "multipliers.permissions.%loop-value%" get of "{@directory}/config.yml" parsed as number
+			set {_multiplier} to {_multiplier}*{_permission}
+			exit loop
+#=========={ SUPER TOOLS }==========#
+	name of player's tool is "&bSuperPickaxe" or "&bSuperAxe" or "&bSuperShovel":
+#----------{ smelting 1 }----------#
+		player's tool is enchanted with Flame 1:
+			set {_smelting.mode} to true
+		else:
+			set {_smelting.mode} to false
+#----------{ fortune 10 }----------#
+		player's tool is enchanted with Fortune 10:
+			set {_multipliers::super} to single value "multipliers.other.super" get of "{@directory}/config.yml" parsed as number
+			set {_multiplier} to {_multiplier}*{_multipliers::super}
+#=========={ FORTUNES }==========#
+	player's tool is enchanted with Fortune 3:
+		set {_multipliers::fortune} to single value "multipliers.fortune.3" get of "{@directory}/config.yml" parsed as number
+		set {_multiplier} to {_multiplier}*{_multipliers::fortune}
+	player's tool is enchanted with Fortune 2:
+		set {_multipliers::fortune} to single value "multipliers.fortune.2" get of "{@directory}/config.yml" parsed as number
+		set {_multiplier} to {_multiplier}*{_multipliers::fortune}
+	player's tool is enchanted with Fortune 1:
+		set {_multipliers::fortune} to single value "multipliers.fortune.1" get of "{@directory}/config.yml" parsed as number
+		set {_multiplier} to {_multiplier}*{_multipliers::fortune}
+#=========={ TURBODROP }==========#
+	set {_multipliers::turbodrop} to single value "multipliers.other.turbodrop" get of "{@directory}/config.yml" parsed as number
+	if {_multipliers::turbodrop} is set:
+		set {_multiplier} to {_multiplier}*{_multipliers::turbodrop}
+#=========={ CONFIG }==========#
+	set {_config::xp} to single value "blocks.%{_block}%.xp" get of "{@directory}/config.yml" parsed as integer
+	set {_basiclist::*} to configuration section "blocks.%{_block}%" get of "{@directory}/config.yml"
+	loop {_basiclist::*}:
+		loop-value isn't "xp":
+			set {_itemlist::%loop-index%} to loop-value
+	loop {_itemlist::*}:
+		{_smelting.mode} is true:
+			set {_config::item} to single value "blocks.%{_block}%.%loop-value%.itemsmelted" get of "{@directory}/config.yml" parsed as itemtype
+		else:
+			set {_config::item} to single value "blocks.%{_block}%.%loop-value%.item" get of "{@directory}/config.yml" parsed as itemtype
+		set {_config::chance} to single value "blocks.%{_block}%.%loop-value%.chance" get of "{@directory}/config.yml" parsed as number
+		set {_config::tools::*} to value list "blocks.%{_block}%.%loop-value%.tools" get of "{@directory}/config.yml"
+		set {_config::biomes::*} to value list "blocks.%{_block}%.%loop-value%.biomes" get of "{@directory}/config.yml"
+		set {_config::heightmin} to single value "blocks.%{_block}%.%loop-value%.heightmin" get of "{@directory}/config.yml" parsed as integer
+		set {_config::heightmax} to single value "blocks.%{_block}%.%loop-value%.heightmax" get of "{@directory}/config.yml" parsed as integer
+#=========={ DROPPING }==========#
+		loop {_config::xp} times:
+			give 1 xp to player
+		if event-block's y-coordinate < {_config::heightmax}:
+			if event-block's y-coordinate > {_config::heightmin}:
+				loop {_config::tools::*}:
+					if player's tool is (loop-value-2 parsed as itemtype):
+						set {_goodtool} to true
+				if {_goodtool} is true:
+					if {_config::biomes::*} is not set:
+						set {_goodbiome} to true
+					else:
+						loop {_config::biomes::*}:
+							if biome at player is (loop-value-2 parsed as biome):
+								set {_goodbiome} to true
+					if {_goodbiome} is true:
+						set {_realchance} to {_config::chance}*{_multiplier}/100
+						if {_realchance} is greater than 1:
+							set {_realchance} to 1
+						chance of {_realchance}:
+							set {_config::message} to single value "messages.dropped" get of "{@directory}/config.yml"
+							drop {_config::item} at event-block
+							{_config::message} is set:
+								replace all "{ITEM}" with "%{_config::item}%" in {_config::message}
+								send "%coloured {_config::message}%"
+							set {_item} to {_config::item} parsed as string
+							set {_score} to single value "dropped.blocks.%{_config::item}%.%player%" get of "{@directory}/stats.yml" parsed as integer
+							add 1 to {_score}
+							set "dropped.blocks.%{_config::item}%.%player%" to "%{_score}%" in yml file "{@directory}/stats.yml"
+
+#==============================#
+#==============================#
+#==#          MOBS          #==#
+#==============================#
+#==============================#
+on death:
+	set {_mob} to victim
+	set {_mob} to {_mob} parsed as entity type
+	set {_multiplier} to 1
+#=========={ PERMISSIONS }==========#
+	set {_permissionslist::*} to configuration section "multipliers.permissions" get of "{@directory}/config.yml"
+	loop {_permissionslist::*}:
+		if attacker has permission "sd.mp.mobs.%loop-value%":
+			set {_permission} to single value "multipliers.permissions.%loop-value%" get of "{@directory}/config.yml" parsed as number
+			set {_multiplier} to {_multiplier}*{_permission}
+			exit loop
+#=========={ SUPER TOOLS }==========#
+	name of attacker's tool is "&bSuperSword":
+#----------{ smelting 1 }----------#
+		player's tool is enchanted with Flame 1:
+			set {_smelting.mode} to true
+		else:
+			set {_smelting.mode} to false
+#----------{ fortune 10 }----------#
+		player's tool is enchanted with Fortune 10:
+			set {_multipliers::super} to single value "multipliers.other.super" get of "{@directory}/config.yml" parsed as number
+			set {_multiplier} to {_multiplier}*{_multipliers::super}
+#=========={ FORTUNES }==========#
+	attacker's tool is enchanted with Fortune 3:
+		set {_multipliers::fortune} to single value "multipliers.fortune.3" get of "{@directory}/config.yml" parsed as number
+		set {_multiplier} to {_multiplier}*{_multipliers::fortune}
+	attacker's tool is enchanted with Fortune 2:
+		set {_multipliers::fortune} to single value "multipliers.fortune.2" get of "{@directory}/config.yml" parsed as number
+		set {_multiplier} to {_multiplier}*{_multipliers::fortune}
+	attacker's tool is enchanted with Fortune 1:
+		set {_multipliers::fortune} to single value "multipliers.fortune.1" get of "{@directory}/config.yml" parsed as number
+		set {_multiplier} to {_multiplier}*{_multipliers::fortune}
+#=========={ TURBODROP }==========#
+	set {_multipliers::turbodrop} to single value "multipliers.other.turbodrop" get of "{@directory}/config.yml" parsed as number
+	if {_multipliers::turbodrop} is set:
+		set {_multiplier} to {_multiplier}*{_multipliers::turbodrop}
+#=========={ CONFIG }==========#
+	set {_config::xp} to single value "mobs.%{_mob}%.xp" get of "{@directory}/config.yml" parsed as integer
+	set {_basiclist::*} to configuration section "mobs.%{_mob}%" get of "{@directory}/config.yml"
+	loop {_basiclist::*}:
+		loop-value isn't "xp":
+			set {_itemlist::%loop-index%} to loop-value
+	loop {_itemlist::*}:
+		{_smelting.mode} is true:
+			set {_config::item} to single value "mobs.%{_mob}%.%loop-value%.itemsmelted" get of "{@directory}/config.yml" parsed as itemtype
+		else:
+			set {_config::item} to single value "mobs.%{_mob}%.%loop-value%.item" get of "{@directory}/config.yml" parsed as itemtype
+		set {_config::chance} to single value "mobs.%{_mob}%.%loop-value%.chance" get of "{@directory}/config.yml" parsed as number
+		set {_config::tools::*} to value list "mobs.%{_mob}%.%loop-value%.tools" get of "{@directory}/config.yml"
+		set {_config::biomes::*} to value list "mobs.%{_mob}%.%loop-value%.biomes" get of "{@directory}/config.yml"
+#=========={ DROPPING }==========#
+		loop {_config::xp} times:
+			give 1 xp to attacker
+		loop {_config::tools::*}:
+			if attacker's tool is (loop-value-2 parsed as itemtype):
+				set {_goodtool} to true
+		if {_goodtool} is true:
+			if {_config::biomes::*} is not set:
+				set {_goodbiome} to true
+			else:
+				loop {_config::biomes::*}:
+					if biome at attacker is (loop-value-2 parsed as biome):
+						set {_goodbiome} to true
+			if {_goodbiome} is true:
+				set {_realchance} to {_config::chance}*{_multiplier}/100
+				if {_realchance} is greater than 1:
+					set {_realchance} to 1
+				chance of {_realchance}:
+					set {_config::message} to single value "messages.dropped" get of "{@directory}/config.yml"
+					drop {_config::item} at victim
+					{_config::message} is set:
+						replace all "{ITEM}" with "%{_config::item}%" in {_config::message}
+						send "%coloured {_config::message}%" to attacker
+					set {_score} to single value "dropped.mobs.%{_config::item}%.%attacker%" get of "{@directory}/stats.yml" parsed as integer
+					add 1 to {_score}
+					set "dropped.mobs.%{_config::item}%.%attacker%" to "%{_score}%" in yml file "{@directory}/stats.yml"
+
+#==============================#
+#==============================#
+#==#         FISHING        #==#
+#==============================#
+#==============================#
+on fishing state of caught fish:
+	set {_multiplier} to 1
+#=========={ PERMISSIONS }==========#
+	set {_permissionslist::*} to configuration section "multipliers.permissions" get of "{@directory}/config.yml"
+	loop {_permissionslist::*}:
+		if player has permission "sd.mp.fishing.%loop-value%":
+			set {_permission} to single value "multipliers.permissions.%loop-value%" get of "{@directory}/config.yml" parsed as number
+			set {_multiplier} to {_multiplier}*{_permission}
+			exit loop
+#=========={ SUPER TOOLS }==========#
+	name of player's tool is "&bSuperFishingRod":
+#----------{ smelting 1 }----------#
+		player's tool is enchanted with Flame 1:
+			set {_smelting.mode} to true
+		else:
+			set {_smelting.mode} to false
+#----------{ fortune 10 }----------#
+		player's tool is enchanted with Luck of the Sea 10:
+			set {_multipliers::super} to single value "multipliers.other.super" get of "{@directory}/config.yml" parsed as number
+			set {_multiplier} to {_multiplier}*{_multipliers::super}
+#=========={ FORTUNES }==========#
+	player's tool is enchanted with Luck of the Sea 3:
+		set {_multipliers::fortune} to single value "multipliers.fortune.3" get of "{@directory}/config.yml" parsed as number
+		set {_multiplier} to {_multiplier}*{_multipliers::fortune}
+	player's tool is enchanted with Luck of the Sea 2:
+		set {_multipliers::fortune} to single value "multipliers.fortune.2" get of "{@directory}/config.yml" parsed as number
+		set {_multiplier} to {_multiplier}*{_multipliers::fortune}
+	player's tool is enchanted with Luck of the Sea 1:
+		set {_multipliers::fortune} to single value "multipliers.fortune.1" get of "{@directory}/config.yml" parsed as number
+		set {_multiplier} to {_multiplier}*{_multipliers::fortune}
+#=========={ TURBODROP }==========#
+	set {_multipliers::turbodrop} to single value "multipliers.other.turbodrop" get of "{@directory}/config.yml" parsed as number
+	if {_multipliers::turbodrop} is set:
+		set {_multiplier} to {_multiplier}*{_multipliers::turbodrop}
+#=========={ CONFIG }==========#
+	set {_config::xp} to single value "fishing.xp" get of "{@directory}/config.yml" parsed as integer
+	set {_basiclist::*} to configuration section "fishing" get of "{@directory}/config.yml"
+	loop {_basiclist::*}:
+		loop-value isn't "xp":
+			set {_itemlist::%loop-index%} to loop-value
+	loop {_itemlist::*}:
+		{_smelting.mode} is true:
+			set {_config::item} to single value "fishing.%loop-value%.itemsmelted" get of "{@directory}/config.yml" parsed as itemtype
+		else:
+			set {_config::item} to single value "fishing.%loop-value%.item" get of "{@directory}/config.yml" parsed as itemtype
+		set {_config::chance} to single value "fishing.%loop-value%.chance" get of "{@directory}/config.yml" parsed as number
+		set {_config::biomes::*} to value list "fishing.%loop-value%.biomes" get of "{@directory}/config.yml"
+#=========={ DROPPING }==========#
+		loop {_config::xp} times:
+			give 1 xp to player
+		if {_config::biomes::*} is not set:
+			set {_goodbiome} to true
+		else:
+			loop {_config::biomes::*}:
+				if biome at player is (loop-value-2 parsed as biome):
+					set {_goodbiome} to true
+		if {_goodbiome} is true:
+			set {_realchance} to {_config::chance}*{_multiplier}/100
+			if {_realchance} is greater than 1:
+				set {_realchance} to 1
+			chance of {_realchance}:
+			#	cancel event
+			#	damage player's tool by 1
+				set {_config::message} to single value "messages.dropped" get of "{@directory}/config.yml"
+				drop {_config::item} at event-location
+				{_config::message} is set:
+					replace all "{ITEM}" with "%{_config::item}%" in {_config::message}
+					send "%coloured {_config::message}%"
+				set {_topitem} to {_config::item} parsed as string
+				set {_score} to single value "dropped.fishing.%{_config::item}%.%player%" get of "{@directory}/config.yml" parsed as integer
+				add 1 to {_score}
+				set "dropped.fishing.%{_config::item}%.%player%" to "%{_score}%" in yml file "{@directory}/config.yml"
+
+on explode:
+	cancel event
+	loop exploded blocks:
+		set {_block} to type of loop-block
+		set {_config::replacewith} to single value "replace.%{_block}%.replacewith" get of "{@directory}/config.yml" parsed as itemtype
+		{_config::replacewith} is set:
+			set loop-block to {_config::replacewith}
+			clear {_config::replacewith}
+	uncancel event
+
+on leftclick:
+	player's gamemode isn't creative:
+		set {_block} to type of event-block
+		set {_config::replacewith} to single value "replace.%{_block}%.replacewith" get of "{@directory}/config.yml" parsed as itemtype
+	{_config::replacewith} is set:
+		set event-block to {_config::replacewith}
+		set {_config::message} to single value "replace.%{_block}%.message" get of "{@directory}/config.yml"
+		send "%coloured {_config::message}%"
